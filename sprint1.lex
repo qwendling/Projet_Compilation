@@ -5,7 +5,7 @@
 /* Declaration C */
 
 /* fichier dans lequel est defini les macros constantes */
-#include "Sprint1.tab.h" 
+#include "sprint1.tab.h" 
 #include <stdio.h>
 
 union {int ival; char *sval; double fval;} yylval;
