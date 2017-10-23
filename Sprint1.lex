@@ -1,3 +1,6 @@
+%option nounput
+%option noyywrap
+
 %{
 /* Declaration C */
 
@@ -5,6 +8,7 @@
 #include "Sprint1.tab.h" 
 #include <stdio.h>
 
+union {int ival; char *sval; double fval;} yylval;
 
 %}
 
@@ -31,8 +35,8 @@ RETURN return\ [0-9]*
 
 {MAIN} {return MAIN;}
 {RETURN} {return RETURN;}
-{NOMBRE} {yyval.ival=atoi(yytext); return NOMBRE;}
-{STRING} {yyval.sval=strdup(yytext); return STRING;}
+{NOMBRE} {yylval.ival=atoi(yytext); return NOMBRE;}
+{STRING} {yylval.sval=strdup(yytext); return STRING;}
 
 
 printf {return PRINTF;}

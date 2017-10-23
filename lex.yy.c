@@ -341,6 +341,9 @@ void yyfree (void *  );
 
 /* Begin user sect3 */
 
+#define yywrap() (/*CONSTCOND*/1)
+#define YY_SKIP_YYWRAP
+
 typedef unsigned char YY_CHAR;
 
 FILE *yyin = (FILE *) 0, *yyout = (FILE *) 0;
@@ -490,19 +493,20 @@ int yy_flex_debug = 0;
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
 #line 1 "Sprint1.lex"
-#line 2 "Sprint1.lex"
+#line 5 "Sprint1.lex"
 /* Declaration C */
 
 /* fichier dans lequel est defini les macros constantes */
-#include "sprint1LEX.tab.h" 
+#include "Sprint1.tab.h" 
 #include <stdio.h>
 
+union {int ival; char *sval; double fval;} yylval;
 
 /* Declaration Lex */
 /* ###### SPRINT 1 ###### */
 /* ##################### */
 /* Regle syntaxique */
-#line 506 "lex.yy.c"
+#line 510 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -562,8 +566,6 @@ extern int yywrap (void );
 #endif
 
 #ifndef YY_NO_UNPUT
-    
-    static void yyunput (int c,char *buf_ptr  );
     
 #endif
 
@@ -720,9 +722,9 @@ YY_DECL
 		}
 
 	{
-#line 28 "Sprint1.lex"
+#line 32 "Sprint1.lex"
 
-#line 726 "lex.yy.c"
+#line 728 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -781,52 +783,52 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 29 "Sprint1.lex"
+#line 33 "Sprint1.lex"
 ;
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 30 "Sprint1.lex"
+#line 34 "Sprint1.lex"
 ;
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 32 "Sprint1.lex"
+#line 36 "Sprint1.lex"
 {return MAIN;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 33 "Sprint1.lex"
+#line 37 "Sprint1.lex"
 {return RETURN;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 34 "Sprint1.lex"
-{yyval.ival=atoi(yytext); return NOMBRE;}
+#line 38 "Sprint1.lex"
+{yylval.ival=atoi(yytext); return NOMBRE;}
 	YY_BREAK
 case 6:
 /* rule 6 can match eol */
 YY_RULE_SETUP
-#line 35 "Sprint1.lex"
-{yyval.sval=strdup(yytext); return STRING;}
+#line 39 "Sprint1.lex"
+{yylval.sval=strdup(yytext); return STRING;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 38 "Sprint1.lex"
+#line 42 "Sprint1.lex"
 {return PRINTF;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 39 "Sprint1.lex"
+#line 43 "Sprint1.lex"
 {return PRINTI;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 41 "Sprint1.lex"
+#line 45 "Sprint1.lex"
 ECHO;
 	YY_BREAK
-#line 830 "lex.yy.c"
+#line 832 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1157,43 +1159,6 @@ static int yy_get_next_buffer (void)
 }
 
 #ifndef YY_NO_UNPUT
-
-    static void yyunput (int c, char * yy_bp )
-{
-	char *yy_cp;
-    
-    yy_cp = (yy_c_buf_p);
-
-	/* undo effects of setting up yytext */
-	*yy_cp = (yy_hold_char);
-
-	if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
-		{ /* need to shift things up to make room */
-		/* +2 for EOB chars. */
-		yy_size_t number_to_move = (yy_n_chars) + 2;
-		char *dest = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[
-					YY_CURRENT_BUFFER_LVALUE->yy_buf_size + 2];
-		char *source =
-				&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move];
-
-		while ( source > YY_CURRENT_BUFFER_LVALUE->yy_ch_buf )
-			*--dest = *--source;
-
-		yy_cp += (int) (dest - source);
-		yy_bp += (int) (dest - source);
-		YY_CURRENT_BUFFER_LVALUE->yy_n_chars =
-			(yy_n_chars) = YY_CURRENT_BUFFER_LVALUE->yy_buf_size;
-
-		if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
-			YY_FATAL_ERROR( "flex scanner push-back overflow" );
-		}
-
-	*--yy_cp = (char) c;
-
-	(yytext_ptr) = yy_bp;
-	(yy_hold_char) = *yy_cp;
-	(yy_c_buf_p) = yy_cp;
-}
 
 #endif
 
@@ -1827,7 +1792,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 41 "Sprint1.lex"
+#line 45 "Sprint1.lex"
 
 
 
