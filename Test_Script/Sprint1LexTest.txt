@@ -5,4 +5,5 @@ int main() {
 	printi("Ok printi");
 	
 	/* Fin du test */
+	return 0;
 }
