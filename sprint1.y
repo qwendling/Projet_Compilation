@@ -1,23 +1,31 @@
+%{
+	#include <stdio.h>
+%}
+
+
+%union {int nombre;char* string;}
 %token MAIN
 %token RETURN
-%token NOMBRE
-%token STRING
+%token <nombre> NOMBRE
+%token <string> STRING
 %token PRINTF
 %token PRINTI
+%type <nombre> B
+%start program
 %%
 program: fonction;
 
 fonction: MAIN'('')''{'ListeInstr'}';
 
-ListeInstr: ListeInstr';'ListeInstr
-	|RETURN B';' { return $2;}
-	|PRINTF'('STRING')'';' { printf("%s\n",$3) }
+ListeInstr: ListeInstr ListeInstr
+	|RETURN' 'B';' { printf("return %d\n",$3);return $3;}
+	|PRINTF'('STRING')'';' { printf("printf : %s\n",$3) ;}
 	|PRINTI'('B')'';' { printf("%d\n",$3); }
 	;
 
-B: NOMBRE;
+B: NOMBRE {$$=$1;};
 
 %%
 int yyerror(void){
-	fprintf(stderr,"erreur de syntaxe\n");return;
+	fprintf(stderr,"erreur de syntaxe\n");return 1;
 }
