@@ -16,8 +16,7 @@
 
 MAIN "int main"
 NOMBRE [0-9]*
-COMMENT \/\*.*\*\/
-ENDLIGNE [\n]
+COMMENT \/\*.*\*\/|([^\\]\/\/.*[\n])
 STRING   \"([^\"\\]|\\.)*\"
 RETURN return
 
@@ -28,10 +27,7 @@ RETURN return
 
 /* Regle syntaxique */
 %%
-{COMMENT}* ;
-{ENDLIGNE}* {printf("fin de ligne\n");};
-\t ;
-
+{COMMENT} {printf(" Commentaire %s\n",yytext);}
 {MAIN} {printf("main reconnu\n");return MAIN;}
 {RETURN} {printf("return reconnu\n");return RETURN;}
 {NOMBRE} {printf("entier lu\n");yylval.nombre=atoi(yytext); return NOMBRE;}
@@ -41,7 +37,8 @@ RETURN return
 printf {return PRINTF;}
 printi {return PRINTI;}
 
-. {printf("caractere : %s\n",yytext);return yytext[0];}
+[{}();] {printf("Envoie de : %s\n",yytext); return yytext[0];}
+. {printf("caractere ignoré: %s\n",yytext);}
 
 %%
 

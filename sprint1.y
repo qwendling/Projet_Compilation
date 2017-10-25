@@ -18,7 +18,7 @@ program: fonction;
 fonction: MAIN'('')''{'ListeInstr'}';
 
 ListeInstr: ListeInstr ListeInstr
-	|RETURN' 'B';' { printf("return %d\n",$3);return $3;}
+	|RETURN B';' { printf("return %d\n",$2);return $2;}
 	|PRINTF'('STRING')'';' { printf("printf : %s\n",$3) ;}
 	|PRINTI'('B')'';' { printf("%d\n",$3); }
 	;

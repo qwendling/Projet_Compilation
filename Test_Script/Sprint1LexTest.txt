@@ -2,7 +2,7 @@ int main() {
 	// Coucou le test
 
 	printf("printf reconnu");
-	printi("Ok printi");
+	printi(42);
 	
 	/* Fin du test */
 	return 0;
