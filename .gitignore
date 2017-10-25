@@ -6,4 +6,5 @@
 !.gitignore
 !.gitattributes
 !.gitkeep
+!makefile
 !*/
