@@ -1,5 +1,6 @@
 #ifndef TABLE_SYMBOLE_H
 #define TABLE_SYMBOLE_H
+#define TAILLE_TABLE 4096
 
 typedef struct std_symbole{
   char* name;
@@ -7,13 +8,15 @@ typedef struct std_symbole{
   struct std_symbole* next;
 }std_symbole,*Symbole;
 
-int sym_hach(const char* name);
+Symbole sym_Table[TAILLE_TABLE];
 
-void sym_add(Symbole* table);
+int sym_hach(char* name);
 
-int sym_find_index(Symbole* table,const char* name);
+void sym_add(char* name);
 
+int sym_find_index(char* name);
 
+void sym_delete_table();
 
 
 #endif
