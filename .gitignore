@@ -1,6 +1,6 @@
 *
-!.y
-!.lex
+!*.y
+!*.lex
 !.txt
 !README.md
 !.gitignore
