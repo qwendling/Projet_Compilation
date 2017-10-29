@@ -7,7 +7,7 @@
 /* fichier dans lequel est defini les macros constantes */
 #include "sprint1.tab.h"
 #include <stdio.h>
-
+#include "arbre.h"
 %}
 
 /* Declaration Lex */

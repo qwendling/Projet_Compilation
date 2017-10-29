@@ -1,22 +1,22 @@
 #ifndef ARBRE_H
 #define ARBRE_H
 
-enum arbre_type{
-  ast_constant;
-  ast_str;
-  ast_printf;
-  ast_printi;
-};
+typedef enum arbre_type{
+  ast_constant,
+  ast_str,
+  ast_printf,
+  ast_printi
+}arbre_type;
 
-union tree_value{
+typedef union tree_value{
   char* str;
   int constante;
-};
+}tree_value;
 
 typedef struct str_arbre{
   arbre_type type;
-  str_arbre* fils;
-  str_arbre* freres;
+  struct str_arbre* fils;
+  struct str_arbre* freres;
   tree_value val;
 } std_arbre,*Arbre;
 
