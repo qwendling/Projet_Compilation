@@ -5,7 +5,9 @@ typedef enum arbre_type{
   ast_constant,
   ast_str,
   ast_printf,
-  ast_printi
+  ast_printi,
+  ast_return,
+  ast_main
 }arbre_type;
 
 typedef union tree_value{
@@ -36,7 +38,8 @@ Arbre concat(Arbre a1,Arbre a2);
 Arbre ast_new_print(arbre_type type,Arbre feuille);
 
 //Ajout d'un noeud return
-Arbre ast_new_return(arbre_type type,Arbre feuille);
+Arbre ast_new_return(Arbre feuille);
 
+Arbre ast_new_main(Arbre statement);
 
 #endif
