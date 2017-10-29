@@ -8,3 +8,5 @@
 !.gitkeep
 !makefile
 !*/
+!*.c
+!*.h
