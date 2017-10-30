@@ -6,6 +6,7 @@
 
 /* fichier dans lequel est defini les macros constantes */
 #include "arbre.h"
+#include "table_symbole.h"
 #include "sprint1.tab.h"
 #include <stdio.h>
 
@@ -50,5 +51,6 @@ int main(int argc, char **argv )
 	yyin = fopen(argv[1],"r");
 	yyparse();
 	fclose(yyin);
+
 	return 0;
 }

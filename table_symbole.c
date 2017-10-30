@@ -1,6 +1,7 @@
 #include "table_symbole.h"
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 int sym_hach(char* name){
   unsigned int i;
@@ -71,4 +72,33 @@ void sym_delete_table(){
   for(;i<TAILLE_TABLE;i++){
     sym_delete(sym_Table[i]);
   }
+}
+
+Symbole sym_new_tmp(){
+  static int nb_tmp=0;
+
+  char name[1024];
+  snprintf(name,1024,"tmp%d",nb_tmp);
+
+  char* name_tmp=malloc(strlen(name));
+
+  strncpy(name_tmp,name,strlen(name));
+
+  nb_tmp++;
+
+  int h=sym_hach(name_tmp);
+
+  Symbole new_tmp;
+
+  if(sym_existe(sym_Table[h],name_tmp)!=NULL){
+    free(name_tmp);
+    new_tmp=sym_new_tmp();
+    return new_tmp;
+  }
+
+  sym_add(name_tmp);
+  new_tmp=sym_existe(sym_Table[h],name_tmp);
+
+  return new_tmp;
+
 }
