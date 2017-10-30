@@ -10,6 +10,7 @@
 #include "sprint1.tab.h"
 #include <stdio.h>
 
+Arbre ast;
 %}
 
 /* Declaration Lex */
@@ -51,6 +52,8 @@ int main(int argc, char **argv )
 	yyin = fopen(argv[1],"r");
 	yyparse();
 	fclose(yyin);
+
+	ast_print(ast);
 
 	return 0;
 }

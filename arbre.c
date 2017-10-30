@@ -1,5 +1,6 @@
 #include "arbre.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 Arbre newArbre(){
   return NULL;
@@ -46,4 +47,43 @@ Arbre ast_new_main(Arbre statement){
   newprint->type = ast_main;
   newprint->fils = statement;
   return newprint;
+}
+
+
+
+void ast_print_aux(Arbre a,int profondeur){
+  if(a==NULL)
+    return;
+  int i;
+  for(i=0;i<profondeur;i++){
+    printf("-");
+  }
+  switch(a->type){
+    case ast_constant:
+      printf("ast_constant\n");
+      break;
+    case ast_str:
+      printf("ast_str\n");
+      break;
+    case ast_printf:
+      printf("ast_printf\n");
+      break;
+    case ast_printi:
+      printf("ast_printi\n");
+      break;
+    case ast_return:
+      printf("ast_return\n");
+      break;
+    case ast_main:
+      printf("ast_main\n");
+      break;
+  }
+
+  ast_print_aux(a->fils,profondeur+1);
+  ast_print_aux(a->freres,profondeur);
+
+}
+
+void ast_print(Arbre a){
+  ast_print_aux(a,0);
 }

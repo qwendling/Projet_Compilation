@@ -42,4 +42,6 @@ Arbre ast_new_return(Arbre feuille);
 
 Arbre ast_new_main(Arbre statement);
 
+void ast_print(Arbre a);
+
 #endif

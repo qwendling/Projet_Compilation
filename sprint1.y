@@ -1,6 +1,7 @@
 %{
 	#include <stdio.h>
 	#include "arbre.h"
+	extern Arbre ast;
 %}
 
 
@@ -18,7 +19,7 @@
 %type <ast> program
 %start program
 %%
-program: fonction;
+program: fonction {ast=$1;};
 
 fonction: MAIN'('')''{'ListeInstr'}' {$$=ast_new_main($5);}
 	;
