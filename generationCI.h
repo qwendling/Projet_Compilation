@@ -4,8 +4,8 @@
 #include "arbre.h"
 
 typedef enum quad_op{
-  printi,
-  printf
+  print_i,
+  print_f
 } quad_op;
 
 
@@ -17,9 +17,9 @@ typedef struct quad_struct {
   struct quad_struct * next; //quad suivant
 }std_quad , *quad;
 
-quad lquad = NULL;
 
-void quad_add(quad_op,Symbole,Symbole,Symbole);
+quad quad_add(quad,quad_op,Symbole,Symbole,Symbole);
+void quad_free(quad);
 
 
 
