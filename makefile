@@ -62,7 +62,7 @@ clean:
 	@rm *.yy.*
 	@rm *.tab.*
 	@rm ${EXEC}
-	@printf " \n ${BOLD}Répertoire Nettoyer ! \n\n"
+	@printf " \n ${BOLD}Répertoire Nettoyer ! ${END}\n\n"
 
 #help makefile
 help:
