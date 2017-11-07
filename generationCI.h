@@ -1,20 +1,25 @@
 #ifndef GENERATIONCI_H
 #define GENERATIONCI_H
+#include "table_symbole.h"
+#include "arbre.h"
 
-typedef union symbol {
-  char* str;
-  int cst;
-}symbol;
+typedef enum quad_op{
+  printi,
+  printf
+} quad_op;
 
 
 typedef struct quad_struct {
-  char op; //operateur
-  symbol* arg1; //1er argument
-  symbol* arg12; //2eme argument
-  symbol* res; // resultat
+  quad_op op; //operateur
+  Symbole arg1; //1er argument
+  Symbole arg2; //2eme argument
+  Symbole res; // resultat
   struct quad_struct * next; //quad suivant
-}quad_struct , *quad;
+}std_quad , *quad;
 
+quad lquad = NULL;
+
+void quad_add(quad_op,Symbole,Symbole,Symbole);
 
 
 
