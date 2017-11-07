@@ -38,6 +38,7 @@ Symbole sym_add_aux(Symbole s,char* name){
   new->name=name;
   new->index=id;
   new->next = s;
+  new->type=sym_var;
   return new;
 }
 
