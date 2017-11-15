@@ -13,6 +13,8 @@
 
 
 Arbre ast;
+
+int return_value = 0;
 %}
 
 /* Declaration Lex */
@@ -57,5 +59,5 @@ int main(int argc, char **argv )
 
 	ast_print(ast);
 
-	return 0;
+	return return_value;
 }

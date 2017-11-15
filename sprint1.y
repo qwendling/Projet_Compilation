@@ -4,6 +4,7 @@
 	extern Arbre ast;
 	int yylex();
 	void yyerror(const char*);
+	extern return_value;
 %}
 
 
@@ -41,4 +42,5 @@ B: NOMBRE {$$=new_const($1);};
 %%
 void yyerror(const char* s){
 	fprintf(stderr,"erreur de syntaxe\n");
+	return_value = 1;
 }

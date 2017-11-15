@@ -3,6 +3,7 @@
 ###########################
 
 GREENBOX = \033[0;42m
+REDBOX = \033[0;41m
 END = \033[0m
 BOLD = \033[0;01m
 YELLOW = \033[1;33m
@@ -52,8 +53,9 @@ test: all
 	@printf "${BOLD}${SPRED}${END} \n"
 	@printf "${ORANGE}Testing in process ... ${END}\n\n"
 	@for i in Test_Script/*.txt; do \
-			./sprint1 $$i >> /dev/null; \
-			printf "%s""$$i ${GREENBOX} PASSED ${END} \n" ; \
+			./sprint1 $$i >> /dev/null \
+			&& printf "%s""$$i ${GREENBOX} PASSED ${END} \n"\
+			|| printf "%s""$$i ${REDBOX} FAILED ${END} \n" ; \
 	done
 	@printf "\n${GREEN}Great success can commit now ! ${END}\n\n"
 	@gnome-terminal --maximize -e ./borat.sh
