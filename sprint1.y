@@ -2,6 +2,8 @@
 	#include <stdio.h>
 	#include "arbre.h"
 	extern Arbre ast;
+	int yylex();
+	void yyerror(const char*);
 %}
 
 
@@ -37,6 +39,6 @@ Instruction: RETURN B { $$=ast_new_return($2);}
 B: NOMBRE {$$=new_const($1);};
 
 %%
-int yyerror(void){
-	fprintf(stderr,"erreur de syntaxe\n");return 1;
+void yyerror(const char* s){
+	fprintf(stderr,"erreur de syntaxe\n");
 }

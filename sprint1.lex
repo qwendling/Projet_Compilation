@@ -11,6 +11,7 @@
 #include "sprint1.tab.h"
 #include <stdio.h>
 
+
 Arbre ast;
 %}
 

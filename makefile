@@ -43,7 +43,7 @@ all: ${LEX} ${YACC} ${ARBRE_C} ${ARBRE_H} ${SYMBOLE_C} ${SYMBOLE_C}
 	@printf "${CYAN}\t\t LEX Compiled ${END} \n"
 	@#######
 	@printf "${YELLOW}Project Compiling... ${END} \n"
-	@gcc -o ${EXEC} ${EXEC}.tab.c lex.yy.c ${ARBRE_C} ${GENERATIONCI_C} ${SYMBOLE_C} -lfl
+	@gcc -o ${EXEC} lex.yy.c ${EXEC}.tab.c ${ARBRE_C} ${GENERATIONCI_C} ${SYMBOLE_C} -ly
 	@printf "\n${CYAN}\t\t Project Compiled ${END} \n\n"
 	@#######
 
@@ -55,7 +55,7 @@ test: all
 			./sprint1 $$i >> /dev/null; \
 			printf "%s""$$i ${GREENBOX} PASSED ${END} \n" ; \
 	done
-	@printf "\n ${GREEN}All test passed, you can commit now ! ${END}\n\n"
+	@printf "\n${GREEN}Great success can commit now ! ${END}\n\n"
 
 # Clean repository
 clean:
