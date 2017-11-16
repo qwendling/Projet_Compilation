@@ -4,7 +4,7 @@
 	extern Arbre ast;
 	int yylex();
 	void yyerror(const char*);
-	extern return_value;
+	extern int return_value;
 %}
 
 

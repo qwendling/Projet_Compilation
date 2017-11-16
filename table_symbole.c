@@ -25,14 +25,14 @@ Symbole sym_existe(Symbole s,char* name){
   return sym_existe(s->next,name);
 }
 
-Symbole sym_add_aux(Symbole s,char* name){
+Symbole sym_add_aux(Symbole s,char* name,int h){
   Symbole e=sym_existe(s,name);
   if(e!=NULL){
     return s;
   }
-  int id = 0;
+  int id = h;
   if(s!=NULL)
-    id = s->index+1;
+    id = s->index+4096;
 
   Symbole new=malloc(sizeof(std_symbole));
   new->name=name;
@@ -46,7 +46,7 @@ void sym_add(char* name){
   int h = sym_hach(name);
   Symbole e = sym_Table[h];
   if(e==NULL){
-    sym_Table[h]=sym_add_aux(sym_Table[h],name);
+    sym_Table[h]=sym_add_aux(sym_Table[h],name,h);
   }
 }
 
@@ -55,7 +55,13 @@ int sym_find_index(char* name){
   Symbole e = sym_existe(sym_Table[h],name);
   if(e==NULL)
     return -1;
-  return e->index*4096+h;
+  return e->index;
+}
+
+Symbole sym_find(char* name){
+  int h = sym_hach(name);
+  Symbole e = sym_existe(sym_Table[h],name);
+  return e;
 }
 
 void sym_delete(Symbole s){
@@ -79,7 +85,7 @@ Symbole sym_new_tmp(){
   static int nb_tmp=0;
 
   char name[1024];
-  snprintf(name,1024,"tmp%d",nb_tmp);
+  snprintf(name,1024,"$tmp%d",nb_tmp);
 
   char* name_tmp=malloc(strlen(name));
 
