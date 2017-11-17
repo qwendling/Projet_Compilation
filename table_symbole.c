@@ -35,7 +35,7 @@ Symbole sym_add_aux(Symbole s,char* name,int h){
     id = s->index+4096;
 
   Symbole new=malloc(sizeof(std_symbole));
-  new->name=name;
+  new->name=strdup(name);
   new->index=id;
   new->next = s;
   new->type=sym_var;

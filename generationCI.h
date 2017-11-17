@@ -22,6 +22,7 @@ typedef struct quad_struct {
 
 quad quad_add(quad,quad_op,Symbole,Symbole,Symbole);
 void quad_free(quad);
+void print_quad(quad);
 
 quad genCode(Arbre,Symbole[]);
 

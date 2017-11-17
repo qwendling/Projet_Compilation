@@ -58,7 +58,12 @@ int main(int argc, char **argv )
 	yyparse();
 	fclose(yyin);
 
+	printf("\n########## AST ##########\n\n");
 	ast_print(ast);
+
+	quad code = genCode(ast,sym_Table);
+	printf("\n########## QUADS ##########\n\n");
+	print_quad(code);
 
 	return return_value;
 }

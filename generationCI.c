@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "generationCI.h"
 
 
@@ -12,10 +13,13 @@ quad quad_add(quad q,quad_op op,Symbole s1,Symbole s2,Symbole s3){
   return new;
 }
 
-void add_quad(quad* q1,quad q2){
-  if(*q1 == NULL)
-    *q1 = q2;
-  add_quad(&(*q1)->next,q2);
+quad add_quad(quad q1,quad q2){
+  if(q1 == NULL){
+      return q2;
+  }
+  q1->next = add_quad(q1->next,q2);
+
+  return q1;
 }
 
 void quad_free(quad q){
@@ -27,7 +31,7 @@ void quad_free(quad q){
 
 quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
   Symbole tmp;
-  quad codegen,arg;
+  quad codegen = NULL,arg = NULL;
   Arbre fils;
   switch(ast->type){
     case ast_constant:
@@ -45,26 +49,46 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
     case ast_printf:
       arg = genCode(ast->fils,sym_table);
       codegen = arg;
-      add_quad(&codegen,quad_add(NULL,print_f,arg->res,NULL,NULL));
+      codegen = add_quad(codegen,quad_add(NULL,print_f,arg->res,NULL,NULL));
       break;
     case ast_printi:
       arg = genCode(ast->fils,sym_table);
       codegen = arg;
-      add_quad(&codegen,quad_add(NULL,print_i,arg->res,NULL,NULL));
+      codegen = add_quad(codegen,quad_add(NULL,print_i,arg->res,NULL,NULL));
       break;
     case ast_return:
       arg = genCode(ast->fils,sym_table);
       codegen = arg;
-      add_quad(&codegen,quad_add(NULL,return_prog,arg->res,NULL,NULL));
+      codegen = add_quad(codegen,quad_add(NULL,return_prog,arg->res,NULL,NULL));
       break;
     case ast_main:
       fils = ast->fils;
       while(fils != NULL){
-        add_quad(&codegen,genCode(fils,sym_table));
+        codegen = add_quad(codegen,genCode(fils,sym_table));
         fils = fils->freres;
       }
       break;
 
   }
   return codegen;
+}
+
+void print_quad(quad q){
+  if(q == NULL)
+    return;
+  switch (q->op){
+    case print_i:
+      printf("print_i %s\n",q->arg1->name);
+      break;
+    case print_f:
+      printf("print_f %s\n",q->arg1->name);
+      break;
+    case affectation:
+      printf("affectation %s\n",q->res->name);
+      break;
+    case return_prog:
+      printf("return %s\n",q->arg1->name);
+      break;
+  }
+  print_quad(q->next);
 }
