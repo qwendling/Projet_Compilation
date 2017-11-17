@@ -42,7 +42,7 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
       break;
     case ast_str:
       tmp = sym_new_tmp(sym_table);
-      tmp->type = sym_const;
+      tmp->type = sym_string;
       tmp->val.str = ast->val.str;
       codegen = quad_add(codegen,affectation,NULL,NULL,tmp);
       break;

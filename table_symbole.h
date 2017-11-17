@@ -4,7 +4,8 @@
 
 typedef enum sym_type{
   sym_var,
-  sym_const
+  sym_const,
+  sym_string
 } sym_type;
 
 typedef struct std_symbole{
@@ -21,8 +22,7 @@ typedef struct std_symbole{
 
 
 int sym_hach(char* name);
-
-void sym_add(char* name,Symbole[]);
+Symbole sym_add(char* name,Symbole[]);
 
 int sym_find_index(char* name,Symbole[]);
 
