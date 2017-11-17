@@ -22,7 +22,7 @@ typedef struct std_symbole{
 
 
 int sym_hach(char* name);
-Symbole sym_add(char* name,Symbole[]);
+void sym_add(char* name,Symbole[]);
 
 int sym_find_index(char* name,Symbole[]);
 
