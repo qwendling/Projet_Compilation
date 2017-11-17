@@ -42,7 +42,7 @@ Symbole sym_add_aux(Symbole s,char* name,int h){
   return new;
 }
 
-void sym_add(char* name){
+void sym_add(char* name,Symbole sym_Table[TAILLE_TABLE]){
   int h = sym_hach(name);
   Symbole e = sym_Table[h];
   if(e==NULL){
@@ -50,7 +50,7 @@ void sym_add(char* name){
   }
 }
 
-int sym_find_index(char* name){
+int sym_find_index(char* name,Symbole sym_Table[TAILLE_TABLE]){
   int h = sym_hach(name);
   Symbole e = sym_existe(sym_Table[h],name);
   if(e==NULL)
@@ -58,7 +58,7 @@ int sym_find_index(char* name){
   return e->index;
 }
 
-Symbole sym_find(char* name){
+Symbole sym_find(char* name,Symbole sym_Table[TAILLE_TABLE]){
   int h = sym_hach(name);
   Symbole e = sym_existe(sym_Table[h],name);
   return e;
@@ -74,14 +74,14 @@ void sym_delete(Symbole s){
   sym_delete(tmp);
 }
 
-void sym_delete_table(){
+void sym_delete_table(Symbole sym_Table[TAILLE_TABLE]){
   int i=0;
   for(;i<TAILLE_TABLE;i++){
     sym_delete(sym_Table[i]);
   }
 }
 
-Symbole sym_new_tmp(){
+Symbole sym_new_tmp(Symbole sym_Table[TAILLE_TABLE]){
   static int nb_tmp=0;
 
   char name[1024];
@@ -99,11 +99,11 @@ Symbole sym_new_tmp(){
 
   if(sym_existe(sym_Table[h],name_tmp)!=NULL){
     free(name_tmp);
-    new_tmp=sym_new_tmp();
+    new_tmp=sym_new_tmp(sym_Table);
     return new_tmp;
   }
 
-  sym_add(name_tmp);
+  sym_add(name_tmp,sym_Table);
   new_tmp=sym_existe(sym_Table[h],name_tmp);
 
   return new_tmp;

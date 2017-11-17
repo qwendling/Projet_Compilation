@@ -5,7 +5,9 @@
 
 typedef enum quad_op{
   print_i,
-  print_f
+  print_f,
+  affectation,
+  return_prog
 } quad_op;
 
 
@@ -20,6 +22,8 @@ typedef struct quad_struct {
 
 quad quad_add(quad,quad_op,Symbole,Symbole,Symbole);
 void quad_free(quad);
+
+quad genCode(Arbre,Symbole[]);
 
 
 

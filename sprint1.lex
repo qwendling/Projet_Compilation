@@ -13,6 +13,7 @@
 
 
 Arbre ast;
+Symbole sym_Table[TAILLE_TABLE];
 
 int return_value = 0;
 %}

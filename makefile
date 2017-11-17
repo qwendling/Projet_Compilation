@@ -32,7 +32,7 @@ GENERATIONCI_C = generationCI.c
 # 		Makefile Action			#
 ###########################
 
-all: ${LEX} ${YACC} ${ARBRE_C} ${ARBRE_H} ${SYMBOLE_C} ${SYMBOLE_C}
+all: ${LEX} ${YACC} ${ARBRE_C} ${ARBRE_H} ${SYMBOLE_C} ${SYMBOLE_H} ${GENERATIONCI_C}
 	@printf "${BOLD}${SPRED}${END}"
 	@printf "${ORANGE}Compiling in process ... ${END} \n\n"
 	@printf "${YELLOW}YACC Compiling... \n${END}"
@@ -59,7 +59,7 @@ test: all
 	done
 	@printf "\n${GREEN}Great success can commit now ! ${END}\n\n"
 	@gnome-terminal --maximize -e ./borat.sh
-	
+
 
 # Clean repository
 clean:
