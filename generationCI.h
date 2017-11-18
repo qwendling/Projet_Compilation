@@ -3,11 +3,19 @@
 #include "table_symbole.h"
 #include "arbre.h"
 
+
+typedef struct const_string {
+  char* name;
+  struct const_string * next;
+}std_string, *ConstString;
+
+
 typedef enum quad_op{
   print_i,
   print_f,
   affectation,
-  return_prog
+  return_prog,
+  create_string
 } quad_op;
 
 
@@ -24,8 +32,10 @@ quad quad_add(quad,quad_op,Symbole,Symbole,Symbole);
 void quad_free(quad);
 void print_quad(quad);
 
-quad genCode(Arbre,Symbole[]);
+quad genCode(Arbre,Symbole[],ConstString*);
 
-
+void print_const(ConstString s);
+ConstString constString_add(char*);
+void constString_free(ConstString);
 
 #endif

@@ -29,7 +29,7 @@ void quad_free(quad q){
   free(q);
 }
 
-quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
+quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE],ConstString* string_table){
   Symbole tmp;
   quad codegen = NULL,arg = NULL;
   Arbre fils;
@@ -44,27 +44,32 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
       tmp = sym_new_tmp(sym_table);
       tmp->type = sym_string;
       tmp->val.str = ast->val.str;
-      codegen = quad_add(codegen,affectation,NULL,NULL,tmp);
+      codegen = quad_add(codegen,create_string,NULL,NULL,tmp);
+
+      ConstString newConst = malloc(sizeof(std_string));
+      newConst->next = *string_table;
+      newConst->name = tmp->name+1;
+      *string_table = newConst;
       break;
     case ast_printf:
-      arg = genCode(ast->fils,sym_table);
+      arg = genCode(ast->fils,sym_table,string_table);
       codegen = arg;
       codegen = add_quad(codegen,quad_add(NULL,print_f,arg->res,NULL,NULL));
       break;
     case ast_printi:
-      arg = genCode(ast->fils,sym_table);
+      arg = genCode(ast->fils,sym_table,string_table);
       codegen = arg;
       codegen = add_quad(codegen,quad_add(NULL,print_i,arg->res,NULL,NULL));
       break;
     case ast_return:
-      arg = genCode(ast->fils,sym_table);
+      arg = genCode(ast->fils,sym_table,string_table);
       codegen = arg;
       codegen = add_quad(codegen,quad_add(NULL,return_prog,arg->res,NULL,NULL));
       break;
     case ast_main:
       fils = ast->fils;
       while(fils != NULL){
-        codegen = add_quad(codegen,genCode(fils,sym_table));
+        codegen = add_quad(codegen,genCode(fils,sym_table,string_table));
         fils = fils->freres;
       }
       break;
@@ -91,4 +96,20 @@ void print_quad(quad q){
       break;
   }
   print_quad(q->next);
+}
+
+
+void print_const(ConstString s){
+  if(s == NULL){
+    return;
+  }
+  printf("%s \n",s->name);
+  print_const(s->next);
+}
+
+void constString_free(ConstString conststring){
+  if(conststring == NULL)
+    return;
+  constString_free(conststring->next);
+  free(conststring);
 }

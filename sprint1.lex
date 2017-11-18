@@ -14,6 +14,7 @@
 
 Arbre ast;
 Symbole sym_Table[TAILLE_TABLE];
+ConstString string_const = NULL;
 
 int return_value = 0;
 %}
@@ -61,9 +62,12 @@ int main(int argc, char **argv )
 	printf("\n########## AST ##########\n\n");
 	ast_print(ast);
 
-	quad code = genCode(ast,sym_Table);
+	quad code = genCode(ast,sym_Table,&string_const);
 	printf("\n########## QUADS ##########\n\n");
 	print_quad(code);
+
+	printf("\n###### CONST STRING ######\n\n");
+	print_const(string_const);
 
 	return return_value;
 }
