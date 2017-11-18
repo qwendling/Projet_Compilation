@@ -43,7 +43,7 @@ void genAssembleur(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
       break;
     case return_prog:
       printf("gen return\n");
-      snprintf(str_code,1024,"lw $a0 %d($sp)\n",code->arg1->index);
+      snprintf(str_code,1024,"lw $a0 %d($sp)\n",4*code->arg1->index);
       fwrite(str_code,sizeof(char),strlen(str_code),file);
       free(str_code);
       str_code = "li $v0 17\n";
@@ -51,6 +51,23 @@ void genAssembleur(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
       str_code = "syscall\n";
       fwrite(str_code,sizeof(char),strlen(str_code),file);
       break;
+    case create_main:
+      str_code = "main:\n";
+      fwrite(str_code,sizeof(char),strlen(str_code),file);
   }
   genAssembleur(code->next,sym_table,file);
+}
+
+void genAssembleur_header(ConstString cs,FILE* file){
+  char* str_code = ".data\n";
+  fwrite(str_code,sizeof(char),strlen(str_code),file);
+  str_code = calloc(1024,sizeof(char));
+  while(cs != NULL){
+    snprintf(str_code,1024,"%s: .asciiz %s\n",cs->name,cs->val);
+    fwrite(str_code,sizeof(char),strlen(str_code),file);
+    cs = cs->next;
+  }
+  free(str_code);
+  str_code = ".text\n.globl main\n";
+  fwrite(str_code,sizeof(char),strlen(str_code),file);
 }

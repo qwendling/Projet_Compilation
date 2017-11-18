@@ -6,6 +6,7 @@
 
 typedef struct const_string {
   char* name;
+  char* val;
   struct const_string * next;
 }std_string, *ConstString;
 
@@ -15,7 +16,8 @@ typedef enum quad_op{
   print_f,
   affectation,
   return_prog,
-  create_string
+  create_string,
+  create_main,
 } quad_op;
 
 

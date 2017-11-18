@@ -49,6 +49,7 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE],ConstString* string_table
       ConstString newConst = malloc(sizeof(std_string));
       newConst->next = *string_table;
       newConst->name = tmp->name+1;
+      newConst->val = ast->val.str;
       *string_table = newConst;
       break;
     case ast_printf:
@@ -67,6 +68,7 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE],ConstString* string_table
       codegen = add_quad(codegen,quad_add(NULL,return_prog,arg->res,NULL,NULL));
       break;
     case ast_main:
+      codegen = quad_add(codegen,create_main,NULL,NULL,NULL);
       fils = ast->fils;
       while(fils != NULL){
         codegen = add_quad(codegen,genCode(fils,sym_table,string_table));
@@ -103,7 +105,7 @@ void print_const(ConstString s){
   if(s == NULL){
     return;
   }
-  printf("%s \n",s->name);
+  printf("%s val : %s\n",s->name,s->val);
   print_const(s->next);
 }
 

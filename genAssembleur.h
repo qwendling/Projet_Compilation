@@ -6,5 +6,6 @@
 #include <stdio.h>
 
 void genAssembleur(quad,Symbole[],FILE*);
+void genAssembleur_header(ConstString,FILE* file);
 
 #endif

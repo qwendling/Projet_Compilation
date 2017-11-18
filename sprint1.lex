@@ -71,6 +71,7 @@ int main(int argc, char **argv )
 	print_const(string_const);
 
 	FILE* file = fopen("test.s","w");
+	genAssembleur_header(string_const,file);
 	genAssembleur(code,sym_Table,file);
 
 	return return_value;
