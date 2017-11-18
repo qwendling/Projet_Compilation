@@ -8,6 +8,7 @@
 #include "arbre.h"
 #include "table_symbole.h"
 #include "generationCI.h"
+#include "genAssembleur.h"
 #include "sprint1.tab.h"
 #include <stdio.h>
 
@@ -68,6 +69,9 @@ int main(int argc, char **argv )
 
 	printf("\n###### CONST STRING ######\n\n");
 	print_const(string_const);
+
+	FILE* file = fopen("test.s","w");
+	genAssembleur(code,sym_Table,file);
 
 	return return_value;
 }

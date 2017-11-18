@@ -86,10 +86,11 @@ Symbole sym_new_tmp(Symbole sym_Table[TAILLE_TABLE]){
 
   char name[1024];
   snprintf(name,1024,"$tmp%d",nb_tmp);
+  //printf("%s size : %d\n",name,strlen(name));
 
-  char* name_tmp=malloc(strlen(name));
+  char* name_tmp = strdup(name);
 
-  strncpy(name_tmp,name,strlen(name));
+  //printf("%s size : %d\n\n",name_tmp,strlen(name_tmp));
 
   nb_tmp++;
 
