@@ -32,7 +32,7 @@ Symbole sym_add_aux(Symbole s,char* name,int h){
   }
   int id = h;
   if(s!=NULL)
-    id = s->index+4096;
+    id = s->index+TAILLE_TABLE;
 
   Symbole new=malloc(sizeof(std_symbole));
   new->name=strdup(name);
