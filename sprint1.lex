@@ -38,8 +38,8 @@ RETURN return
 
 /* --------- SPRINT 2 --------- */
 
-
-
+ID [a-zA-Z_][a-zA-Z0-9_]*
+INT "int"
 
 
 /*###################################*/
@@ -52,12 +52,14 @@ RETURN return
 {NOMBRE} {printf("entier lu\n");yylval.nombre=atoi(yytext); return NOMBRE;}
 {STRING} {yylval.string=strdup(yytext); return STRING;}
 
-
 printf {return PRINTF;}
 printi {return PRINTI;}
 
 [{}();] {printf("Envoie de : %s\n",yytext); return yytext[0];}
 . {printf("caractere ignoré: %s\n",yytext);}
+
+{INT} {printf("type reconnu %s \n",yytext); return INT;}
+{ID}	{printf("id reconnu : %s \n",yytext); return ID;}
 
 %%
 
@@ -88,7 +90,7 @@ int main(int argc, char **argv )
 	FILE* file = fopen("test.s","w");
 	// 1.Header
 	genAssembleur_header(string_const,file);
-	// 2.Generation a partir des quads 
+	// 2.Generation a partir des quads
 	genAssembleur(code,sym_Table,file);
 
 	return return_value;
