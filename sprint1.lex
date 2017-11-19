@@ -56,9 +56,11 @@ printf {return PRINTF;}
 printi {return PRINTI;}
 
 [{}();] {printf("Envoie de : %s\n",yytext); return yytext[0];}
+[+-/*=] {printf("Envoie Expression Math de  : %s\n",yytext); return yytext[0];}
+
 . {printf("caractere ignoré: %s\n",yytext);}
 
-{INT} {printf("type reconnu %s \n",yytext); return INT;}
+{INT} {printf("type reconnu : %s \n",yytext); return INT;}
 {ID}	{printf("id reconnu : %s \n",yytext); return ID;}
 
 %%
