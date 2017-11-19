@@ -1,0 +1,19 @@
+int main() {
+	// Coucou le test
+	int intVar1_ = 0 ;
+	int intVar2_ ;
+
+	intVar1_ = 4 + 3;
+	intVar1_ = intVar1_ * 2;
+	intVar2_ = 10 /2;
+	intVar2_++;
+	intVar1_ = intVar1_ - intVar2_;
+	intVar1_--;
+	printi(intVar1_);
+
+	printf("printf reconnu");
+	printi(42);
+	/* Fin du test */
+
+	return 0;
+}
