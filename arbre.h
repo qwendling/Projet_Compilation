@@ -8,7 +8,8 @@ typedef enum arbre_type{
   ast_printf,
   ast_printi,
   ast_return,
-  ast_main
+  ast_main,
+  ast_declareInt,
 }arbre_type;
 
 // Union definissant les valeurs possibles d'une feuille
@@ -46,7 +47,9 @@ Arbre ast_new_return(Arbre feuille);
 //Ajout un noeud main
 Arbre ast_new_main(Arbre statement);
 
-//Affiche dans le terminal l'AST avec ses profondeurs 
+Arbre ast_new_declare(arbre_type type,Arbre expression);
+
+//Affiche dans le terminal l'AST avec ses profondeurs
 void ast_print(Arbre a);
 
 #endif

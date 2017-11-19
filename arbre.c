@@ -59,6 +59,13 @@ Arbre ast_new_main(Arbre statement){
   return newprint;
 }
 
+Arbre ast_new_declare(arbre_type type, Arbre expression){
+  Arbre newDeclaration = malloc(sizeof(std_arbre));
+  newDeclaration->type = type;
+  newDeclaration->fils = expression;
+  return newDeclaration;
+}
+
 
 //Affiche dans le terminal l'AST avec ses profondeurs
 void ast_print_aux(Arbre a,int profondeur){
@@ -86,6 +93,9 @@ void ast_print_aux(Arbre a,int profondeur){
       break;
     case ast_main:
       printf("ast_main\n");
+      break;
+    case ast_declareInt:
+      printf("ast_declareInt\n");
       break;
   }
 
