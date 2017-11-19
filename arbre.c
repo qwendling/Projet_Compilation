@@ -2,23 +2,30 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+//creation d'un arbre vide
 Arbre newArbre(){
   return NULL;
 }
 
+//creation d'une feuille const
 Arbre new_const(int val){
   Arbre new = malloc(sizeof(std_arbre));
   new->type = ast_constant;
   new->val.constante = val;
+  // On return une feuille de type ast_constant
   return new;
 }
 
+//creation d'une feuille string
 Arbre new_string(char* val){
   Arbre new = malloc(sizeof(std_arbre));
   new->type = ast_str;
   new->val.str = val;
+  // On return une feuille de type ast_str
   return new;
 }
+
+//ajout de a2 dans les frere de a1
 Arbre concat(Arbre a1,Arbre a2){
   Arbre tmp=a1;
   while(a1->freres != NULL){
@@ -28,6 +35,7 @@ Arbre concat(Arbre a1,Arbre a2){
   return tmp;
 }
 
+//Ajout d'un noeud printi ou printf suivant le type
 Arbre ast_new_print(arbre_type type,Arbre feuille){
   Arbre newprint = malloc(sizeof(std_arbre));
   newprint->type = type;
@@ -35,6 +43,7 @@ Arbre ast_new_print(arbre_type type,Arbre feuille){
   return newprint;
 }
 
+//Ajout d'un noeud return
 Arbre ast_new_return(Arbre feuille){
   Arbre newprint = malloc(sizeof(std_arbre));
   newprint->type = ast_return;
@@ -42,6 +51,7 @@ Arbre ast_new_return(Arbre feuille){
   return newprint;
 }
 
+//Ajout un noeud main, noeud le plus haut en profondeurs
 Arbre ast_new_main(Arbre statement){
   Arbre newprint = malloc(sizeof(std_arbre));
   newprint->type = ast_main;
@@ -50,7 +60,7 @@ Arbre ast_new_main(Arbre statement){
 }
 
 
-
+//Affiche dans le terminal l'AST avec ses profondeurs
 void ast_print_aux(Arbre a,int profondeur){
   if(a==NULL)
     return;
@@ -79,6 +89,7 @@ void ast_print_aux(Arbre a,int profondeur){
       break;
   }
 
+  //Affiche de manière recursive et ajoute une profondeur si possède des fils
   ast_print_aux(a->fils,profondeur+1);
   ast_print_aux(a->freres,profondeur);
 

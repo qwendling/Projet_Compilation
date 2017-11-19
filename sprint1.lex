@@ -2,7 +2,9 @@
 %option noyywrap
 
 %{
-/* Declaration C */
+//###################################
+//####### 	DECLARATION C ###########
+//###################################
 
 /* fichier dans lequel est defini les macros constantes */
 #include "arbre.h"
@@ -12,17 +14,21 @@
 #include "sprint1.tab.h"
 #include <stdio.h>
 
-
+/*----------- Variables globales --------------*/
 Arbre ast;
 Symbole sym_Table[TAILLE_TABLE];
+//Liste chainé stockant les strings
 ConstString string_const = NULL;
+
 
 int return_value = 0;
 %}
 
-/* Declaration Lex */
+/*###################################
+/*####### DECLARATION LEX	###########
+/*###################################
 
-/* ###### SPRINT 1 ###### */
+/* --------- SPRINT 1 --------- */
 
 MAIN "int main"
 NOMBRE [0-9]*
@@ -30,12 +36,15 @@ COMMENT \/\*.*\*\/|([^\\]\/\/.*[\n])
 STRING   \"([^\"\\]|\\.)*\"
 RETURN return
 
-/* ##################### */
+/* --------- SPRINT 2 --------- */
 
 
 
 
-/* Regle syntaxique */
+
+/*###################################*/
+/*####### REGLE SYNTAXIQUE ##########*/
+/*###################################*/
 %%
 {COMMENT} {printf(" Commentaire %s\n",yytext);}
 {MAIN} {printf("main reconnu\n");return MAIN;}
@@ -53,9 +62,13 @@ printi {return PRINTI;}
 %%
 
 
-/* Code C additionnel */
+//###################################
+//##### CODE ADDITIONNEL C	#########
+//###################################
+
 int main(int argc, char **argv )
 {
+	// Ouverture du fichier
 	yyin = fopen(argv[1],"r");
 	yyparse();
 	fclose(yyin);
@@ -63,6 +76,7 @@ int main(int argc, char **argv )
 	printf("\n########## AST ##########\n\n");
 	ast_print(ast);
 
+	// Generation de quad aprés remplissage de l'AST et des constantes String
 	quad code = genCode(ast,sym_Table,&string_const);
 	printf("\n########## QUADS ##########\n\n");
 	print_quad(code);
@@ -70,8 +84,11 @@ int main(int argc, char **argv )
 	printf("\n###### CONST STRING ######\n\n");
 	print_const(string_const);
 
+	// Generation du code assembleur dans le fichier test.s
 	FILE* file = fopen("test.s","w");
+	// 1.Header
 	genAssembleur_header(string_const,file);
+	// 2.Generation a partir des quads 
 	genAssembleur(code,sym_Table,file);
 
 	return return_value;
