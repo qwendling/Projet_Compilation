@@ -2,6 +2,45 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+
+Arbre new_var(char* var){
+	Arbre new = malloc(sizeof(std_arbre));		
+  new->type = ast_var;
+  new->val.str = var;
+  // On return une feuille de type ast_var
+  return new;
+}
+
+Arbre new_op(arbre_type type, char op){
+	Arbre new = malloc(sizeof(std_arbre));		
+  new->type = type;
+  new->val.op = op;
+  // On return une feuille de type ast_op_OP
+  return new;
+}
+
+Arbre ast_new_affectation(Arbre id, Arbre expr){
+  Arbre newaffec = malloc(sizeof(std_arbre));
+  newaffec->type = ast_affectation;
+  newaffec->fils = concat(id,expr);
+  return newaffec;
+}
+
+Arbre ast_new_declaration(Arbre feuille){
+  Arbre newdeclare = malloc(sizeof(std_arbre));
+  newdeclare->type = ast_declaration;
+  newdeclare->fils = feuille;
+  return newdeclare;
+}
+
+Arbre ast_new_expression(Arbre arg1, char op, Arbre arg2){
+  Arbre newexpr = malloc(sizeof(std_arbre));
+  newexpr->type = ast_expression;
+  newexpr->fils = concat(arg1,arg2);
+  newexpr->val.op = op;
+  return newexpr;
+}
+
 //creation d'un arbre vide
 Arbre newArbre(){
   return NULL;
@@ -59,14 +98,6 @@ Arbre ast_new_main(Arbre statement){
   return newprint;
 }
 
-Arbre ast_new_declare(arbre_type type, Arbre expression){
-  Arbre newDeclaration = malloc(sizeof(std_arbre));
-  newDeclaration->type = type;
-  newDeclaration->fils = expression;
-  return newDeclaration;
-}
-
-
 //Affiche dans le terminal l'AST avec ses profondeurs
 void ast_print_aux(Arbre a,int profondeur){
   if(a==NULL)
@@ -94,9 +125,19 @@ void ast_print_aux(Arbre a,int profondeur){
     case ast_main:
       printf("ast_main\n");
       break;
-    case ast_declareInt:
-      printf("ast_declareInt\n");
+    case ast_affectation:
+      printf("ast_affectation\n");
       break;
+	case ast_var:
+		printf("ast_var\n");
+		break;
+	case ast_expression:
+	printf("ast_expression : %c \n",a->val.op);
+	break;
+	case ast_declaration:
+	printf("ast_declaration \n");
+	break;
+	break;
   }
 
   //Affiche de manière recursive et ajoute une profondeur si possède des fils

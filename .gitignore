@@ -7,7 +7,7 @@
 !.gitattributes
 !.gitkeep
 !makefile
-!*/
+!*/*
 !*.c
 !*.h
 *.tab.*

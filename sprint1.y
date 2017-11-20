@@ -29,7 +29,7 @@
 %type <ast> Declaration
 %type <ast> Expression
 %type <ast> Affectation
-%type <ope> OPE
+%token <ope> OPE
 %start program
 
 
@@ -51,39 +51,30 @@ ListeInstr: Instruction';'ListeInstr { $$=concat($1,$3);}
 	;
 
 // Les différentes instructions possible
-Instruction: RETURN B { $$=ast_new_return($2);}
+Instruction: RETURN Expression { $$=ast_new_return($2);}
 	|PRINTF'('STRING')' { $$=ast_new_print(ast_printf,new_string($3));}
-	|PRINTI'('B')' { $$=ast_new_print(ast_printi,$3); }
+	|PRINTI'('Expression')' { $$=ast_new_print(ast_printi,$3); }
 	|Declaration { $$=$1;}
-	|Expression	{ $$=$1;}
+	|Affectation { $$=$1;}
 	;
 
 
 
 //---- NATHAN SPRINT 2
 
-Declaration: INT Affectation {$$=ast_new_declare(ast_declareInt,$2);}
-	| INT ID {$$=ast_new_declare(ast_declareInt,new_string($2));}
+Declaration: INT Affectation{$$=ast_new_declaration(new_var($2->fils->val.str)); $$->freres = $2;}
+	| INT ID {$$=ast_new_declaration(new_var($2));}
 	;
 
-Affectation: ID '=' B {$$=concat(new_string($1),$3);};
+Affectation: ID '=' Expression {$$=ast_new_affectation(new_var($1),$3);};
 
 // Les différents expressions arithmétiques possibles
-Expression: ID '=' B OPE B {;}
-	|ID OPE {;}
+Expression: B {$$ = $1;}
+	|B OPE B {$$ = ast_new_expression($1,$2,$3);}
 	;
-
 
 B: NOMBRE {$$=new_const($1);}
-	| ID { $$ = new_string($1) ;}
-	;
-
-OPE : '+' {;}
-	| '-' {;}
-	| '*' {;}
-	| '/' {;}
-	| '+''+' {;}
-	| '-''-' {;}
+	| ID { $$ = new_var($1);}
 	;
 
 %%
