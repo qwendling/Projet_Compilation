@@ -4,7 +4,8 @@
 
 
 Arbre new_var(char* var){
-	Arbre new = malloc(sizeof(std_arbre));		
+	Arbre new = malloc(sizeof(std_arbre));	
+		printf("var : %s",var);
   new->type = ast_var;
   new->val.str = var;
   // On return une feuille de type ast_var
@@ -129,7 +130,7 @@ void ast_print_aux(Arbre a,int profondeur){
       printf("ast_affectation\n");
       break;
 	case ast_var:
-		printf("ast_var\n");
+		printf("ast_var %s\n",a->val.str);
 		break;
 	case ast_expression:
 	printf("ast_expression : %c \n",a->val.op);
@@ -149,3 +150,6 @@ void ast_print_aux(Arbre a,int profondeur){
 void ast_print(Arbre a){
   ast_print_aux(a,0);
 }
+
+
+

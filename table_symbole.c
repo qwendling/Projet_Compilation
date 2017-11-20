@@ -130,3 +130,30 @@ Symbole sym_new_tmp(Symbole sym_Table[TAILLE_TABLE]){
   return new_tmp;
 
 }
+
+int sym_existe_table(Symbole table[],char* name){
+	Symbole e = sym_existe(table[sym_hach(name)],name);
+	return e != NULL;
+}
+
+int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
+	if(a == NULL)
+		return 0;
+	char* name;
+	switch(a->type){
+		case ast_declaration:
+			printf("declaration semantique\n");
+			name = a->fils->val.str;
+			printf("declaration de %s\n",name);
+			if(sym_existe_table(sym_table,name))
+				return 2;
+			sym_add(name,sym_table);
+			break;
+		case ast_var:
+			name = a->val.str;
+			if(!sym_existe_table(sym_table,name))
+				return 1;
+			break;
+	}
+	return ast_semantique(a->fils,sym_table) && ast_semantique(a->freres,sym_table);
+}

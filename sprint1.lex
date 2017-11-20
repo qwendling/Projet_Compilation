@@ -62,7 +62,7 @@ printi {return PRINTI;}
 . {printf("caractere ignoré: %s\n",yytext);}
 
 {INT} {printf("type reconnu : %s \n",yytext); return INT;}
-{ID}	{printf("id reconnu : %s \n",yytext); return ID;}
+{ID}	{printf("id reconnu : %s \n",yytext);yylval.string=strdup(yytext); return ID;}
 
 %%
 
@@ -80,6 +80,11 @@ int main(int argc, char **argv )
 
 	printf("\n########## AST ##########\n\n");
 	ast_print(ast);
+	
+	if(ast_semantique(ast,sym_Table)){
+		printf("erreur semantique \n");
+		return 1;
+	}
 
 	// Generation de quad aprés remplissage de l'AST et des constantes String
 	quad code = genCode(ast,sym_Table,&string_const);

@@ -4,6 +4,8 @@
 // Taille de la table des symboles
 #define TAILLE_TABLE 4096
 
+#include "arbre.h"
+
 // Enumeration des types de symboles
 typedef enum sym_type{
   sym_var, // symbole
@@ -50,5 +52,8 @@ void sym_delete_table(Symbole[]);
 
 // AJoute un nouveau symbole temporaire dans la table
 Symbole sym_new_tmp(Symbole[]);
+
+//return 0 si l'analyse et bonne sinon ficher non semantiquement correct
+int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]);
 
 #endif
