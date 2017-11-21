@@ -34,12 +34,36 @@ Arbre ast_new_declaration(Arbre feuille){
   return newdeclare;
 }
 
-Arbre ast_new_expression(Arbre arg1, char op, Arbre arg2){
-  Arbre newexpr = malloc(sizeof(std_arbre));
-  newexpr->type = ast_expression;
-  newexpr->fils = concat(arg1,arg2);
-  newexpr->val.op = op;
-  return newexpr;
+Arbre ast_new_plus(Arbre operande1, Arbre operande2){
+	 Arbre newplus = malloc(sizeof(std_arbre));
+  newplus->type = ast_plus;
+  newplus->fils = operande1;
+  newplus->fils->freres = operande2;
+  return newplus;
+}
+
+Arbre ast_new_moins(Arbre operande1, Arbre operande2){
+		 Arbre newmoins = malloc(sizeof(std_arbre));
+  newmoins->type = ast_moins;
+  newmoins->fils = operande1;
+  newmoins->fils->freres = operande2;
+  return newmoins;
+}
+
+Arbre ast_new_div(Arbre operande1, Arbre operande2){
+	Arbre newdiv = malloc(sizeof(std_arbre));
+  newdiv->type = ast_div;
+  newdiv->fils = operande1;
+  newdiv->fils->freres = operande2;
+  return newdiv;
+}
+
+Arbre ast_new_fois(Arbre operande1, Arbre operande2){
+	Arbre newfois = malloc(sizeof(std_arbre));
+  newfois->type = ast_fois;
+  newfois->fils = operande1;
+  newfois->fils->freres = operande2;
+  return newfois;
 }
 
 //creation d'un arbre vide
@@ -132,9 +156,18 @@ void ast_print_aux(Arbre a,int profondeur){
 	case ast_var:
 		printf("ast_var %s\n",a->val.str);
 		break;
-	case ast_expression:
-	printf("ast_expression : %c \n",a->val.op);
-	break;
+	case ast_plus:
+		printf("ast_plus \n");
+		break;
+	case ast_moins:
+		printf("ast_moins \n");
+		break;
+	case ast_fois:
+		printf("ast_fois \n");
+		break;
+	case ast_div:
+		printf("ast_div \n");
+		break;
 	case ast_declaration:
 	printf("ast_declaration \n");
 	break;

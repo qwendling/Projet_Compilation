@@ -57,7 +57,7 @@ printi {return PRINTI;}
 
 [{}();] {printf("Envoie de : %s\n",yytext); return yytext[0];}
 =		{return yytext[0];}
-[+-/*] {printf("Envoie Expression Math de  : %s\n",yytext);yylval.ope = yytext[0]; return OPE;}
+[+-/*] {printf("Envoie Expression Math de  : %s\n",yytext);return yytext[0];}
 
 . {printf("caractere ignoré: %s\n",yytext);}
 

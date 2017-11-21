@@ -29,7 +29,8 @@
 %type <ast> Declaration
 %type <ast> Expression
 %type <ast> Affectation
-%token <ope> OPE
+%type <ast> Facteur
+%type <ast> Terme
 %start program
 
 
@@ -69,9 +70,19 @@ Declaration: INT Affectation{$$=ast_new_declaration(new_var($2->fils->val.str));
 Affectation: ID '=' Expression {$$=ast_new_affectation(new_var($1),$3);};
 
 // Les différents expressions arithmétiques possibles
-Expression: B {$$ = $1;}
-	|B OPE B {$$ = ast_new_expression($1,$2,$3);}
+Expression: Expression'+'Terme {$$ = ast_new_plus($1,$3);}
+	|Expression'-'Terme {$$ = ast_new_moins($1,$3);}
+	|Terme {$$ = $1;}
 	;
+
+Terme: Terme'*'Facteur {$$ = ast_new_fois($1,$3);}
+	| Terme'/'Facteur {$$ = ast_new_div($1,$3);}
+	|Facteur {$$ = $1;}
+	;
+	
+Facteur: '('Expression')' {$$ = $2;}
+	| B {$$ = $1;}
+
 
 B: NOMBRE {$$=new_const($1);}
 	| ID { $$ = new_var($1);}

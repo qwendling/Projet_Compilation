@@ -6,17 +6,16 @@ typedef enum arbre_type{
   ast_constant,
   ast_str,
   ast_var,
-  ast_op_plus,
-  ast_op_moins,
-  ast_op_fois,
-  ast_op_div,
+  ast_plus,
+  ast_moins,
+  ast_fois,
+  ast_div,
   ast_printf,
   ast_printi,
   ast_return,
   ast_main,
   ast_affectation,
   ast_declaration,
-  ast_expression
 }arbre_type;
 
 // Union definissant les valeurs possibles d'une feuille
@@ -42,7 +41,10 @@ Arbre ast_new_affectation(Arbre id, Arbre Expr);
 
 Arbre ast_new_declaration(Arbre feuille);
 
-Arbre ast_new_expression(Arbre arg1, char op, Arbre arg2);
+Arbre ast_new_plus(Arbre operande1, Arbre operande2);
+Arbre ast_new_moins(Arbre operande1, Arbre operande2);
+Arbre ast_new_div(Arbre operande1, Arbre operande2);
+Arbre ast_new_fois(Arbre operande1, Arbre operande2);
 
 Arbre new_op(arbre_type type, char op);
 
