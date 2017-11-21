@@ -97,7 +97,7 @@ int main(int argc, char **argv )
 	// Generation du code assembleur dans le fichier test.s
 	FILE* file = fopen("test.s","w");
 	// 1.Header
-	genAssembleur_header(string_const,file);
+	genAssembleur_header(sym_Table,file);
 	// 2.Generation a partir des quads
 	genAssembleur(code,sym_Table,file);
 

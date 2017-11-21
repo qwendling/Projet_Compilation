@@ -10,6 +10,6 @@
 void genAssembleur(quad,Symbole[],FILE*);
 
 // Genere le head du fichier assembleur : .data .text .globl main
-void genAssembleur_header(ConstString,FILE* file);
+void genAssembleur_header(Symbole[],FILE* file);
 
 #endif
