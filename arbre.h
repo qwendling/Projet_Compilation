@@ -74,5 +74,7 @@ Arbre ast_new_main(Arbre statement);
 //Affiche dans le terminal l'AST avec ses profondeurs
 void ast_print(Arbre a);
 
+void ast_free(Arbre);
+
 
 #endif

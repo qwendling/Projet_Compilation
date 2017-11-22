@@ -79,6 +79,9 @@ void sym_delete(Symbole s){
   if(s==NULL){
     return;
   }
+  if(s->type == sym_string){
+	  free(s->val.str);
+  }
   Symbole tmp = s->next;
   free(s->name);
   free(s);

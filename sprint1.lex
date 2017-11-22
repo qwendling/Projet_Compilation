@@ -71,6 +71,12 @@ printi {return PRINTI;}
 //##### CODE ADDITIONNEL C	#########
 //###################################
 
+// Free the memory allocated for Lex when we are done.
+void lex_free() {
+  yy_delete_buffer(YY_CURRENT_BUFFER);
+  free(yy_buffer_stack);
+}
+
 int main(int argc, char **argv )
 {
 	// Ouverture du fichier
@@ -88,11 +94,10 @@ int main(int argc, char **argv )
 
 	// Generation de quad aprés remplissage de l'AST et des constantes String
 	quad code = genCode(ast,sym_Table,&string_const);
+	
+	ast_free(ast);
 	printf("\n########## QUADS ##########\n\n");
 	print_quad(code);
-
-	printf("\n###### CONST STRING ######\n\n");
-	print_const(string_const);
 
 	// Generation du code assembleur dans le fichier test.s
 	FILE* file = fopen("test.s","w");
@@ -100,6 +105,12 @@ int main(int argc, char **argv )
 	genAssembleur_header(sym_Table,file);
 	// 2.Generation a partir des quads
 	genAssembleur(code,sym_Table,file);
+	
+	quad_free(code);
+	sym_delete_table(sym_Table);
+	lex_free();
+	
+	fclose(file);
 
 	return return_value;
 }
