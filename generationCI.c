@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "generationCI.h"
 
 // Ajoute un quad dans la liste q
@@ -48,15 +49,8 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE],ConstString* string_table
     case ast_str:
       tmp = sym_new_tmp(sym_table);
       tmp->type = sym_string;
-      tmp->val.str = ast->val.str;
+      tmp->val.str = strdup(ast->val.str);
       codegen = quad_add(codegen,create_string,NULL,NULL,tmp);
-
-      // Si string alors on l'ajoute aussi dans la liste ConstString
-      ConstString newConst = malloc(sizeof(std_string));
-      newConst->next = *string_table;
-      newConst->name = tmp->name+1;
-      newConst->val = ast->val.str;
-      *string_table = newConst;
       break;
     case ast_printf:
       // on genere le quad de la constante a afficher

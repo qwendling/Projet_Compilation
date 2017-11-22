@@ -106,29 +106,25 @@ Symbole sym_new_tmp(Symbole sym_Table[TAILLE_TABLE]){
   snprintf(name,1024,"$tmp%d",nb_tmp);
   //printf("%s size : %d\n",name,strlen(name));
 
-  //nom du temporaire, $tmp+nb_tmp
-  char* name_tmp = strdup(name);
-
   //printf("%s size : %d\n\n",name_tmp,strlen(name_tmp));
 
   nb_tmp++;
 
-  int h=sym_hach(name_tmp);
+  int h=sym_hach(name);
 
   Symbole new_tmp;
 
   // si le symbole existe on le free pour l'ajouter
-  if(sym_existe(sym_Table[h],name_tmp)!=NULL){
-    free(name_tmp);
+  if(sym_existe(sym_Table[h],name)!=NULL){
     new_tmp=sym_new_tmp(sym_Table);
     return new_tmp;
   }
 
   // on ajoute le symbol
-  sym_add(name_tmp,sym_Table);
+  sym_add(name,sym_Table);
 
   // on verifie que le symbole existe bien en le retournant
-  new_tmp=sym_existe(sym_Table[h],name_tmp);
+  new_tmp=sym_existe(sym_Table[h],name);
 
   return new_tmp;
 

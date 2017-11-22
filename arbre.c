@@ -1,23 +1,24 @@
 #include "arbre.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 
 Arbre new_var(char* var){
 	Arbre new = calloc(1,sizeof(std_arbre));	
-		printf("var : %s",var);
-  new->type = ast_var;
-  new->val.str = var;
-  // On return une feuille de type ast_var
-  return new;
+	printf("var : %s",var);
+	new->type = ast_var;
+	new->val.str = strdup(var);
+	// On return une feuille de type ast_var
+	return new;
 }
 
 Arbre new_op(arbre_type type, char op){
 	Arbre new = calloc(1,sizeof(std_arbre));		
-  new->type = type;
-  new->val.op = op;
-  // On return une feuille de type ast_op_OP
-  return new;
+	new->type = type;
+	new->val.op = op;
+	// On return une feuille de type ast_op_OP
+	return new;
 }
 
 Arbre ast_new_affectation(Arbre id, Arbre expr){
@@ -189,8 +190,11 @@ void ast_free(Arbre a){
 		return;
 	ast_free(a->freres);
 	ast_free(a->fils);
-	if(a->type == ast_str)
-		free(a->val.str);
+	if(a->type == ast_str || a->type == ast_var){
+		if(a->val.str != NULL)
+			free(a->val.str);
+	}
+		
 	free(a);
 }
 
