@@ -18,6 +18,12 @@ typedef enum quad_op{
   return_prog,
   create_string,
   create_main,
+  use_var,
+  affectation_var,
+  q_add,
+  q_sub,
+  q_mul,
+  q_div
 } quad_op;
 
 // structure des quads
@@ -43,7 +49,7 @@ void quad_free(quad);
 void print_quad(quad);
 
 // genere les quads depuis l'AST en stockant dans la table des symboles et strings
-quad genCode(Arbre,Symbole[],ConstString*);
+quad genCode(Arbre,Symbole[]);
 
 // Affiche les strings sur le terminal
 void print_const(ConstString s);

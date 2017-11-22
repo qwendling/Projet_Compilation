@@ -93,12 +93,13 @@ int main(int argc, char **argv )
 	}
 
 	// Generation de quad aprés remplissage de l'AST et des constantes String
-	quad code = genCode(ast,sym_Table,&string_const);
+	quad code = genCode(ast,sym_Table);
 	
 	ast_free(ast);
 	printf("\n########## QUADS ##########\n\n");
 	print_quad(code);
 
+	printf("\n########## MIPS ##########\n\n");
 	// Generation du code assembleur dans le fichier test.s
 	FILE* file = fopen("test.s","w");
 	// 1.Header

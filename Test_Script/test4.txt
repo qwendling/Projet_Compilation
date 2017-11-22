@@ -1,11 +1,12 @@
 int main() {
 	// Coucou le test
 
-	int intVar1_ = 0 ;
+	int intVar1_ = 20 ;
 	int intVar2_ ;
 	intVar1_ = intVar1_ + 2;
 	printf("printf reconnu");
 	printi(42);
+	printi(intVar1_);
 	/* Fin du test */
 	return 0;
 }
