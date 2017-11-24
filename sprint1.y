@@ -67,21 +67,32 @@ Declaration: INT Affectation{$$=ast_new_declaration(new_var($2->fils->val.str));
 	| INT ID {$$=ast_new_declaration(new_var($2));}
 	;
 
-Affectation: ID '=' Expression {$$=ast_new_affectation(new_var($1),$3);};
+Affectation: ID '=' Expression {$$=ast_new_affectation(new_var($1),$3);}
+	/*| ID'+''+' {$$=ast_new_affectation(new_var($1),ast_new_plus($1,new_const(1)));}
+	| ID'-''-' {$$=ast_new_affectation(new_var($1),ast_new_moins($1,new_const(1)));}
+	| '+''+'ID {$$=ast_new_affectation(new_var($3),ast_new_plus($3,new_const(1)));}
+	| '-''-'ID {$$=ast_new_affectation(new_var($3),ast_new_moins($3,new_const(1)));}*/
+	;
 
 // Les différents expressions arithmétiques possibles
 Expression: Expression'+'Terme {$$ = ast_new_plus($1,$3);}
-	|Expression'-'Terme {$$ = ast_new_moins($1,$3);}
-	|Terme {$$ = $1;}
+	|	Expression'-'Terme {$$ = ast_new_moins($1,$3);}
+	|	Terme {$$ = $1;}
 	;
 
 Terme: Terme'*'Facteur {$$ = ast_new_fois($1,$3);}
 	| Terme'/'Facteur {$$ = ast_new_div($1,$3);}
-	|Facteur {$$ = $1;}
+	|	Facteur {$$ = $1;}
 	;
-	
+
 Facteur: '('Expression')' {$$ = $2;}
+	| '-''('Expression')' {$$ = ast_new_fois(new_const(-1),$3);}
 	| B {$$ = $1;}
+	| '-'B {$$ = ast_new_fois(new_const(-1),$2);}
+	//| ID'+''+' {$$=ast_new_affectation(new_var($1),ast_new_plus($1,new_const(1)));}
+	//| ID'-''-' {$$=ast_new_affectation(new_var($1),ast_new_moins($1,new_const(1)));}
+	//| '+''+'ID {$$=ast_new_affectation(new_var($1),ast_new_plus($1,new_const(1)));}
+	//| '-''-'ID {$$=ast_new_affectation(new_var($1),ast_new_moins($1,new_const(1)));}
 
 
 B: NOMBRE {$$=new_const($1);}
