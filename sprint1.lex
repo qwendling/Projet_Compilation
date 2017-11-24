@@ -55,6 +55,18 @@ INCREMENTMOINS "--"
 {NOMBRE} {printf("entier lu\n");yylval.nombre=atoi(yytext); return NOMBRE;}
 {STRING} {yylval.string=strdup(yytext); return STRING;}
 
+printf {return PRINTF;}
+printi {return PRINTI;}
+
+[{}();] {printf("Envoie de : %s\n",yytext); return yytext[0];}
+=		{return yytext[0];}
+[+-/*] {printf("Envoie Expression Math de  : %s\n",yytext);return yytext[0];}
+
+
+
+
+{INT} {printf("type reconnu : %s \n",yytext); return INT;}
+{ID}	{printf("id reconnu : %s \n",yytext);yylval.string=strdup(yytext); return ID;}
 {ID}{INCREMENTMOINS} {yytext[strlen(yytext)-2]='\0';
                       yylval.string=strdup(yytext);
                       return INCREMENTMOINSBEFORE;}
@@ -64,18 +76,8 @@ INCREMENTMOINS "--"
                       return INCREMENTPLUSBEFORE;}
 {INCREMENTPLUS}{ID}  {yylval.string=strdup(yytext+2);return INCREMENTPLUSAFTER;}
 
-printf {return PRINTF;}
-printi {return PRINTI;}
-
-[{}();] {printf("Envoie de : %s\n",yytext); return yytext[0];}
-=		{return yytext[0];}
-[+-/*] {printf("Envoie Expression Math de  : %s\n",yytext);return yytext[0];}
 
 . {printf("caractere ignoré: %s\n",yytext);}
-
-{INT} {printf("type reconnu : %s \n",yytext); return INT;}
-{ID}	{printf("id reconnu : %s \n",yytext);yylval.string=strdup(yytext); return ID;}
-
 %%
 
 
@@ -119,6 +121,7 @@ int main(int argc, char **argv )
 	// 2.Generation a partir des quads
 	genAssembleur(code,sym_Table,file);
 
+  // Liberation de la memoire utilise
 	quad_free(code);
 	sym_delete_table(sym_Table);
 	lex_free();

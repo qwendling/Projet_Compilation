@@ -35,23 +35,7 @@ typedef struct str_arbre{
   tree_value val;
 } std_arbre,*Arbre;
 
-Arbre ast_new_autoIncrement_plus(Arbre var);
-
-Arbre ast_new_autoIncrement_moins(Arbre var);
-
-//creation d'une feuille variable
-Arbre new_var(char* var);
-
-Arbre ast_new_affectation(Arbre id, Arbre Expr);
-
-Arbre ast_new_declaration(Arbre feuille);
-
-Arbre ast_new_plus(Arbre operande1, Arbre operande2);
-Arbre ast_new_moins(Arbre operande1, Arbre operande2);
-Arbre ast_new_div(Arbre operande1, Arbre operande2);
-Arbre ast_new_fois(Arbre operande1, Arbre operande2);
-
-Arbre new_op(arbre_type type, char op);
+//------- SPRINT 1 -------
 
 //creation d'un arbre vide
 Arbre newArbre();
@@ -61,7 +45,6 @@ Arbre new_const(int val);
 
 //creation d'une feuille string
 Arbre new_string(char* str);
-
 
 //ajout de a2 dans les frere de a1
 Arbre concat(Arbre a1,Arbre a2);
@@ -76,10 +59,44 @@ Arbre ast_new_return(Arbre feuille);
 Arbre ast_new_main(Arbre statement);
 
 
-//Affiche dans le terminal l'AST avec ses profondeurs
-void ast_print(Arbre a);
+//------- SPRINT 2 -------
 
+//creation d'une feuille variable avec un ID donné
+Arbre new_var(char* var);
+
+//Ajout d'un noeud de declaration
+Arbre ast_new_declaration(Arbre feuille);
+
+//Ajout d'un noeud affectation
+Arbre ast_new_affectation(Arbre id, Arbre Expr);
+
+//Ajout d'un noeud somme
+Arbre ast_new_plus(Arbre operande1, Arbre operande2);
+
+//Ajout d'un noeud soustraction
+Arbre ast_new_moins(Arbre operande1, Arbre operande2);
+
+//Ajout d'un noeud division
+Arbre ast_new_div(Arbre operande1, Arbre operande2);
+
+//Ajout d'un noeud produit
+Arbre ast_new_fois(Arbre operande1, Arbre operande2);
+
+//Ajout d'un noeud AutoIncrementation +
+Arbre ast_new_autoIncrement_plus(Arbre var);
+
+//Ajout d'un noeud AutoIncrementation -
+Arbre ast_new_autoIncrement_moins(Arbre var);
+
+//Libere la mémoire de l'AST
 void ast_free(Arbre);
 
+
+//------- All sprints -------
+//Affiche dans le terminal l'AST général avec ses frères et fils 
+void ast_print(Arbre a);
+
+//Affiche dans le terminal l'AST donné a une profondeur donné
+void ast_print_aux(Arbre a,int profondeur);
 
 #endif

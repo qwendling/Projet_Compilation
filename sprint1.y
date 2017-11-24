@@ -13,18 +13,24 @@
 
 /*--------- Declaration tokens et récuperation regex LEX---------*/
 %union {int nombre;char* string;char ope; Arbre ast;}
+
+// ---- Sprint 1 Tokens
 %token MAIN
 %token RETURN
 %token <nombre> NOMBRE
 %token <string> STRING
 %token PRINTF
 %token PRINTI
+
+// ---- Sprint 2 Tokens
 %token <string> ID
 %token INT
 %token <string> INCREMENTPLUSBEFORE
 %token <string> INCREMENTPLUSAFTER
 %token <string> INCREMENTMOINSAFTER
 %token <string> INCREMENTMOINSBEFORE
+
+// ---- AST
 %type <ast> B
 %type <ast> Instruction
 %type <ast> ListeInstr
@@ -38,6 +44,7 @@
 %type <ast> AutoIncremente
 
 
+// ---- Gestion de la priorite
 %left '+' '-'
 %left '*' '/'
 %left UMOINS
@@ -51,6 +58,8 @@
 //####### REGLE TRADUCTION ##########
 //###################################
 
+
+//---------- STRUCTURE PROGRAMME -------------//
 // Le program est une fonction qu'on considère comme un arbre ast
 program: fonction {ast=$1;};
 
@@ -72,40 +81,47 @@ Instruction: RETURN Expression { $$=ast_new_return($2);}
 	|AutoIncremente {$$=$1;}
 	;
 
-
-
-//---- NATHAN SPRINT 2
-
+//---------- DECLARATION VARIABLE -------------//
+// Declaration de variable soit par une affectation de valeur soit vide
 Declaration: INT Affectation{$$=ast_new_declaration(new_var($2->fils->val.str)); $$->freres = $2;}
 	| INT ID {$$=ast_new_declaration(new_var($2));}
 	;
 
+//---------- AFFECTATION VARIABLE -------------//
+// Une affectation correspond a un ID prenant comme valeur une expression
 Affectation: ID '=' Expression {$$=ast_new_affectation(new_var($1),$3);}
 	;
 
-// Les différents expressions arithmétiques possibles
+//---------- EXPRESSION ARITHMETIQUE -------------//
+// Expressions arithmétiques + -, avec respect de la priorité
 Expression: Expression'+'Terme {$$ = ast_new_plus($1,$3);}
 	|	Expression'-'Terme {$$ = ast_new_moins($1,$3);}
 	|	Terme {$$ = $1;}
 	;
 
+// Expressions arithmétiques * /, avec respect de la priorité
 Terme: Terme'*'Facteur {$$ = ast_new_fois($1,$3);}
 	| Terme'/'Facteur {$$ = ast_new_div($1,$3);}
 	|	Facteur {$$ = $1;}
 	;
 
+// Priorité maximal dans une expression arithmétiques, - unaire et parenthèse
 Facteur: '('Expression')' {$$ = $2;}
 	| '-''('Expression')' {$$ = ast_new_fois(new_const(-1),$3);} %prec UMOINS
 	| B {$$ = $1;}
 	| '-'B {$$ = ast_new_fois(new_const(-1),$2);} %prec UMOINS
 	;
 
+//---------- AUTO INCREMENTATION -------------//
+// Gestion de l'AutoIncrementation avant (BEFORE) et aprés (AFTER) la variable a incrémenter
 AutoIncremente:	INCREMENTPLUSAFTER {$$=ast_new_autoIncrement_plus(new_var($1));} %prec AUTOINCR
 	| INCREMENTMOINSAFTER {$$=ast_new_autoIncrement_moins(new_var($1));;} %prec AUTOINCR
 	| INCREMENTMOINSBEFORE {$$=ast_new_affectation(new_var($1),ast_new_moins(new_var($1),new_const(1)));} %prec AUTOINCR
 	| INCREMENTPLUSBEFORE {$$=ast_new_affectation(new_var($1),ast_new_plus(new_var($1),new_const(1)));} %prec AUTOINCR
 	;
 
+//---------- ETAT TERMINAL -------------//
+// Etat terminal qui peut etre soit un nombre, un variable ou une incrementation de variable
 B: NOMBRE {$$=new_const($1);}
 	| ID { $$ = new_var($1);}
 	| AutoIncremente {$$ = $1;}
