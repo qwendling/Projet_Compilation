@@ -21,6 +21,10 @@
 %token PRINTI
 %token <string> ID
 %token INT
+%token <string> INCREMENTPLUSBEFORE
+%token <string> INCREMENTPLUSAFTER
+%token <string> INCREMENTMOINSAFTER
+%token <string> INCREMENTMOINSBEFORE
 %type <ast> B
 %type <ast> Instruction
 %type <ast> ListeInstr
@@ -31,6 +35,14 @@
 %type <ast> Affectation
 %type <ast> Facteur
 %type <ast> Terme
+%type <ast> AutoIncremente
+
+
+%left '+' '-'
+%left '*' '/'
+%left UMOINS
+%left AUTOINCR
+
 %start program
 
 
@@ -57,6 +69,7 @@ Instruction: RETURN Expression { $$=ast_new_return($2);}
 	|PRINTI'('Expression')' { $$=ast_new_print(ast_printi,$3); }
 	|Declaration { $$=$1;}
 	|Affectation { $$=$1;}
+	|AutoIncremente {$$=$1;}
 	;
 
 
@@ -68,10 +81,6 @@ Declaration: INT Affectation{$$=ast_new_declaration(new_var($2->fils->val.str));
 	;
 
 Affectation: ID '=' Expression {$$=ast_new_affectation(new_var($1),$3);}
-	/*| ID'+''+' {$$=ast_new_affectation(new_var($1),ast_new_plus($1,new_const(1)));}
-	| ID'-''-' {$$=ast_new_affectation(new_var($1),ast_new_moins($1,new_const(1)));}
-	| '+''+'ID {$$=ast_new_affectation(new_var($3),ast_new_plus($3,new_const(1)));}
-	| '-''-'ID {$$=ast_new_affectation(new_var($3),ast_new_moins($3,new_const(1)));}*/
 	;
 
 // Les différents expressions arithmétiques possibles
@@ -86,17 +95,20 @@ Terme: Terme'*'Facteur {$$ = ast_new_fois($1,$3);}
 	;
 
 Facteur: '('Expression')' {$$ = $2;}
-	| '-''('Expression')' {$$ = ast_new_fois(new_const(-1),$3);}
+	| '-''('Expression')' {$$ = ast_new_fois(new_const(-1),$3);} %prec UMOINS
 	| B {$$ = $1;}
-	| '-'B {$$ = ast_new_fois(new_const(-1),$2);}
-	//| ID'+''+' {$$=ast_new_affectation(new_var($1),ast_new_plus($1,new_const(1)));}
-	//| ID'-''-' {$$=ast_new_affectation(new_var($1),ast_new_moins($1,new_const(1)));}
-	//| '+''+'ID {$$=ast_new_affectation(new_var($1),ast_new_plus($1,new_const(1)));}
-	//| '-''-'ID {$$=ast_new_affectation(new_var($1),ast_new_moins($1,new_const(1)));}
+	| '-'B {$$ = ast_new_fois(new_const(-1),$2);} %prec UMOINS
+	;
 
+AutoIncremente:	INCREMENTPLUSAFTER {$$=ast_new_autoIncrement_plus(new_var($1));} %prec AUTOINCR
+	| INCREMENTMOINSAFTER {$$=ast_new_autoIncrement_moins(new_var($1));;} %prec AUTOINCR
+	| INCREMENTMOINSBEFORE {$$=ast_new_affectation(new_var($1),ast_new_moins(new_var($1),new_const(1)));} %prec AUTOINCR
+	| INCREMENTPLUSBEFORE {$$=ast_new_affectation(new_var($1),ast_new_plus(new_var($1),new_const(1)));} %prec AUTOINCR
+	;
 
 B: NOMBRE {$$=new_const($1);}
 	| ID { $$ = new_var($1);}
+	| AutoIncremente {$$ = $1;}
 	;
 
 %%

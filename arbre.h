@@ -16,6 +16,8 @@ typedef enum arbre_type{
   ast_main,
   ast_affectation,
   ast_declaration,
+  ast_autoIncrementPlus,
+  ast_autoIncrementMoins
 }arbre_type;
 
 // Union definissant les valeurs possibles d'une feuille
@@ -33,6 +35,9 @@ typedef struct str_arbre{
   tree_value val;
 } std_arbre,*Arbre;
 
+Arbre ast_new_autoIncrement_plus(Arbre var);
+
+Arbre ast_new_autoIncrement_moins(Arbre var);
 
 //creation d'une feuille variable
 Arbre new_var(char* var);

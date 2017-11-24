@@ -4,8 +4,27 @@
 #include <string.h>
 
 
+
+
+
+Arbre ast_new_autoIncrement_plus(Arbre var){
+	Arbre new = calloc(1,sizeof(std_arbre));
+	new->type = ast_autoIncrementPlus;
+	new->fils = var;
+	// On return une feuille de type ast_autoIncrementPlus
+	return new;
+}
+
+Arbre ast_new_autoIncrement_moins(Arbre var){
+	Arbre new = calloc(1,sizeof(std_arbre));
+	new->type = ast_autoIncrementMoins;
+	new->fils = var;
+	// On return une feuille de type ast_autoIncrementMoins
+	return new;
+}
+
 Arbre new_var(char* var){
-	Arbre new = calloc(1,sizeof(std_arbre));	
+	Arbre new = calloc(1,sizeof(std_arbre));
 	printf("var : %s",var);
 	new->type = ast_var;
 	new->val.str = strdup(var);
@@ -14,7 +33,7 @@ Arbre new_var(char* var){
 }
 
 Arbre new_op(arbre_type type, char op){
-	Arbre new = calloc(1,sizeof(std_arbre));		
+	Arbre new = calloc(1,sizeof(std_arbre));
 	new->type = type;
 	new->val.op = op;
 	// On return une feuille de type ast_op_OP
@@ -172,6 +191,12 @@ void ast_print_aux(Arbre a,int profondeur){
 	case ast_declaration:
 	printf("ast_declaration \n");
 	break;
+	case ast_autoIncrementPlus:
+	printf("ast_autoIncrementPlus \n");
+	break;
+	case ast_autoIncrementMoins:
+	printf("ast_autoIncrementMoins \n");
+	break;
 	break;
   }
 
@@ -194,9 +219,6 @@ void ast_free(Arbre a){
 		if(a->val.str != NULL)
 			free(a->val.str);
 	}
-		
+
 	free(a);
 }
-
-
-

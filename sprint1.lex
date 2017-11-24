@@ -36,11 +36,14 @@ COMMENT \/\*.*\*\/|([^\\]\/\/.*[\n])
 STRING   \"([^\"\\]|\\.)*\"
 RETURN return
 
+
 /* --------- SPRINT 2 --------- */
 
 ID [a-zA-Z_][a-zA-Z0-9_]*
 INT "int"
 
+INCREMENTPLUS "++"
+INCREMENTMOINS "--"
 
 /*###################################*/
 /*####### REGLE SYNTAXIQUE ##########*/
@@ -51,6 +54,15 @@ INT "int"
 {RETURN} {printf("return reconnu\n");return RETURN;}
 {NOMBRE} {printf("entier lu\n");yylval.nombre=atoi(yytext); return NOMBRE;}
 {STRING} {yylval.string=strdup(yytext); return STRING;}
+
+{ID}{INCREMENTMOINS} {yytext[strlen(yytext)-2]='\0';
+                      yylval.string=strdup(yytext);
+                      return INCREMENTMOINSBEFORE;}
+{INCREMENTMOINS}{ID} {yylval.string=strdup(yytext+2);return INCREMENTMOINSAFTER;}
+{ID}{INCREMENTPLUS}  {yytext[strlen(yytext)-2]='\0';
+                      yylval.string=strdup(yytext);
+                      return INCREMENTPLUSBEFORE;}
+{INCREMENTPLUS}{ID}  {yylval.string=strdup(yytext+2);return INCREMENTPLUSAFTER;}
 
 printf {return PRINTF;}
 printi {return PRINTI;}
@@ -86,7 +98,7 @@ int main(int argc, char **argv )
 
 	printf("\n########## AST ##########\n\n");
 	ast_print(ast);
-	
+
 	if(ast_semantique(ast,sym_Table)){
 		printf("erreur semantique \n");
 		return 1;
@@ -94,7 +106,7 @@ int main(int argc, char **argv )
 
 	// Generation de quad aprés remplissage de l'AST et des constantes String
 	quad code = genCode(ast,sym_Table);
-	
+
 	ast_free(ast);
 	printf("\n########## QUADS ##########\n\n");
 	print_quad(code);
@@ -106,11 +118,11 @@ int main(int argc, char **argv )
 	genAssembleur_header(sym_Table,file);
 	// 2.Generation a partir des quads
 	genAssembleur(code,sym_Table,file);
-	
+
 	quad_free(code);
 	sym_delete_table(sym_Table);
 	lex_free();
-	
+
 	fclose(file);
 
 	return return_value;
