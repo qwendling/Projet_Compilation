@@ -1,6 +1,6 @@
 int main() {
 	// Coucou le test
-	int intVar1_ = 0 ;
+	int intVar1_ = 20 ;
 	int intVar2_ ;
 
 	intVar1_ = 4 + 3;
