@@ -5,15 +5,15 @@
 typedef enum arbre_type{
   ast_constant,
   ast_str,
+  ast_printf,
+  ast_printi,
+  ast_return,
+  ast_main,
   ast_var,
   ast_plus,
   ast_moins,
   ast_fois,
   ast_div,
-  ast_printf,
-  ast_printi,
-  ast_return,
-  ast_main,
   ast_affectation,
   ast_declaration,
   ast_autoIncrementPlus,
@@ -93,7 +93,7 @@ void ast_free(Arbre);
 
 
 //------- All sprints -------
-//Affiche dans le terminal l'AST général avec ses frères et fils 
+//Affiche dans le terminal l'AST général avec ses frères et fils
 void ast_print(Arbre a);
 
 //Affiche dans le terminal l'AST donné a une profondeur donné

@@ -139,6 +139,7 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
 	if(a == NULL)
 		return 0;
 	char* name;
+  printf("sem\n");
 	switch(a->type){
 		case ast_declaration:
 			printf("declaration semantique\n");
@@ -154,5 +155,7 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
 				return 1;
 			break;
 	}
-	return ast_semantique(a->fils,sym_table) && ast_semantique(a->freres,sym_table);
+  int tmp = ast_semantique(a->fils,sym_table);
+  int tmp2 = ast_semantique(a->freres,sym_table);
+	return tmp && tmp2;
 }

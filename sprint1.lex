@@ -69,12 +69,12 @@ printi {return PRINTI;}
 {ID}	{printf("id reconnu : %s \n",yytext);yylval.string=strdup(yytext); return ID;}
 {ID}{INCREMENTMOINS} {yytext[strlen(yytext)-2]='\0';
                       yylval.string=strdup(yytext);
-                      return INCREMENTMOINSBEFORE;}
-{INCREMENTMOINS}{ID} {yylval.string=strdup(yytext+2);return INCREMENTMOINSAFTER;}
+                      return INCREMENTMOINSAFTER;}
+{INCREMENTMOINS}{ID} {yylval.string=strdup(yytext+2);return INCREMENTMOINSBEFORE;}
 {ID}{INCREMENTPLUS}  {yytext[strlen(yytext)-2]='\0';
                       yylval.string=strdup(yytext);
-                      return INCREMENTPLUSBEFORE;}
-{INCREMENTPLUS}{ID}  {yylval.string=strdup(yytext+2);return INCREMENTPLUSAFTER;}
+                      return INCREMENTPLUSAFTER;}
+{INCREMENTPLUS}{ID}  {yylval.string=strdup(yytext+2);return INCREMENTPLUSBEFORE;}
 
 
 . {printf("caractere ignoré: %s\n",yytext);}
