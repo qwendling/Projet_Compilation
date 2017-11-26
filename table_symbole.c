@@ -159,6 +159,8 @@ Symbole sym_new_lbl(Symbole sym_Table[TAILLE_TABLE]){
   // on verifie que le symbole existe bien en le retournant
   new_lbl=sym_existe(sym_Table[h],name);
 
+  new_lbl->type = sym_label;
+
   return new_lbl;
 
 }

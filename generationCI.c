@@ -123,11 +123,14 @@ quad add_bool(quad q1,quad q2){
 
 quad genCodeRelop(quad_op relop,Arbre ast,Symbole sym_table[TAILLE_TABLE]){
   quad codegen=NULL,arg=NULL,arg2=NULL,tmpQuad=NULL,tmpQuad2=NULL;
+  Symbole sym_arg1,sym_arg2;
   arg = genCode(ast->fils,sym_table);
   arg2 = genCode(ast->fils->freres,sym_table);
+  sym_arg1=quad_res(arg);
+  sym_arg2=quad_res(arg2);
   codegen=add_quad(codegen,arg);
   codegen=add_quad(codegen,arg2);
-  tmpQuad = quad_add(NULL,relop,quad_res(arg),quad_res(arg2),NULL);
+  tmpQuad = quad_add(NULL,relop,sym_arg1,sym_arg2,NULL);
   codegen=add_quad(codegen,tmpQuad);
   tmpQuad2 = quad_add(NULL,q_goto,NULL,NULL,NULL);
   codegen=add_quad(codegen,tmpQuad2);
@@ -347,7 +350,9 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
       lbl2 = sym_new_lbl(sym_table);
       codegen = add_quad(codegen,quad_add(NULL,q_goto,NULL,NULL,lbl2));
       if(arg3 != NULL){
-
+        printf("\n\n######ELSE#####\n\n");
+        print_quad(arg3);
+        printf("#########\n\n");
         lbl = sym_new_lbl(sym_table);
         tmpQuad = quad_add(NULL,q_create_label,NULL,NULL,lbl);
         quad_complete(ast->fils->val.boolList.falseList,lbl);
@@ -360,6 +365,14 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
 
       codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl2));
 
+      break;
+    case ast_bloc:
+      fils = ast->fils;
+      // On parcoure l'AST pour générer tout les quads du main
+      while(fils != NULL){
+        codegen = add_quad(codegen,genCode(fils,sym_table));
+        fils = fils->freres;
+      }
       break;
 
   }

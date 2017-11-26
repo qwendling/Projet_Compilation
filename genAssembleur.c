@@ -201,6 +201,150 @@ void gen_div(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 }
 
 
+void gen_equal(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
+	char* str_code = calloc(1024,sizeof(char));
+	if(str_code == NULL)
+		exit(1);
+
+	// On sauvgarde la valeur dans le registre t0
+	snprintf(str_code,1024,"lw $t0 %s\n",code->arg1->name);
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+
+	// On sauvgarde la valeur dans le registre t0
+	snprintf(str_code,1024,"lw $t1 %s\n",code->arg2->name);
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+
+	// On sauvgarde la valeur dans le registre t0
+	snprintf(str_code,1024,"beq $t0 $t1 %s\n",code->res->name);
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+
+	free(str_code);
+}
+
+void gen_nequal(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
+	char* str_code = calloc(1024,sizeof(char));
+	if(str_code == NULL)
+		exit(1);
+
+	// On sauvgarde la valeur dans le registre t0
+	snprintf(str_code,1024,"lw $t0 %s\n",code->arg1->name);
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+
+	// On sauvgarde la valeur dans le registre t0
+	snprintf(str_code,1024,"lw $t1 %s\n",code->arg2->name);
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+
+	// On sauvgarde la valeur dans le registre t0
+	snprintf(str_code,1024,"bne $t0 $t1 %s\n",code->res->name);
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+
+	free(str_code);
+}
+
+void gen_greater(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
+	char* str_code = calloc(1024,sizeof(char));
+	if(str_code == NULL)
+		exit(1);
+
+	// On sauvgarde la valeur dans le registre t0
+	snprintf(str_code,1024,"lw $t0 %s\n",code->arg1->name);
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+
+	// On sauvgarde la valeur dans le registre t0
+	snprintf(str_code,1024,"lw $t1 %s\n",code->arg2->name);
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+
+	// On sauvgarde la valeur dans le registre t0
+	snprintf(str_code,1024,"bgt $t0 $t1 %s\n",code->res->name);
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+
+	free(str_code);
+}
+
+void gen_greaterOrEqual(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
+	char* str_code = calloc(1024,sizeof(char));
+	if(str_code == NULL)
+		exit(1);
+
+	// On sauvgarde la valeur dans le registre t0
+	snprintf(str_code,1024,"lw $t0 %s\n",code->arg1->name);
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+
+	// On sauvgarde la valeur dans le registre t0
+	snprintf(str_code,1024,"lw $t1 %s\n",code->arg2->name);
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+
+	// On sauvgarde la valeur dans le registre t0
+	snprintf(str_code,1024,"bge $t0 $t1 %s\n",code->res->name);
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+
+	free(str_code);
+}
+
+void gen_less(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
+	char* str_code = calloc(1024,sizeof(char));
+	if(str_code == NULL)
+		exit(1);
+
+	// On sauvgarde la valeur dans le registre t0
+	snprintf(str_code,1024,"lw $t0 %s\n",code->arg1->name);
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+
+	// On sauvgarde la valeur dans le registre t0
+	snprintf(str_code,1024,"lw $t1 %s\n",code->arg2->name);
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+
+	// On sauvgarde la valeur dans le registre t0
+	snprintf(str_code,1024,"blt $t0 $t1 %s\n",code->res->name);
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+
+	free(str_code);
+}
+
+void gen_lessOrEqual(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
+	char* str_code = calloc(1024,sizeof(char));
+	if(str_code == NULL)
+		exit(1);
+
+	// On sauvgarde la valeur dans le registre t0
+	snprintf(str_code,1024,"lw $t0 %s\n",code->arg1->name);
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+
+	// On sauvgarde la valeur dans le registre t0
+	snprintf(str_code,1024,"lw $t1 %s\n",code->arg2->name);
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+
+	// On sauvgarde la valeur dans le registre t0
+	snprintf(str_code,1024,"ble $t0 $t1 %s\n",code->res->name);
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+
+	free(str_code);
+}
+
+void gen_label(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
+	char* str_code = calloc(1024,sizeof(char));
+	if(str_code == NULL)
+		exit(1);
+
+	// On sauvgarde la valeur dans le registre t0
+	snprintf(str_code,1024,"%s:\n",code->res->name);
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+
+	free(str_code);
+}
+
+void gen_goto(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
+	char* str_code = calloc(1024,sizeof(char));
+	if(str_code == NULL)
+		exit(1);
+
+	// On sauvgarde la valeur dans le registre t0
+	snprintf(str_code,1024,"b %s\n",code->res->name);
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+
+	free(str_code);
+}
+
 //Genere le code assembleur en fonction des quads et Table des Symbole dans un fichier .s
 void genAssembleur(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
   if(code == NULL)
@@ -238,6 +382,30 @@ void genAssembleur(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 			break;
 		case q_div:
 			gen_div(code,sym_table,file);
+			break;
+		case q_equal:
+			gen_equal(code,sym_table,file);
+			break;
+		case q_nequal:
+			gen_nequal(code,sym_table,file);
+			break;
+		case q_greater:
+			gen_greater(code,sym_table,file);
+			break;
+		case q_greaterOrEqual:
+			gen_greaterOrEqual(code,sym_table,file);
+			break;
+		case q_less:
+			gen_less(code,sym_table,file);
+			break;
+		case q_lessOrEqual:
+			gen_lessOrEqual(code,sym_table,file);
+			break;
+		case q_create_label:
+			gen_label(code,sym_table,file);
+			break;
+		case q_goto:
+			gen_goto(code,sym_table,file);
 			break;
 
   }

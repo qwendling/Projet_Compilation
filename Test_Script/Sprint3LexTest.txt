@@ -4,9 +4,9 @@ int main() {
   int intVar2_ = 12;
   int intVar3_ = 43;
 
-	if(intVar1_ < intVar2_){
+	if(intVar1_ > intVar2_){
     printf("yo");
-		printf("if");
+		printf("if\n");
 		intVar1_++;
   }else{
     printi(intVar1_);

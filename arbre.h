@@ -36,6 +36,7 @@ typedef enum arbre_type{
   ast_less,
   ast_lessOrEqual,
   ast_if,
+  ast_bloc,
 }arbre_type;
 
 // Union definissant les valeurs possibles d'une feuille

@@ -248,7 +248,14 @@ Arbre ast_new_if(Arbre ifCondition, Arbre ifInstructions, Arbre elseInstructions
   Arbre new = calloc(1,sizeof(std_arbre));
 	new->type = ast_if;
 	new->fils = ifCondition;
-  new->fils->freres = concat(ifInstructions,elseInstructions);
+
+  new->fils->freres = calloc(1,sizeof(std_arbre));
+  new->fils->freres->type = ast_bloc;
+  new->fils->freres->fils = ifInstructions;
+
+  new->fils->freres->freres = calloc(1,sizeof(std_arbre));
+  new->fils->freres->freres->type = ast_bloc;
+  new->fils->freres->freres->fils = elseInstructions;
 
 	// On return une feuille de type ast_autoIncrementMoins
 	return new;
@@ -347,6 +354,9 @@ void ast_print_aux(Arbre a,int profondeur){
   case ast_if:
   printf("ast_if\n" );
 	break;
+  case ast_bloc:
+  printf("ast_bloc\n");
+  break;
   }
 
   //Affiche de manière recursive et ajoute une profondeur si possède des fils
