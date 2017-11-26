@@ -21,7 +21,6 @@ typedef enum quad_op{
   q_div,
 
   // Sprint3
-  q_or,
   q_equal,
   q_nequal,
   q_greater,
@@ -29,6 +28,7 @@ typedef enum quad_op{
   q_less,
   q_lessOrEqual,
   q_create_label,
+  q_goto,
 } quad_op;
 
 // structure des quads

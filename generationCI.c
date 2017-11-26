@@ -96,11 +96,28 @@ quad add_bool(quad q1,quad q2){
   return q1;
 }
 
+quad genCodeRelop(quad_op relop,Arbre ast,Symbole sym_table[TAILLE_TABLE]){
+  quad codegen,arg,arg2,tmpQuad,tmpQuad2;
+  arg = genCode(ast->fils,sym_table);
+  arg2 = genCode(ast->fils->freres,sym_table);
+  codegen=add_quad(codegen,arg);
+  codegen=add_quad(codegen,arg2);
+  tmpQuad = quad_add(NULL,relop,quad_res(arg),quad_res(arg2),NULL);
+  codegen=add_quad(codegen,tmpQuad);
+  tmpQuad2 = quad_add(NULL,q_goto,NULL,NULL,NULL);
+  codegen=add_quad(codegen,tmpQuad2);
+  ast->val.boolList.trueList = tmpQuad;
+  ast->val.boolList.falseList = tmpQuad2;
+  return codegen;
+}
+
 // genere les quads depuis l'AST en stockant dans la table des symboles
 quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
+  if(ast == NULL)
+    return NULL;
   //nouveau symbole du quad
-  Symbole tmp,tmp2,sym_arg1,sym_arg2,lbl;
-  quad codegen = NULL,arg = NULL,arg2=NULL;
+  Symbole tmp,tmp2,sym_arg1,sym_arg2,lbl,lbl2;
+  quad codegen = NULL,arg = NULL,arg2=NULL,arg3=NULL,tmpQuad=NULL,tmpQuad2=NULL;
   Arbre fils;
   //Suivant le type de l'AST le quad est différent
   switch(ast->type){
@@ -266,7 +283,54 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
       codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl));
       codegen = add_quad(codegen,arg2);
       break;
+    case ast_not:
+      codegen = genCode(ast->fils,sym_table);
+      ast->val.boolList.falseList = ast->fils->val.boolList.trueList;
+      ast->val.boolList.trueList = ast->fils->val.boolList.falseList;
+      break;
+    case ast_equal:
+      codegen = genCodeRelop(q_equal,ast,sym_table);
+      break;
+    case ast_nequal:
+      codegen = genCodeRelop(q_nequal,ast,sym_table);
+      break;
+    case ast_greater:
+      codegen = genCodeRelop(q_greater,ast,sym_table);
+      break;
+    case ast_greaterOrEqual:
+      codegen = genCodeRelop(q_greaterOrEqual,ast,sym_table);
+      break;
+    case ast_less:
+      codegen = genCodeRelop(q_less,ast,sym_table);
+      break;
+    case ast_lessOrEqual:
+      codegen = genCodeRelop(q_lessOrEqual,ast,sym_table);
+      break;
+    case ast_if:
+      arg = genCode(ast->fils,sym_table);
+      arg2 = genCode(ast->fils->freres,sym_table);
+      arg3 = genCode(ast->fils->freres->freres,sym_table);
 
+      lbl = sym_new_lbl(sym_table);
+      tmpQuad = quad_add(NULL,q_create_label,NULL,NULL,lbl);
+      quad_complete(ast->fils->val.boolList.trueList,lbl);
+
+      codegen = arg;
+      codegen = add_quad(codegen,tmpQuad);
+      codegen = add_quad(codegen,arg2);
+
+      if(arg3 != NULL){
+        lbl2 = sym_new_lbl(sym_table);
+        codegen = add_quad(codegen,quad_add(NULL,q_goto,NULL,NULL,lbl2));
+        lbl = sym_new_lbl(sym_table);
+        tmpQuad = quad_add(NULL,q_create_label,NULL,NULL,lbl);
+        quad_complete(ast->fils->val.boolList.falseList,lbl);
+        codegen = add_quad(codegen,tmpQuad);
+        codegen = add_quad(codegen,arg3);
+        codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl2));
+      }
+
+      break;
 
   }
   return codegen;

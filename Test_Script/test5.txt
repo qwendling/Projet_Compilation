@@ -1,0 +1,5 @@
+int main(){
+  if(1<2)
+    printf("GOOD test \n");
+  return 0;
+}
