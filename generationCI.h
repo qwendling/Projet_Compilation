@@ -63,7 +63,5 @@ ConstString constString_add(char*);
 // Supprime ConstString
 void constString_free(ConstString);
 
-// Return le resultat d'un quad
-Symbole quad_res(quad q);
 
 #endif
