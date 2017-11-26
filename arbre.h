@@ -1,6 +1,9 @@
 #ifndef ARBRE_H
 #define ARBRE_H
 
+#include "table_symbole.h"
+#include "quad.h"
+
 // Enum des types de Noeuds dans l'AST
 typedef enum arbre_type{
   //--- Sprint 1
@@ -20,7 +23,19 @@ typedef enum arbre_type{
   ast_affectation,
   ast_declaration,
   ast_autoIncrementPlus,
-  ast_autoIncrementMoins
+  ast_autoIncrementMoins,
+
+  // Sprint3
+  ast_and,
+  ast_or,
+  ast_not,
+  ast_equal,
+  ast_nequal,
+  ast_greater,
+  ast_greaterOrEqual,
+  ast_less,
+  ast_lessOrEqual,
+  ast_if,
 }arbre_type;
 
 // Union definissant les valeurs possibles d'une feuille
@@ -28,6 +43,10 @@ typedef union tree_value{
   char* str;
   int constante;
   char op;
+  struct{
+    quad trueList;
+    quad falseList;
+  } boolList;
 }tree_value;
 
 // Structure de l'AST
@@ -101,5 +120,8 @@ void ast_print(Arbre a);
 
 //Affiche dans le terminal l'AST donné a une profondeur donné
 void ast_print_aux(Arbre a,int profondeur);
+
+//return 0 si l'analyse et bonne sinon ficher non semantiquement correct
+int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]);
 
 #endif

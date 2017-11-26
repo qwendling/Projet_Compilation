@@ -231,3 +231,28 @@ void ast_print_aux(Arbre a,int profondeur){
   ast_print_aux(a->freres,profondeur);
 
 }
+
+int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
+	if(a == NULL)
+		return 0;
+	char* name;
+  printf("sem\n");
+	switch(a->type){
+		case ast_declaration:
+			printf("declaration semantique\n");
+			name = a->fils->val.str;
+			printf("declaration de %s\n",name);
+			if(sym_existe_table(sym_table,name))
+				return 2;
+			sym_add(name,sym_table);
+			break;
+		case ast_var:
+			name = a->val.str;
+			if(!sym_existe_table(sym_table,name))
+				return 1;
+			break;
+	}
+  int tmp = ast_semantique(a->fils,sym_table);
+  int tmp2 = ast_semantique(a->freres,sym_table);
+	return tmp && tmp2;
+}
