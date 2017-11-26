@@ -1,5 +1,8 @@
 int main(){
-  if(1<2)
+  if(1<2 || 2==3){
     printf("GOOD test \n");
+  }else{
+    printf("Pas GOOD test\n");
+  }
   return 0;
 }

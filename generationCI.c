@@ -78,6 +78,31 @@ void print_quad(quad q){
 	case use_var:
 		printf("use NULL NULL %s\n",q->res->name);
 		break;
+    case q_equal:
+      printf("equal %s %s %s\n",q->arg1->name,q->arg2->name,q->res->name);
+      break;
+    case q_nequal:
+    printf("nequal %s %s %s\n",q->arg1->name,q->arg2->name,q->res->name);
+    break;
+    case q_greater:
+    printf("gt %s %s %s\n",q->arg1->name,q->arg2->name,q->res->name);
+    break;
+    case q_greaterOrEqual:
+    printf("gte %s %s %s\n",q->arg1->name,q->arg2->name,q->res->name);
+    break;
+    case q_less:
+    printf("lt %s %s %s\n",q->arg1->name,q->arg2->name,q->res->name);
+    break;
+    case q_lessOrEqual:
+    printf("lte %s %s %s\n",q->arg1->name,q->arg2->name,q->res->name);
+    break;
+    case q_create_label:
+    printf("label NULL NULL %s\n",q->res->name);
+    break;
+    case q_goto:
+    printf("goto NULL NULL %s\n",q->res->name);
+    break;
+
   }
   print_quad(q->next);
 }
@@ -97,7 +122,7 @@ quad add_bool(quad q1,quad q2){
 }
 
 quad genCodeRelop(quad_op relop,Arbre ast,Symbole sym_table[TAILLE_TABLE]){
-  quad codegen,arg,arg2,tmpQuad,tmpQuad2;
+  quad codegen=NULL,arg=NULL,arg2=NULL,tmpQuad=NULL,tmpQuad2=NULL;
   arg = genCode(ast->fils,sym_table);
   arg2 = genCode(ast->fils->freres,sym_table);
   codegen=add_quad(codegen,arg);
@@ -106,6 +131,7 @@ quad genCodeRelop(quad_op relop,Arbre ast,Symbole sym_table[TAILLE_TABLE]){
   codegen=add_quad(codegen,tmpQuad);
   tmpQuad2 = quad_add(NULL,q_goto,NULL,NULL,NULL);
   codegen=add_quad(codegen,tmpQuad2);
+
   ast->val.boolList.trueList = tmpQuad;
   ast->val.boolList.falseList = tmpQuad2;
   return codegen;
@@ -318,17 +344,21 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
       codegen = arg;
       codegen = add_quad(codegen,tmpQuad);
       codegen = add_quad(codegen,arg2);
-
+      lbl2 = sym_new_lbl(sym_table);
+      codegen = add_quad(codegen,quad_add(NULL,q_goto,NULL,NULL,lbl2));
       if(arg3 != NULL){
-        lbl2 = sym_new_lbl(sym_table);
-        codegen = add_quad(codegen,quad_add(NULL,q_goto,NULL,NULL,lbl2));
+
         lbl = sym_new_lbl(sym_table);
         tmpQuad = quad_add(NULL,q_create_label,NULL,NULL,lbl);
         quad_complete(ast->fils->val.boolList.falseList,lbl);
         codegen = add_quad(codegen,tmpQuad);
         codegen = add_quad(codegen,arg3);
-        codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl2));
+
+      }else{
+        quad_complete(ast->fils->val.boolList.falseList,lbl2);
       }
+
+      codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl2));
 
       break;
 
