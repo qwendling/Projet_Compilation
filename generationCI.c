@@ -82,10 +82,24 @@ void print_quad(quad q){
   print_quad(q->next);
 }
 
+void quad_complete(quad q,Symbole s){
+  if(q==NULL)
+    return;
+  q->res = s;
+  quad_complete(q->nextBool,s);
+}
+
+quad add_bool(quad q1,quad q2){
+  if(q1 == NULL)
+    return q2;
+  q1->nextBool = add_bool(q1->nextBool,q2);
+  return q1;
+}
+
 // genere les quads depuis l'AST en stockant dans la table des symboles
 quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
   //nouveau symbole du quad
-  Symbole tmp,tmp2,sym_arg1,sym_arg2;
+  Symbole tmp,tmp2,sym_arg1,sym_arg2,lbl;
   quad codegen = NULL,arg = NULL,arg2=NULL;
   Arbre fils;
   //Suivant le type de l'AST le quad est différent
@@ -230,6 +244,30 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
       codegen = add_quad(codegen,quad_add(NULL,q_sub,sym_arg1,tmp2,sym_arg1));
       codegen = add_quad(codegen,quad_add(NULL,use_var,NULL,NULL,tmp));
       break;
+    case ast_and:
+      arg = genCode(ast->fils,sym_table);
+      arg2 = genCode(ast->fils->freres,sym_table);
+      lbl = sym_new_lbl(sym_table);
+      quad_complete(ast->fils->val.boolList.trueList,lbl);
+      ast->val.boolList.trueList = ast->fils->freres->val.boolList.trueList;
+      ast->val.boolList.falseList = add_bool(ast->fils->val.boolList.falseList,ast->fils->freres->val.boolList.falseList);
+      codegen = add_quad(codegen,arg);
+      codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl));
+      codegen = add_quad(codegen,arg2);
+      break;
+    case ast_or:
+      arg = genCode(ast->fils,sym_table);
+      arg2 = genCode(ast->fils->freres,sym_table);
+      lbl = sym_new_lbl(sym_table);
+      quad_complete(ast->fils->val.boolList.falseList,lbl);
+      ast->val.boolList.falseList = ast->fils->freres->val.boolList.falseList;
+      ast->val.boolList.trueList = add_bool(ast->fils->val.boolList.trueList,ast->fils->freres->val.boolList.trueList);
+      codegen = add_quad(codegen,arg);
+      codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl));
+      codegen = add_quad(codegen,arg2);
+      break;
+
+
   }
   return codegen;
 }

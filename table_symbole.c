@@ -130,6 +130,39 @@ Symbole sym_new_tmp(Symbole sym_Table[TAILLE_TABLE]){
 
 }
 
+// Ajoute un nouveau symbole temporaire dans la table
+Symbole sym_new_lbl(Symbole sym_Table[TAILLE_TABLE]){
+  // static pour le nombre de temporaire
+  static int nb_lbl=0;
+
+  char name[1024];
+  snprintf(name,1024,"$lbl%d",nb_lbl);
+  //printf("%s size : %d\n",name,strlen(name));
+
+  //printf("%s size : %d\n\n",name_tmp,strlen(name_tmp));
+
+  nb_lbl++;
+
+  int h=sym_hach(name);
+
+  Symbole new_lbl;
+
+  // si le symbole existe on le free pour l'ajouter
+  if(sym_existe(sym_Table[h],name)!=NULL){
+    new_lbl=sym_new_lbl(sym_Table);
+    return new_lbl;
+  }
+
+  // on ajoute le symbol
+  sym_add(name,sym_Table);
+
+  // on verifie que le symbole existe bien en le retournant
+  new_lbl=sym_existe(sym_Table[h],name);
+
+  return new_lbl;
+
+}
+
 int sym_existe_table(Symbole table[],char* name){
 	Symbole e = sym_existe(table[sym_hach(name)],name);
 	return e != NULL;

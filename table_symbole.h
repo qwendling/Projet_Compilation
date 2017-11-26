@@ -53,6 +53,9 @@ void sym_delete_table(Symbole[]);
 // AJoute un nouveau symbole temporaire dans la table
 Symbole sym_new_tmp(Symbole[]);
 
+//Ajoute un label dans la table
+Symbole sym_new_lbl(Symbole[]);
+
 int sym_existe_table(Symbole table[],char* name);
 
 #endif

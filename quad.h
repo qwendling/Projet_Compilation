@@ -18,7 +18,17 @@ typedef enum quad_op{
   q_add,
   q_sub,
   q_mul,
-  q_div
+  q_div,
+
+  // Sprint3
+  q_or,
+  q_equal,
+  q_nequal,
+  q_greater,
+  q_greaterOrEqual,
+  q_less,
+  q_lessOrEqual,
+  q_create_label,
 } quad_op;
 
 // structure des quads
@@ -28,6 +38,7 @@ typedef struct quad_struct {
   Symbole arg2; //2eme argument
   Symbole res; // resultat
   struct quad_struct * next; //quad suivant
+  struct quad_struct * nextBool;
 }std_quad , *quad;
 
 
