@@ -57,6 +57,18 @@ typedef struct str_arbre{
   tree_value val;
 } std_arbre,*Arbre;
 
+Arbre ast_new_and(Arbre operande1, Arbre operande2);
+Arbre ast_new_or(Arbre operande1, Arbre operande2);
+Arbre ast_new_not(Arbre operande);
+Arbre ast_new_equal(Arbre operande1, Arbre operande2);
+Arbre ast_new_nequal(Arbre operande1, Arbre operande2);
+Arbre ast_new_greater(Arbre operande1, Arbre operande2);
+Arbre ast_new_greaterOrEqual(Arbre operande1, Arbre operande2);
+Arbre ast_new_less(Arbre operande1, Arbre operande2);
+Arbre ast_new_lessOrEqual(Arbre operande1, Arbre operande2);
+Arbre ast_new_if(Arbre ifCondition, Arbre ifInstructions, Arbre elseInstructions);
+
+
 //------- SPRINT 1 -------
 
 //creation d'un arbre vide

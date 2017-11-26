@@ -45,22 +45,40 @@ INT "int"
 INCREMENTPLUS "++"
 INCREMENTMOINS "--"
 
+/* --------- SPRINT 3 --------- */
+
+IF "if"
+ELSE "else"
+EQUAL "=="
+SUPP ">"
+INF "<"
+SUPPEQU ">="
+INFEQU "<="
+DIFFERENCE "!="
+NOT "!"
+AND "&&"
+OR "||"
+
 /*###################################*/
 /*####### REGLE SYNTAXIQUE ##########*/
 /*###################################*/
 %%
-{COMMENT} {printf(" Commentaire %s\n",yytext);}
+{IF} {printf ("Debut if \n"); return IF; }
+{ELSE} {printf ("Debut else \n"); return ELSE;}
+
+
+{COMMENT} {}
 {MAIN} {printf("main reconnu\n");return MAIN;}
 {RETURN} {printf("return reconnu\n");return RETURN;}
-{NOMBRE} {printf("entier lu\n");yylval.nombre=atoi(yytext); return NOMBRE;}
+{NOMBRE} {yylval.nombre=atoi(yytext); return NOMBRE;}
 {STRING} {yylval.string=strdup(yytext); return STRING;}
 
 printf {return PRINTF;}
 printi {return PRINTI;}
 
-[{}();] {printf("Envoie de : %s\n",yytext); return yytext[0];}
+[\{\}\(\)\;] {printf("Envoie de : %s\n",yytext); return yytext[0];}
 =		{return yytext[0];}
-[+-/*] {printf("Envoie Expression Math de  : %s\n",yytext);return yytext[0];}
+[+-/*] {return yytext[0];}
 
 
 
@@ -77,7 +95,20 @@ printi {return PRINTI;}
 {INCREMENTPLUS}{ID}  {yylval.string=strdup(yytext+2);return INCREMENTPLUSBEFORE;}
 
 
-. {printf("caractere ignoré: %s\n",yytext);}
+
+{EQUAL} {return EQUAL;}
+{SUPP} {return SUPP;}
+{INF} {return INF;}
+{SUPPEQU} {return SUPPEQU;}
+{INFEQU} {return INFEQU;}
+{DIFFERENCE} {return DIFFERENCE;}
+{NOT} {return NOT;}
+{AND} {return AND;}
+{OR} {return OR;}
+
+
+
+. {;}
 %%
 
 
@@ -97,6 +128,8 @@ int main(int argc, char **argv )
 	yyin = fopen(argv[1],"r");
 	yyparse();
 	fclose(yyin);
+  if(return_value)
+    return_value;
 
 	printf("\n########## AST ##########\n\n");
 	ast_print(ast);

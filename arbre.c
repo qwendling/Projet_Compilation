@@ -162,6 +162,100 @@ void ast_free(Arbre a){
 }
 
 
+//------- Sprint 3 -------
+
+Arbre ast_new_and(Arbre operande1, Arbre operande2){
+  Arbre new = calloc(1,sizeof(std_arbre));
+	new->type = ast_and;
+	new->fils = operande1;
+  new->fils->freres = operande2;
+	// On return une feuille de type ast_autoIncrementMoins
+	return new;
+}
+
+Arbre ast_new_or(Arbre operande1, Arbre operande2){
+  Arbre new = calloc(1,sizeof(std_arbre));
+	new->type = ast_or;
+	new->fils = operande1;
+  new->fils->freres = operande2;
+	// On return une feuille de type ast_autoIncrementMoins
+	return new;
+}
+
+Arbre ast_new_not(Arbre operande){
+  Arbre new = calloc(1,sizeof(std_arbre));
+	new->type = ast_not;
+	new->fils = operande;
+	// On return une feuille de type ast_autoIncrementMoins
+	return new;
+}
+
+Arbre ast_new_equal(Arbre operande1, Arbre operande2){
+  Arbre new = calloc(1,sizeof(std_arbre));
+	new->type = ast_equal;
+	new->fils = operande1;
+  new->fils->freres = operande2;
+	// On return une feuille de type ast_autoIncrementMoins
+	return new;
+}
+
+Arbre ast_new_nequal(Arbre operande1, Arbre operande2){
+  Arbre new = calloc(1,sizeof(std_arbre));
+	new->type = ast_nequal;
+	new->fils = operande1;
+  new->fils->freres = operande2;
+	// On return une feuille de type ast_autoIncrementMoins
+	return new;
+}
+
+Arbre ast_new_greater(Arbre operande1, Arbre operande2){
+  Arbre new = calloc(1,sizeof(std_arbre));
+	new->type = ast_greater;
+	new->fils = operande1;
+  new->fils->freres = operande2;
+	// On return une feuille de type ast_autoIncrementMoins
+	return new;
+}
+
+Arbre ast_new_greaterOrEqual(Arbre operande1, Arbre operande2){
+  Arbre new = calloc(1,sizeof(std_arbre));
+	new->type = ast_greaterOrEqual;
+	new->fils = operande1;
+  new->fils->freres = operande2;
+	// On return une feuille de type ast_autoIncrementMoins
+	return new;
+}
+
+Arbre ast_new_less(Arbre operande1, Arbre operande2){
+  Arbre new = calloc(1,sizeof(std_arbre));
+	new->type = ast_less;
+	new->fils = operande1;
+  new->fils->freres = operande2;
+	// On return une feuille de type ast_autoIncrementMoins
+	return new;
+}
+
+Arbre ast_new_lessOrEqual(Arbre operande1, Arbre operande2){
+  Arbre new = calloc(1,sizeof(std_arbre));
+	new->type = ast_lessOrEqual;
+	new->fils = operande1;
+  new->fils->freres = operande2;
+	// On return une feuille de type ast_autoIncrementMoins
+	return new;
+}
+
+Arbre ast_new_if(Arbre ifCondition, Arbre ifInstructions, Arbre elseInstructions){
+  Arbre new = calloc(1,sizeof(std_arbre));
+	new->type = ast_if;
+	new->fils = ifCondition;
+  new->fils->freres = concat(ifInstructions,elseInstructions);
+
+	// On return une feuille de type ast_autoIncrementMoins
+	return new;
+}
+
+
+
 //------- All sprints -------
 
 //Affiche dans le terminal l'AST général avec ses frères et fils
@@ -223,6 +317,35 @@ void ast_print_aux(Arbre a,int profondeur){
 	case ast_autoIncrementMoins:
 	printf("ast_autoIncrementMoins \n");
 	break;
+  case ast_and:
+  printf("ast_and\n");
+	break;
+  case ast_or:
+  printf("ast_or\n");
+	break;
+  case ast_not:
+  printf("ast_not\n");
+	break;
+  case ast_equal:
+  printf("ast_equal\n");
+	break;
+  case ast_nequal:
+  printf("ast_nequal\n");
+	break;
+  case ast_greater:
+  printf("ast_greater\n");
+	break;
+  case ast_greaterOrEqual:
+  printf("ast_greaterOrEqual\n");
+	break;
+  case ast_less:
+  printf("ast_less\n" );
+	break;
+  case ast_lessOrEqual:
+  printf("ast_lessOrEqual\n");
+	break;
+  case ast_if:
+  printf("ast_if\n" );
 	break;
   }
 
@@ -236,7 +359,6 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
 	if(a == NULL)
 		return 0;
 	char* name;
-  printf("sem\n");
 	switch(a->type){
 		case ast_declaration:
 			printf("declaration semantique\n");

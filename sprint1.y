@@ -30,6 +30,19 @@
 %token <string> INCREMENTMOINSAFTER
 %token <string> INCREMENTMOINSBEFORE
 
+// ---- Sprint 3 Tokens
+%token EQUAL
+%token SUPP
+%token INF
+%token SUPPEQU
+%token INFEQU
+%token DIFFERENCE
+%token NOT
+%token AND
+%token OR
+%token IF
+%token ELSE
+
 // ---- AST
 %type <ast> B
 %type <ast> Instruction
@@ -42,13 +55,19 @@
 %type <ast> Facteur
 %type <ast> Terme
 %type <ast> AutoIncremente
-
+%type <ast> Condition
+%type <ast> ExprBoolean
+%type <ast> ListeCondition
 
 // ---- Gestion de la priorite
+%left NOT
+%left AND
+%left OR
 %left '+' '-'
 %left '*' '/'
 %left UMOINS
 %left AUTOINCR
+
 
 %start program
 
@@ -70,6 +89,8 @@ fonction: MAIN'('')''{'ListeInstr'}' {$$=ast_new_main($5);}
 // Une liste d'instruction est une  succession d'instruction se terminant par ;
 ListeInstr: Instruction';'ListeInstr { $$=concat($1,$3);}
 	| Instruction';' {$$=$1;}
+	| Condition ListeInstr {$$=concat($1,$2);}
+	| Condition {$$=$1;}
 	;
 
 // Les différentes instructions possible
@@ -125,6 +146,30 @@ AutoIncremente:	INCREMENTPLUSAFTER {$$=ast_new_autoIncrement_plus(new_var($1));}
 B: NOMBRE {$$=new_const($1);}
 	| ID { $$ = new_var($1);}
 	| AutoIncremente {$$ = $1;}
+	;
+
+
+//---------- CONDITIONS -------------//
+Condition: IF '('ListeCondition')''{' ListeInstr '}' ELSE '{' ListeInstr '}' {$$=ast_new_if($3,$6,$10);}
+	| IF '('ListeCondition')''{' ListeInstr '}' {$$=ast_new_if($3,$6,NULL);}
+	| IF '('ListeCondition')' Instruction ';' {$$=ast_new_if($3,$5,NULL);}
+	;
+
+
+ListeCondition: ListeCondition AND ListeCondition {$$=ast_new_and($1,$3);}
+	| ListeCondition OR ListeCondition {$$=ast_new_or($1,$3);}
+	| NOT ListeCondition {$$=ast_new_not($2);}
+	| '('ListeCondition')' {$$=$2;}
+	| ExprBoolean {$$=$1;}
+	;
+
+
+ExprBoolean: B EQUAL B {$$=ast_new_equal($1,$3);}
+	| B SUPP B {$$=ast_new_greater($1,$3);}
+	| B INF B {$$=ast_new_less($1,$3);}
+	| B SUPPEQU B {$$=ast_new_greaterOrEqual($1,$3);}
+	| B INFEQU B {$$=ast_new_lessOrEqual($1,$3);}
+	| B DIFFERENCE B {$$=ast_new_nequal($1,$3);}
 	;
 
 %%

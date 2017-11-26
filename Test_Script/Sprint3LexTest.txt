@@ -1,0 +1,28 @@
+int main() {
+	// Coucou le test
+	int intVar1_ = 42;
+  int intVar2_ = 12;
+  int intVar3_ = 43;
+
+	if(intVar1_ < intVar2_){
+    printf("yo");
+		printf("if");
+		intVar1_++;
+  }else{
+    printi(intVar1_);
+		printf("ici");
+		int intVar4_ = 43;
+  }
+
+	if(intVar4_ == intVar2_)
+		printi(intVar4_);
+
+	if( intVar4_ <= intVar2_ || intVar4_ != intVar1_)
+		printi(intVar4_);
+
+	if(intVar4_ == intVar2_){
+		printi(intVar4_);
+	}
+
+	return 0;
+}
