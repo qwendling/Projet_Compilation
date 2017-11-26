@@ -32,6 +32,7 @@ void quad_free(quad q){
   free(q);
 }
 
+// Return le resultat d'un quad
 Symbole quad_res(quad q){
 	if(q == NULL){
 		return NULL;
@@ -81,7 +82,7 @@ void print_quad(quad q){
   print_quad(q->next);
 }
 
-// genere les quads depuis l'AST en stockant dans la table des symboles et strings
+// genere les quads depuis l'AST en stockant dans la table des symboles
 quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
   //nouveau symbole du quad
   Symbole tmp,tmp2,sym_arg1,sym_arg2;
@@ -108,6 +109,7 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
         // on genere le quad de la constante a afficher
         arg = genCode(ast->fils,sym_table);
         codegen = arg;
+        // on concatene le dernier quad (argument string) avec un quad printf
         codegen = add_quad(codegen,quad_add(NULL,print_f,quad_res(arg),NULL,NULL));
         break;
     case ast_printi:
@@ -115,6 +117,7 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
         // on genere le quad de la constante a afficher
         arg = genCode(ast->fils,sym_table);
         codegen = arg;
+        // on concatene le dernier quad (argument constant) avec un quad printi
         codegen = add_quad(codegen,quad_add(NULL,print_i,quad_res(arg),NULL,NULL));
         break;
     case ast_return:
@@ -122,13 +125,14 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
         // on genere le quad de la valeur a return
         arg = genCode(ast->fils,sym_table);
         codegen = arg;
+        // on concatene le dernier quad (argument constant) avec un quad return
         codegen = add_quad(codegen,quad_add(NULL,return_prog,quad_res(arg),NULL,NULL));
         break;
     case ast_main:
   		printf("CI main\n");
         codegen = quad_add(codegen,create_main,NULL,NULL,NULL);
         fils = ast->fils;
-        // On parcoure l'AST pour générer tout les quads
+        // On parcoure l'AST pour générer tout les quads du main
         while(fils != NULL){
           codegen = add_quad(codegen,genCode(fils,sym_table));
           fils = fils->freres;
@@ -136,6 +140,7 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
         break;
     case ast_var:
   		printf("CI Var\n");
+      // On génère le quad de variable déja initialisé
   		codegen = quad_add(codegen,use_var,NULL,NULL,sym_find(ast->val.str,sym_table));
   		break;
   	case ast_affectation:
@@ -143,20 +148,28 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
   		arg = genCode(ast->fils->freres,sym_table);
   		printf("test arg : %s\n",quad_res(arg)->name);
   		codegen = arg;
+      // On génère le quad d'affectation de variable
   		codegen = add_quad(codegen,quad_add(NULL,affectation_var,quad_res(arg),NULL,sym_find(ast->fils->val.str,sym_table)));
   		break;
   	case ast_div:
   	  printf("CI /\n");
+        // On génère les quad pour le calcul de la division
   		tmp = sym_new_tmp(sym_table);
+      // quad pour coté gauche div
   		arg = genCode(ast->fils,sym_table);
+      // quad pour coté droite div
   		arg2 = genCode(ast->fils->freres,sym_table);
+      // resultat coté gauche stocké
   		sym_arg1 = quad_res(arg);
+      // resultat coté droite stocké
   		sym_arg2 = quad_res(arg2);
   		codegen = add_quad(arg,arg2);
+      // on concat les quad existant avec un nouveau de division et ses 2 operandes
   		codegen = add_quad(codegen,quad_add(NULL,q_div,sym_arg1,sym_arg2,tmp));
   		break;
   	case ast_fois:
   	  printf("CI *\n");
+      // On génère les quad pour le calcul de la multiplication
   		tmp = sym_new_tmp(sym_table);
   		arg = genCode(ast->fils,sym_table);
   		arg2 = genCode(ast->fils->freres,sym_table);
@@ -167,6 +180,7 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
   		break;
   	case ast_moins:
   	  printf("CI -\n");
+      // On génère les quad pour le calcul de la soustraction
   		tmp = sym_new_tmp(sym_table);
   		arg = genCode(ast->fils,sym_table);
   		arg2 = genCode(ast->fils->freres,sym_table);
@@ -177,6 +191,7 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
   		break;
   	case ast_plus:
   		printf("CI +\n");
+      // On génère les quad pour le calcul de la somme
   		tmp = sym_new_tmp(sym_table);
   		arg = genCode(ast->fils,sym_table);
   		arg2 = genCode(ast->fils->freres,sym_table);
@@ -187,13 +202,20 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
 
   		break;
     case ast_autoIncrementPlus:
+      // On génère les quad pour le calcul de l'autoIncremente
+      // On cherche la valeur de la variable a incrémenter
       sym_arg1 = sym_find(ast->fils->val.str,sym_table);
       tmp = sym_new_tmp(sym_table);
+
+      // On affecte a une variable temporaire la valeur de la variable recherché
       codegen = add_quad(codegen,quad_add(NULL,affectation_var,sym_arg1,NULL,tmp));
+      // Incrementation = affectation de +1, creation de la constant entier 1
       tmp2 = sym_new_tmp(sym_table);
       tmp2->type = sym_const;
       tmp2->val.entier = 1;
+      // On affecte la constante 1
       codegen = add_quad(codegen,quad_add(NULL,affectation,NULL,NULL,tmp2));
+      // On genere le quad de somme var + 1
       codegen = add_quad(codegen,quad_add(NULL,q_add,tmp2,sym_arg1,sym_arg1));
       codegen = add_quad(codegen,quad_add(NULL,use_var,NULL,NULL,tmp));
       break;

@@ -3,12 +3,15 @@
 
 // Enum des types de Noeuds dans l'AST
 typedef enum arbre_type{
+  //--- Sprint 1
   ast_constant,
   ast_str,
   ast_printf,
   ast_printi,
   ast_return,
   ast_main,
+
+  //--- Sprint 2
   ast_var,
   ast_plus,
   ast_moins,

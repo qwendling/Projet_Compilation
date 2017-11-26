@@ -12,13 +12,16 @@ typedef struct const_string {
 
 // enumeration des types de quad
 typedef enum quad_op{
+  //--- Sprint 1
   print_i,
   print_f,
-  affectation,
   return_prog,
   create_string,
   create_main,
+
+  //--- Sprint 2
   use_var,
+  affectation,
   affectation_var,
   q_add,
   q_sub,
@@ -48,7 +51,7 @@ void quad_free(quad);
 //Affiche les quads sur le terminal
 void print_quad(quad);
 
-// genere les quads depuis l'AST en stockant dans la table des symboles et strings
+// genere les quads depuis l'AST en stockant dans la table des symboles
 quad genCode(Arbre,Symbole[]);
 
 // Affiche les strings sur le terminal
@@ -59,5 +62,8 @@ ConstString constString_add(char*);
 
 // Supprime ConstString
 void constString_free(ConstString);
+
+// Return le resultat d'un quad
+Symbole quad_res(quad q);
 
 #endif

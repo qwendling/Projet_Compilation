@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+// FOnction de generation de printf
 void gen_printf(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 	char* str_code = calloc(1024,sizeof(char));
 	if(str_code == NULL)
@@ -20,6 +21,7 @@ void gen_printf(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 	fwrite(str_code,sizeof(char),strlen(str_code),file);
 }
 
+// FOnction de generation de printi
 void gen_printi(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 	char* str_code = calloc(1024,sizeof(char));
 	if(str_code == NULL)
@@ -39,6 +41,7 @@ void gen_printi(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 	fwrite(str_code,sizeof(char),strlen(str_code),file);
 }
 
+// FOnction de generation de l'affectation
 void gen_affectation(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 	/*char* str_code = calloc(1024,sizeof(char));
 	if(str_code == NULL)
@@ -55,6 +58,7 @@ void gen_affectation(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 	free(str_code);*/
 }
 
+// FOnction de generation du return
 void gen_return(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 	char* str_code = calloc(1024,sizeof(char));
 	if(str_code == NULL)
@@ -71,6 +75,7 @@ void gen_return(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 	fwrite(str_code,sizeof(char),strlen(str_code),file);
 }
 
+// FOnction de generation du main
 void gen_main(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 	char* str_code;
 
@@ -79,6 +84,7 @@ void gen_main(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 	fwrite(str_code,sizeof(char),strlen(str_code),file);
 }
 
+// FOnction de generation de l'affectation de variable
 void gen_affecVar(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 	char* str_code = calloc(1024,sizeof(char));
 	if(str_code == NULL)
@@ -94,6 +100,7 @@ void gen_affecVar(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 	free(str_code);
 }
 
+// FOnction de generation de la somme
 void gen_add(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 	char* str_code = calloc(1024,sizeof(char));
 	if(str_code == NULL)
@@ -118,6 +125,7 @@ void gen_add(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 	free(str_code);
 }
 
+// FOnction de generation de la soustraction
 void gen_sub(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 	char* str_code = calloc(1024,sizeof(char));
 	if(str_code == NULL)
@@ -142,6 +150,7 @@ void gen_sub(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 	free(str_code);
 }
 
+// FOnction de generation de la multiplication
 void gen_mul(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 	char* str_code = calloc(1024,sizeof(char));
 	if(str_code == NULL)
@@ -166,6 +175,7 @@ void gen_mul(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 	free(str_code);
 }
 
+// FOnction de generation de la division
 void gen_div(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 	char* str_code = calloc(1024,sizeof(char));
 	if(str_code == NULL)
@@ -208,11 +218,9 @@ void genAssembleur(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
     case affectation: // Assembleur pour l'affectation'
       gen_affectation(code,sym_table,file);
       break;
-      // WTFFFFFFFFFFFFFFFFFFFFFFFF ?????????????????
     case return_prog: // Assembleur pour le return du programme
       gen_return(code,sym_table,file);
       break;
-      // WTFFFFFFFFFFFFFFFFFFFFFFFF ?????????????????
     case create_main:
 	  	gen_main(code,sym_table,file);
 			break;
@@ -237,6 +245,7 @@ void genAssembleur(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
   genAssembleur(code->next,sym_table,file);
 }
 
+// Ajout de tout les symboles dans le .data
 void gen_sym(Symbole s,FILE* file){
 	if(s == NULL)
 		return;
