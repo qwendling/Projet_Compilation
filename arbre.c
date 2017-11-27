@@ -28,6 +28,14 @@ Arbre new_string(char* val){
   return new;
 }
 
+Arbre ast_new_bloc(Arbre feuille){
+	Arbre new = calloc(1,sizeof(std_arbre));
+	new->type = ast_bloc;
+	new->fils = feuille;
+	return new;
+}
+
+
 //ajout de a2 dans les frere de a1
 Arbre concat(Arbre a1,Arbre a2){
   Arbre tmp=a1;
@@ -261,7 +269,26 @@ Arbre ast_new_if(Arbre ifCondition, Arbre ifInstructions, Arbre elseInstructions
 	return new;
 }
 
+//------- SPRINT 4 -------
 
+Arbre ast_new_for(Arbre inits,Arbre conditions,Arbre increments,Arbre instructions){
+	Arbre new = calloc(1,sizeof(std_arbre));
+	new->type = ast_for;
+	new->fils = ast_new_bloc(inits);
+	new->fils->freres = conditions;
+	new->fils->freres->freres = ast_new_bloc(increments);
+	new->fils->freres->freres->freres = ast_new_bloc(instructions);
+	return new;
+}
+
+
+Arbre ast_new_while(Arbre conditions, Arbre instructions){
+	Arbre new = calloc(1,sizeof(std_arbre));
+	new->type = ast_while;
+	new->fils = conditions;
+	new->fils->freres = ast_new_bloc(instructions);
+	return new;
+}
 
 //------- All sprints -------
 
@@ -356,6 +383,12 @@ void ast_print_aux(Arbre a,int profondeur){
 	break;
   case ast_bloc:
   printf("ast_bloc\n");
+  break;
+  case ast_for:
+  printf("ast_for\n");
+  break;
+  case ast_while:
+  printf("ast_while\n");
   break;
   }
 

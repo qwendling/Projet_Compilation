@@ -59,32 +59,40 @@ NOT "!"
 AND "&&"
 OR "||"
 
+/* --------- SPRINT 4 --------- */
+
+WHILE "while"
+FOR "for"
+
+
 /*###################################*/
 /*####### REGLE SYNTAXIQUE ##########*/
 /*###################################*/
 %%
-{IF} {printf ("Debut if \n"); return IF; }
-{ELSE} {printf ("Debut else \n"); return ELSE;}
+{IF} { return IF; }
+{ELSE} { return ELSE;}
 
+{WHILE} {printf("debut while \n");return WHILE;}
+{FOR} {printf("debut for \n");return FOR;}
 
 {COMMENT} {}
-{MAIN} {printf("main reconnu\n");return MAIN;}
-{RETURN} {printf("return reconnu\n");return RETURN;}
+{MAIN} {return MAIN;}
+{RETURN} {return RETURN;}
 {NOMBRE} {yylval.nombre=atoi(yytext); return NOMBRE;}
 {STRING} {yylval.string=strdup(yytext); return STRING;}
 
 printf {return PRINTF;}
 printi {return PRINTI;}
 
-[\{\}\(\)\;] {printf("Envoie de : %s\n",yytext); return yytext[0];}
+[\{\}\(\)\;] {return yytext[0];}
 =		{return yytext[0];}
 [+-/*] {return yytext[0];}
 
 
 
 
-{INT} {printf("type reconnu : %s \n",yytext); return INT;}
-{ID}	{printf("id reconnu : %s \n",yytext);yylval.string=strdup(yytext); return ID;}
+{INT}	{return INT;}
+{ID}	{yylval.string=strdup(yytext); return ID;}
 {ID}{INCREMENTMOINS} {yytext[strlen(yytext)-2]='\0';
                       yylval.string=strdup(yytext);
                       return INCREMENTMOINSAFTER;}
@@ -105,6 +113,8 @@ printi {return PRINTI;}
 {NOT} {return NOT;}
 {AND} {return AND;}
 {OR} {return OR;}
+
+
 
 
 

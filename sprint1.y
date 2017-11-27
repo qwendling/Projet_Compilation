@@ -43,6 +43,10 @@
 %token IF
 %token ELSE
 
+// ---- Sprint 4 Tokens
+%token WHILE
+%token FOR
+
 // ---- AST
 %type <ast> B
 %type <ast> Instruction
@@ -58,6 +62,10 @@
 %type <ast> Condition
 %type <ast> ExprBoolean
 %type <ast> ListeCondition
+%type <ast> Boucle
+%type <ast> ListeInit
+%type <ast> ListeIncrement
+%type <ast> InitMember
 
 // ---- Gestion de la priorite
 %left NOT
@@ -91,6 +99,8 @@ ListeInstr: Instruction';'ListeInstr { $$=concat($1,$3);}
 	| Instruction';' {$$=$1;}
 	| Condition ListeInstr {$$=concat($1,$2);}
 	| Condition {$$=$1;}
+	| Boucle  ListeInstr {$$=concat($1,$2);}
+	| Boucle {$$=$1;}
 	;
 
 // Les différentes instructions possible
@@ -171,6 +181,27 @@ ExprBoolean: B EQUAL B {$$=ast_new_equal($1,$3);}
 	| B INFEQU B {$$=ast_new_lessOrEqual($1,$3);}
 	| B DIFFERENCE B {$$=ast_new_nequal($1,$3);}
 	;
+
+
+//---------- BOUCLES -------------//
+ListeInit:InitMember','ListeInit {$$=concat($1,$3);}
+	|InitMember {$$=$1;}
+	;
+
+InitMember: Affectation {$$=$1;}
+	| Declaration {$$=$1;}
+	| {$$=NULL;}
+	;
+
+ListeIncrement: AutoIncremente',' ListeIncrement {$$=concat($1,$3);}
+	| AutoIncremente {$$=$1;}
+	;
+
+Boucle: FOR'('ListeInit';'ListeCondition';'ListeIncrement')''{'ListeInstr'}' {$$=ast_new_for($3,$5,$7,$10);}
+	| WHILE'('ListeCondition')''{'ListeInstr'}' {$$=ast_new_while($3,$6);}
+	;
+
+
 
 %%
 

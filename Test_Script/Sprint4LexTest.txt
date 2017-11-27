@@ -1,0 +1,28 @@
+int main() {
+	// Coucou le test
+	int intVar1_ = 42;
+
+	while(intVar1_<10){
+		intVar1_--;
+	}
+
+	for(int i=0;i<=intVar1_;i++){
+		printf("Mouallezzz");
+	}
+
+	for(int j=0, int k ;j<=intVar1_;j++,k--){
+		printf("Mouallezzz V2");
+	}
+
+	if(intVar1_ > intVar2_){
+		printf("yo");
+		printf("if\n");
+		intVar1_++;
+	}else{
+		printi(intVar1_);
+		printf("ici");
+		int intVar4_ = 43;
+	}
+
+	return 0;
+}

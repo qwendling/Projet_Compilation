@@ -62,6 +62,9 @@ typedef struct str_arbre{
   tree_value val;
 } std_arbre,*Arbre;
 
+
+Arbre ast_new_for(Arbre inits,Arbre conditions,Arbre increments,Arbre instructions);
+Arbre ast_new_while(Arbre conditions, Arbre instructions);
 Arbre ast_new_and(Arbre operande1, Arbre operande2);
 Arbre ast_new_or(Arbre operande1, Arbre operande2);
 Arbre ast_new_not(Arbre operande);
