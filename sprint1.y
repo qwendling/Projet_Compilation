@@ -175,12 +175,12 @@ ListeCondition: ListeCondition AND ListeCondition {$$=ast_new_and($1,$3);}
 	;
 
 // Expression boolean possible
-ExprBoolean: B EQUAL B {$$=ast_new_equal($1,$3);}
-	| B SUPP B {$$=ast_new_greater($1,$3);}
-	| B INF B {$$=ast_new_less($1,$3);}
-	| B SUPPEQU B {$$=ast_new_greaterOrEqual($1,$3);}
-	| B INFEQU B {$$=ast_new_lessOrEqual($1,$3);}
-	| B DIFFERENCE B {$$=ast_new_nequal($1,$3);}
+ExprBoolean: Expression EQUAL Expression {$$=ast_new_equal($1,$3);}
+	| Expression SUPP Expression {$$=ast_new_greater($1,$3);}
+	| Expression INF Expression {$$=ast_new_less($1,$3);}
+	| Expression SUPPEQU Expression {$$=ast_new_greaterOrEqual($1,$3);}
+	| Expression INFEQU Expression {$$=ast_new_lessOrEqual($1,$3);}
+	| Expression DIFFERENCE Expression {$$=ast_new_nequal($1,$3);}
 	;
 
 

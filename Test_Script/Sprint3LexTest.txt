@@ -19,7 +19,7 @@ int main() {
 	if( intVar4_ >= intVar2_ || intVar4_ != intVar1_)
 		printf("Condition OK ! Ca marche \n");
 
-	if(intVar2_ == 12){
+	if(intVar2_+1 == 12+1){
 		if(4 == 4 && intVar1_ == intVar3_){
 			printf("Yes Test Ok \n");
 			printi(intVar2_);

@@ -14,7 +14,7 @@ int main() {
 		printf("Mouallezzz \n");
 	}
 
-	for(int j=0, int k ;j<=intVar1_;j++,k--){
+	for(int j=0, int k ;j<=intVar1_-2;j++,k--){
 		for(int r=0; r<=2;r++){
 			printf("For imbriqué \n");
 		}
