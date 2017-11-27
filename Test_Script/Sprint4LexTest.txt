@@ -5,6 +5,9 @@ int main() {
 
 	while(intVar1_<10){
 		intVar1_--;
+		printf("la variable dans le while : ");
+		printi(intVar1_);
+		printf("\n");
 	}
 
 	for(int i=0;i<=intVar1_;i++){

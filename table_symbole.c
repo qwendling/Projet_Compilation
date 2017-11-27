@@ -125,6 +125,10 @@ Symbole sym_new_tmp(Symbole sym_Table[TAILLE_TABLE]){
 
   // on verifie que le symbole existe bien en le retournant
   new_tmp=sym_existe(sym_Table[h],name);
+  
+  if(new_tmp == NULL)
+	return sym_new_tmp(sym_Table);
+  printf("#########new tmp = %p\n",new_tmp);
 
   return new_tmp;
 

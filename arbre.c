@@ -422,3 +422,33 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
   int tmp2 = ast_semantique(a->freres,sym_table);
 	return !(!tmp && !tmp2);
 }
+
+
+/*int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
+	if(a == NULL){
+		return 0;
+	}
+	char* name = malloc(1024);
+	switch(a->type){
+		case ast_declaration:
+			snprintf(name,1024,"%sVAR",a->fils->val.str);
+			if(sym_existe_table(sym_table,name)){
+				return 2;
+			}
+			sym_add(name,sym_table);
+			break;
+		case ast_var:
+			snprintf(name,1024,"%sVAR",a->val.str);
+			free(a->val.str);
+			a->val.str = strdup(name);
+			if(!sym_existe_table(sym_table,name)){
+				return 1;
+			}
+			break;
+	}
+	free(name);
+  int tmp = ast_semantique(a->fils,sym_table);
+  int tmp2 = ast_semantique(a->freres,sym_table);
+	return !(!tmp && !tmp2);
+}*/
+

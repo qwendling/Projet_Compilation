@@ -19,6 +19,7 @@ Arbre ast;
 Symbole sym_Table[TAILLE_TABLE];
 //Liste chainé stockant les strings
 ConstString string_const = NULL;
+char* name_id;
 
 
 int return_value = 0;
@@ -92,15 +93,15 @@ printi {return PRINTI;}
 
 
 {INT}	{return INT;}
-{ID}	{yylval.string=strdup(yytext); return ID;}
+{ID}	{snprintf(name_id,1024,"%sVAR",yytext);yylval.string=name_id; return ID;}
 {ID}{INCREMENTMOINS} {yytext[strlen(yytext)-2]='\0';
-                      yylval.string=strdup(yytext);
+                      snprintf(name_id,1024,"%sVAR",yytext);yylval.string=name_id;
                       return INCREMENTMOINSAFTER;}
-{INCREMENTMOINS}{ID} {yylval.string=strdup(yytext+2);return INCREMENTMOINSBEFORE;}
+{INCREMENTMOINS}{ID} {snprintf(name_id,1024,"%sVAR",yytext+2);yylval.string=name_id;return INCREMENTMOINSBEFORE;}
 {ID}{INCREMENTPLUS}  {yytext[strlen(yytext)-2]='\0';
-                      yylval.string=strdup(yytext);
+                      snprintf(name_id,1024,"%sVAR",yytext);yylval.string=name_id;
                       return INCREMENTPLUSAFTER;}
-{INCREMENTPLUS}{ID}  {yylval.string=strdup(yytext+2);return INCREMENTPLUSBEFORE;}
+{INCREMENTPLUS}{ID}  {snprintf(name_id,1024,"%sVAR",yytext+2);yylval.string=name_id;return INCREMENTPLUSBEFORE;}
 
 
 
@@ -134,10 +135,12 @@ void lex_free() {
 
 int main(int argc, char **argv )
 {
+	name_id = malloc(1024);
 	// Ouverture du fichier
 	yyin = fopen(argv[1],"r");
 	yyparse();
 	fclose(yyin);
+	free(name_id);
   if(return_value)
     return_value;
 

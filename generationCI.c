@@ -61,6 +61,7 @@ void print_quad(quad q){
       printf("return %s NULL NULL\n",q->arg1->name);
       break;
     case affectation_var:
+		printf("WTFFF %s %p\n",q->arg1->name,q->res);
 		printf("affectation %s NULL %s\n",q->arg1->name,q->res->name);
 		break;
     case q_add:
@@ -212,6 +213,7 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
   		printf("test arg : %s\n",quad_res(arg)->name);
   		codegen = arg;
       // On génère le quad d'affectation de variable
+		printf("\n\n############FIND %s %p\n\n",ast->fils->val.str,sym_find(ast->fils->val.str,sym_table));
   		codegen = add_quad(codegen,quad_add(NULL,affectation_var,quad_res(arg),NULL,sym_find(ast->fils->val.str,sym_table)));
   		break;
   	case ast_div:
@@ -269,7 +271,7 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
       // On cherche la valeur de la variable a incrémenter
       sym_arg1 = sym_find(ast->fils->val.str,sym_table);
       tmp = sym_new_tmp(sym_table);
-
+		printf("######CHECK tmp %p\n",tmp);
       // On affecte a une variable temporaire la valeur de la variable recherché
       codegen = add_quad(codegen,quad_add(NULL,affectation_var,sym_arg1,NULL,tmp));
       // Incrementation = affectation de +1, creation de la constant entier 1
@@ -383,11 +385,8 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
 		lbl2 = sym_new_lbl(sym_table);
 		lbl3 = sym_new_lbl(sym_table);
 		
-		printf("Debut complete while\n");
 		quad_complete(ast->fils->val.boolList.trueList,lbl);
-		printf("Milieu complete while\n");
 		quad_complete(ast->fils->val.boolList.falseList,lbl2);
-		printf("Fin complete while\n");
 		
 		codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl3));
 		codegen= add_quad(codegen,arg);
