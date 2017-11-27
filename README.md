@@ -2,7 +2,7 @@
 Projet de compilation de langage StenC CMI M1S1 2017-2018
 
 ## Current Version
-#### Version 0.1.1
+#### Version 4.1.0
 
 *plan : V Sprint.MAJ.Update*
 
