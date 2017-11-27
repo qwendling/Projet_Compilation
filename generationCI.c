@@ -110,6 +110,7 @@ void print_quad(quad q){
 void quad_complete(quad q,Symbole s){
   if(q==NULL)
     return;
+  printf("test complete\n");
   q->res = s;
   quad_complete(q->nextBool,s);
 }
@@ -136,7 +137,9 @@ quad genCodeRelop(quad_op relop,Arbre ast,Symbole sym_table[TAILLE_TABLE]){
   codegen=add_quad(codegen,tmpQuad2);
 
   ast->val.boolList.trueList = tmpQuad;
+  tmpQuad->nextBool = NULL;
   ast->val.boolList.falseList = tmpQuad2;
+  tmpQuad2->nextBool = NULL;
   return codegen;
 }
 
@@ -372,14 +375,19 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
       }
       break;
 	case ast_while:
+		printf("CI while\n");
 		arg=genCode(ast->fils,sym_table);
 		arg2 = genCode(ast->fils->freres,sym_table);
+		printf("Fin gen while\n");
 		lbl = sym_new_lbl(sym_table);
 		lbl2 = sym_new_lbl(sym_table);
 		lbl3 = sym_new_lbl(sym_table);
 		
+		printf("Debut complete while\n");
 		quad_complete(ast->fils->val.boolList.trueList,lbl);
+		printf("Milieu complete while\n");
 		quad_complete(ast->fils->val.boolList.falseList,lbl2);
+		printf("Fin complete while\n");
 		
 		codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl3));
 		codegen= add_quad(codegen,arg);

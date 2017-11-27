@@ -1,6 +1,7 @@
 int main() {
 	// Coucou le test
 	int intVar1_ = 42;
+	int intVar2_;
 
 	while(intVar1_<10){
 		intVar1_--;
