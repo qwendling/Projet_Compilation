@@ -145,7 +145,7 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
   if(ast == NULL)
     return NULL;
   //nouveau symbole du quad
-  Symbole tmp,tmp2,sym_arg1,sym_arg2,lbl,lbl2;
+  Symbole tmp,tmp2,sym_arg1,sym_arg2,lbl,lbl2,lbl3;
   quad codegen = NULL,arg = NULL,arg2=NULL,arg3=NULL,tmpQuad=NULL,tmpQuad2=NULL;
   Arbre fils;
   //Suivant le type de l'AST le quad est différent
@@ -350,9 +350,6 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
       lbl2 = sym_new_lbl(sym_table);
       codegen = add_quad(codegen,quad_add(NULL,q_goto,NULL,NULL,lbl2));
       if(arg3 != NULL){
-        printf("\n\n######ELSE#####\n\n");
-        print_quad(arg3);
-        printf("#########\n\n");
         lbl = sym_new_lbl(sym_table);
         tmpQuad = quad_add(NULL,q_create_label,NULL,NULL,lbl);
         quad_complete(ast->fils->val.boolList.falseList,lbl);
@@ -374,7 +371,24 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
         fils = fils->freres;
       }
       break;
-
+	case ast_while:
+		arg=genCode(ast->fils,sym_table);
+		arg2 = genCode(ast->fils->freres,sym_table);
+		lbl = sym_new_lbl(sym_table);
+		lbl2 = sym_new_lbl(sym_table);
+		lbl3 = sym_new_lbl(sym_table);
+		
+		quad_complete(ast->fils->val.boolList.trueList,lbl);
+		quad_complete(ast->fils->val.boolList.falseList,lbl2);
+		
+		codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl3));
+		codegen= add_quad(codegen,arg);
+		codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl));
+		codegen = add_quad(codegen,arg2);
+		codegen = add_quad(codegen,quad_add(NULL,q_goto,NULL,NULL,lbl3));
+		codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl2));
+		
+		break;
   }
   return codegen;
 }
