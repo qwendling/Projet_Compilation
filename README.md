@@ -44,8 +44,9 @@ Commit Style with git commit :
 Commentaire to explain more precisly
 ```
 
-3 types of prefix :
+4 types of prefix :
   * (**feat**) : Add a feature #issueNumber
+  * (**test**) : Add a test #issueNumber
   * (**refactor**) : Explain the refactor #issueNumber
   * (**Debug**): Explain the debugging #issueNumber
 
