@@ -1,9 +1,9 @@
 int main() {
 	// Coucou le test
-	int intVar1_ = 42;
+	int intVar1_ = 15;
 	int intVar2_;
 
-	while(intVar1_<10){
+	while(intVar1_>10){
 		intVar1_--;
 		printf("la variable dans le while : ");
 		printi(intVar1_);
@@ -11,21 +11,22 @@ int main() {
 	}
 
 	for(int i=0;i<=intVar1_;i++){
-		printf("Mouallezzz");
+		printf("Mouallezzz \n");
 	}
 
 	for(int j=0, int k ;j<=intVar1_;j++,k--){
-		printf("Mouallezzz V2");
+		for(int r=0; r<=2;r++){
+			printf("For imbriqué \n");
+		}
+		printf("Mouallezzz V2 \n");
 	}
 
 	if(intVar1_ > intVar2_){
-		printf("yo");
-		printf("if\n");
-		intVar1_++;
-	}else{
+		printf("Coucou ca marche !\n ");
+		intVar1_ = intVar1_ + 5 ;
 		printi(intVar1_);
-		printf("ici");
-		int intVar4_ = 43;
+	}else{
+		printf("ici Bug");
 	}
 
 	return 0;
