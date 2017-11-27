@@ -3,24 +3,30 @@ int main() {
 	int intVar1_ = 42;
   int intVar2_ = 12;
   int intVar3_ = 43;
+	int intVar4_ = 43;
 
 	if(intVar1_ > intVar2_){
-    printf("yo");
-		printf("if\n");
+    printf("yo test qui marche \n");
 		intVar1_++;
   }else{
     printi(intVar1_);
-		printf("ici");
-		int intVar4_ = 43;
+		printf("Pas cense etre la \n ");
   }
 
-	if(intVar4_ == intVar2_)
+	if(intVar4_ == intVar3_)
 		printi(intVar4_);
 
-	if( intVar4_ <= intVar2_ || intVar4_ != intVar1_)
-		printi(intVar4_);
+	if( intVar4_ >= intVar2_ || intVar4_ != intVar1_)
+		printf("Condition OK ! Ca marche \n");
 
-	if(intVar4_ == intVar2_){
+	if(intVar2_ == 12){
+		if(4 == 4 && intVar1_ == intVar3_){
+			printf("Yes Test Ok \n");
+			printi(intVar2_);
+		}
+		else{
+			printf("Bug \n");
+		}
 		printi(intVar4_);
 	}
 
