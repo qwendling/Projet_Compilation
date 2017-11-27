@@ -146,7 +146,7 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
     return NULL;
   //nouveau symbole du quad
   Symbole tmp,tmp2,sym_arg1,sym_arg2,lbl,lbl2,lbl3;
-  quad codegen = NULL,arg = NULL,arg2=NULL,arg3=NULL,tmpQuad=NULL,tmpQuad2=NULL;
+  quad codegen = NULL,arg = NULL,arg2=NULL,arg3=NULL,arg4=NULL,tmpQuad=NULL,tmpQuad2=NULL;
   Arbre fils;
   //Suivant le type de l'AST le quad est différent
   switch(ast->type){
@@ -387,6 +387,37 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
 		codegen = add_quad(codegen,arg2);
 		codegen = add_quad(codegen,quad_add(NULL,q_goto,NULL,NULL,lbl3));
 		codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl2));
+		
+		break;
+	case ast_for: 
+		arg=genCode(ast->fils,sym_table);
+		arg2=genCode(ast->fils->freres,sym_table);
+		arg3=genCode(ast->fils->freres->freres,sym_table);
+		arg4=genCode(ast->fils->freres->freres->freres,sym_table);
+		
+		lbl = sym_new_lbl(sym_table);
+		lbl2 = sym_new_lbl(sym_table);
+		lbl3 = sym_new_lbl(sym_table);
+		
+		quad_complete(ast->fils->freres->val.boolList.trueList,lbl2);
+		quad_complete(ast->fils->freres->val.boolList.falseList,lbl3);
+		
+		//Code Init
+		codegen = add_quad(codegen,arg);
+		//Label condition
+		codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl));
+		//Condition
+		codegen = add_quad(codegen,arg2);
+		//Label true
+		codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl2));
+		//Bloc de code
+		codegen = add_quad(codegen,arg3);
+		//iteration
+		codegen = add_quad(codegen,arg4);
+		//gotoCond
+		codegen = add_quad(codegen,quad_add(NULL,q_goto,NULL,NULL,lbl));
+		//label false
+		codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl3));
 		
 		break;
   }
