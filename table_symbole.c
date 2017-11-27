@@ -53,9 +53,7 @@ Symbole sym_add_aux(Symbole s,char* name,int h){
 void sym_add(char* name,Symbole sym_Table[TAILLE_TABLE]){
   int h = sym_hach(name);
   Symbole e = sym_Table[h];
-  if(e==NULL){
-    sym_Table[h]=sym_add_aux(sym_Table[h],name,h);
-  }
+  sym_Table[h]=sym_add_aux(sym_Table[h],name,h);
 }
 
 // Cherche l'index d'un symbole dans la table avec son id
@@ -125,10 +123,6 @@ Symbole sym_new_tmp(Symbole sym_Table[TAILLE_TABLE]){
 
   // on verifie que le symbole existe bien en le retournant
   new_tmp=sym_existe(sym_Table[h],name);
-  
-  if(new_tmp == NULL)
-	return sym_new_tmp(sym_Table);
-  printf("#########new tmp = %p\n",new_tmp);
 
   return new_tmp;
 
