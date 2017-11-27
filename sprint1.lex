@@ -32,7 +32,7 @@ int return_value = 0;
 
 MAIN "int main"
 NOMBRE [0-9]*
-COMMENT \/\*.*\*\/|([^\\]\/\/.*[\n])
+COMMENT ([^\\]\/\/.*[\n])|\/\*(.|[\n])*\*\/
 STRING   \"([^\"\\]|\\.)*\"
 RETURN return
 
@@ -75,7 +75,7 @@ FOR "for"
 {WHILE} {printf("debut while \n");return WHILE;}
 {FOR} {printf("debut for \n");return FOR;}
 
-{COMMENT} {}
+{COMMENT} {printf(" Commentaire %s\n",yytext);}
 {MAIN} {return MAIN;}
 {RETURN} {return RETURN;}
 {NOMBRE} {yylval.nombre=atoi(yytext); return NOMBRE;}
