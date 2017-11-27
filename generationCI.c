@@ -108,10 +108,10 @@ void print_quad(quad q){
   print_quad(q->next);
 }
 
+
 void quad_complete(quad q,Symbole s){
   if(q==NULL)
     return;
-  printf("test complete\n");
   q->res = s;
   quad_complete(q->nextBool,s);
 }
@@ -123,22 +123,33 @@ quad add_bool(quad q1,quad q2){
   return q1;
 }
 
+//genere les quad des expressions boolean
 quad genCodeRelop(quad_op relop,Arbre ast,Symbole sym_table[TAILLE_TABLE]){
   quad codegen=NULL,arg=NULL,arg2=NULL,tmpQuad=NULL,tmpQuad2=NULL;
   Symbole sym_arg1,sym_arg2;
+  //operande gauche
   arg = genCode(ast->fils,sym_table);
+  //operande droite
   arg2 = genCode(ast->fils->freres,sym_table);
+  // symbole de l'operande gauche
   sym_arg1=quad_res(arg);
+  // symbole de l'operande droite
   sym_arg2=quad_res(arg2);
+  //ajout quad de l'operande gauche
   codegen=add_quad(codegen,arg);
+  //ajout quad de l'operande droite
   codegen=add_quad(codegen,arg2);
+
+  // hummmm
   tmpQuad = quad_add(NULL,relop,sym_arg1,sym_arg2,NULL);
   codegen=add_quad(codegen,tmpQuad);
   tmpQuad2 = quad_add(NULL,q_goto,NULL,NULL,NULL);
   codegen=add_quad(codegen,tmpQuad2);
 
+  // quads de la liste si vrai
   ast->val.boolList.trueList = tmpQuad;
   tmpQuad->nextBool = NULL;
+  // quads de la liste si faux
   ast->val.boolList.falseList = tmpQuad2;
   tmpQuad2->nextBool = NULL;
   return codegen;
@@ -271,7 +282,6 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
       // On cherche la valeur de la variable a incrémenter
       sym_arg1 = sym_find(ast->fils->val.str,sym_table);
       tmp = sym_new_tmp(sym_table);
-		printf("######CHECK tmp %p\n",tmp);
       // On affecte a une variable temporaire la valeur de la variable recherché
       codegen = add_quad(codegen,quad_add(NULL,affectation_var,sym_arg1,NULL,tmp));
       // Incrementation = affectation de +1, creation de la constant entier 1
@@ -296,13 +306,20 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
       codegen = add_quad(codegen,quad_add(NULL,use_var,NULL,NULL,tmp));
       break;
     case ast_and:
+      // operande de gauche
       arg = genCode(ast->fils,sym_table);
+      // operande de droite
       arg2 = genCode(ast->fils->freres,sym_table);
       lbl = sym_new_lbl(sym_table);
+      //la true liste prene le label actuel
       quad_complete(ast->fils->val.boolList.trueList,lbl);
+      // on ajoute tout les frères de la condtion dans la true liste, donc si condition verifié
       ast->val.boolList.trueList = ast->fils->freres->val.boolList.trueList;
+      // on ajoute le else dans la false list
       ast->val.boolList.falseList = add_bool(ast->fils->val.boolList.falseList,ast->fils->freres->val.boolList.falseList);
+
       codegen = add_quad(codegen,arg);
+      /// mmmmh je bug la
       codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl));
       codegen = add_quad(codegen,arg2);
       break;
@@ -377,38 +394,47 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
       }
       break;
 	case ast_while:
-		printf("CI while\n");
+    //quad condition
 		arg=genCode(ast->fils,sym_table);
+    //quad instructions
 		arg2 = genCode(ast->fils->freres,sym_table);
-		printf("Fin gen while\n");
 		lbl = sym_new_lbl(sym_table);
 		lbl2 = sym_new_lbl(sym_table);
 		lbl3 = sym_new_lbl(sym_table);
-		
+
+    // quad quand condition vrai
 		quad_complete(ast->fils->val.boolList.trueList,lbl);
+    //quad quand faux
 		quad_complete(ast->fils->val.boolList.falseList,lbl2);
-		
+
+    // hummm le lbl3 why ?
 		codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl3));
 		codegen= add_quad(codegen,arg);
 		codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl));
 		codegen = add_quad(codegen,arg2);
 		codegen = add_quad(codegen,quad_add(NULL,q_goto,NULL,NULL,lbl3));
 		codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl2));
-		
+
 		break;
-	case ast_for: 
+	case ast_for:
+    //quad inits
 		arg=genCode(ast->fils,sym_table);
+    //quad condition
 		arg2=genCode(ast->fils->freres,sym_table);
+    //quad increment
 		arg3=genCode(ast->fils->freres->freres,sym_table);
+    //quad instructions
 		arg4=genCode(ast->fils->freres->freres->freres,sym_table);
-		
+
 		lbl = sym_new_lbl(sym_table);
 		lbl2 = sym_new_lbl(sym_table);
 		lbl3 = sym_new_lbl(sym_table);
-		
+
+    // quad quand condition verifié
 		quad_complete(ast->fils->freres->val.boolList.trueList,lbl2);
+    //quad quand fini boucle
 		quad_complete(ast->fils->freres->val.boolList.falseList,lbl3);
-		
+
 		//Code Init
 		codegen = add_quad(codegen,arg);
 		//Label condition
@@ -425,7 +451,7 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
 		codegen = add_quad(codegen,quad_add(NULL,q_goto,NULL,NULL,lbl));
 		//label false
 		codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl3));
-		
+
 		break;
   }
   return codegen;

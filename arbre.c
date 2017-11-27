@@ -28,6 +28,7 @@ Arbre new_string(char* val){
   return new;
 }
 
+//creation d'un noeud bloc pour différencier les blocs d'instruction dans les boucles ou conditions
 Arbre ast_new_bloc(Arbre feuille){
 	Arbre new = calloc(1,sizeof(std_arbre));
 	new->type = ast_bloc;
@@ -172,86 +173,87 @@ void ast_free(Arbre a){
 
 //------- Sprint 3 -------
 
+//Ajout d'un noeud &&
 Arbre ast_new_and(Arbre operande1, Arbre operande2){
   Arbre new = calloc(1,sizeof(std_arbre));
 	new->type = ast_and;
 	new->fils = operande1;
   new->fils->freres = operande2;
-	// On return une feuille de type ast_autoIncrementMoins
 	return new;
 }
 
+//Ajout d'un noeud ||
 Arbre ast_new_or(Arbre operande1, Arbre operande2){
   Arbre new = calloc(1,sizeof(std_arbre));
 	new->type = ast_or;
 	new->fils = operande1;
   new->fils->freres = operande2;
-	// On return une feuille de type ast_autoIncrementMoins
 	return new;
 }
 
+//Ajout d'un noeud !
 Arbre ast_new_not(Arbre operande){
   Arbre new = calloc(1,sizeof(std_arbre));
 	new->type = ast_not;
 	new->fils = operande;
-	// On return une feuille de type ast_autoIncrementMoins
 	return new;
 }
 
+//Ajout d'un noeud ==
 Arbre ast_new_equal(Arbre operande1, Arbre operande2){
   Arbre new = calloc(1,sizeof(std_arbre));
 	new->type = ast_equal;
 	new->fils = operande1;
   new->fils->freres = operande2;
-	// On return une feuille de type ast_autoIncrementMoins
 	return new;
 }
 
+//Ajout d'un noeud !=
 Arbre ast_new_nequal(Arbre operande1, Arbre operande2){
   Arbre new = calloc(1,sizeof(std_arbre));
 	new->type = ast_nequal;
 	new->fils = operande1;
   new->fils->freres = operande2;
-	// On return une feuille de type ast_autoIncrementMoins
 	return new;
 }
 
+//Ajout d'un noeud >
 Arbre ast_new_greater(Arbre operande1, Arbre operande2){
   Arbre new = calloc(1,sizeof(std_arbre));
 	new->type = ast_greater;
 	new->fils = operande1;
   new->fils->freres = operande2;
-	// On return une feuille de type ast_autoIncrementMoins
 	return new;
 }
 
+//Ajout d'un noeud >=
 Arbre ast_new_greaterOrEqual(Arbre operande1, Arbre operande2){
   Arbre new = calloc(1,sizeof(std_arbre));
 	new->type = ast_greaterOrEqual;
 	new->fils = operande1;
   new->fils->freres = operande2;
-	// On return une feuille de type ast_autoIncrementMoins
 	return new;
 }
 
+//Ajout d'un noeud <
 Arbre ast_new_less(Arbre operande1, Arbre operande2){
   Arbre new = calloc(1,sizeof(std_arbre));
 	new->type = ast_less;
 	new->fils = operande1;
   new->fils->freres = operande2;
-	// On return une feuille de type ast_autoIncrementMoins
 	return new;
 }
 
+//Ajout d'un noeud <=
 Arbre ast_new_lessOrEqual(Arbre operande1, Arbre operande2){
   Arbre new = calloc(1,sizeof(std_arbre));
 	new->type = ast_lessOrEqual;
 	new->fils = operande1;
   new->fils->freres = operande2;
-	// On return une feuille de type ast_autoIncrementMoins
 	return new;
 }
 
+//Ajout d'un noeud de condition IF
 Arbre ast_new_if(Arbre ifCondition, Arbre ifInstructions, Arbre elseInstructions){
   Arbre new = calloc(1,sizeof(std_arbre));
 	new->type = ast_if;
@@ -265,23 +267,27 @@ Arbre ast_new_if(Arbre ifCondition, Arbre ifInstructions, Arbre elseInstructions
   new->fils->freres->freres->type = ast_bloc;
   new->fils->freres->freres->fils = elseInstructions;
 
-	// On return une feuille de type ast_autoIncrementMoins
 	return new;
 }
 
 //------- SPRINT 4 -------
 
+//Ajout d'un noeud de boucle for
 Arbre ast_new_for(Arbre inits,Arbre conditions,Arbre increments,Arbre instructions){
 	Arbre new = calloc(1,sizeof(std_arbre));
 	new->type = ast_for;
+  // fils 1 initialiseurs
 	new->fils = ast_new_bloc(inits);
+  // fils 2 conditon
 	new->fils->freres = conditions;
+  // fils 3 incrementation
 	new->fils->freres->freres = ast_new_bloc(increments);
+  // fils 4 bloc d'instruction
 	new->fils->freres->freres->freres = ast_new_bloc(instructions);
 	return new;
 }
 
-
+//Ajout d'un noeud de boucle while
 Arbre ast_new_while(Arbre conditions, Arbre instructions){
 	Arbre new = calloc(1,sizeof(std_arbre));
 	new->type = ast_while;
@@ -398,6 +404,7 @@ void ast_print_aux(Arbre a,int profondeur){
 
 }
 
+// Repère si il y'a une erreur de sémantique dans le programme
 int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
 	if(a == NULL){
 		return 0;
@@ -451,4 +458,3 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
   int tmp2 = ast_semantique(a->freres,sym_table);
 	return !(!tmp && !tmp2);
 }*/
-

@@ -160,12 +160,13 @@ B: NOMBRE {$$=new_const($1);}
 
 
 //---------- CONDITIONS -------------//
+// Gestion des IF types possible
 Condition: IF '('ListeCondition')''{' ListeInstr '}' ELSE '{' ListeInstr '}' {$$=ast_new_if($3,$6,$10);}
 	| IF '('ListeCondition')''{' ListeInstr '}' {$$=ast_new_if($3,$6,NULL);}
 	| IF '('ListeCondition')' Instruction ';' {$$=ast_new_if($3,$5,NULL);}
 	;
 
-
+// Liste des conditions multiples possibles
 ListeCondition: ListeCondition AND ListeCondition {$$=ast_new_and($1,$3);}
 	| ListeCondition OR ListeCondition {$$=ast_new_or($1,$3);}
 	| NOT ListeCondition {$$=ast_new_not($2);}
@@ -173,7 +174,7 @@ ListeCondition: ListeCondition AND ListeCondition {$$=ast_new_and($1,$3);}
 	| ExprBoolean {$$=$1;}
 	;
 
-
+// Expression boolean possible
 ExprBoolean: B EQUAL B {$$=ast_new_equal($1,$3);}
 	| B SUPP B {$$=ast_new_greater($1,$3);}
 	| B INF B {$$=ast_new_less($1,$3);}
@@ -184,24 +185,26 @@ ExprBoolean: B EQUAL B {$$=ast_new_equal($1,$3);}
 
 
 //---------- BOUCLES -------------//
+//Gestion des boucles type possible
+Boucle: FOR'('ListeInit';'ListeCondition';'ListeIncrement')''{'ListeInstr'}' {$$=ast_new_for($3,$5,$7,$10);}
+	| WHILE'('ListeCondition')''{'ListeInstr'}' {$$=ast_new_while($3,$6);}
+	;
+
+//Liste des initialiseurs dans la boucle for
 ListeInit:InitMember','ListeInit {$$=concat($1,$3);}
 	|InitMember {$$=$1;}
 	;
 
+// Initialiseurs possible
 InitMember: Affectation {$$=$1;}
 	| Declaration {$$=$1;}
 	| {$$=NULL;}
 	;
 
+// Liste des Incrementations dans la boucle for
 ListeIncrement: AutoIncremente',' ListeIncrement {$$=concat($1,$3);}
 	| AutoIncremente {$$=$1;}
 	;
-
-Boucle: FOR'('ListeInit';'ListeCondition';'ListeIncrement')''{'ListeInstr'}' {$$=ast_new_for($3,$5,$7,$10);}
-	| WHILE'('ListeCondition')''{'ListeInstr'}' {$$=ast_new_while($3,$6);}
-	;
-
-
 
 %%
 

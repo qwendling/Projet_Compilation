@@ -25,7 +25,7 @@ typedef enum arbre_type{
   ast_autoIncrementPlus,
   ast_autoIncrementMoins,
 
-  // Sprint3
+  //--- Sprint3
   ast_and,
   ast_or,
   ast_not,
@@ -37,8 +37,8 @@ typedef enum arbre_type{
   ast_lessOrEqual,
   ast_if,
   ast_bloc,
-  
-  //Sprint4
+
+  //--- Sprint4
   ast_while,
   ast_for,
 }arbre_type;
@@ -61,20 +61,6 @@ typedef struct str_arbre{
   struct str_arbre* freres;
   tree_value val;
 } std_arbre,*Arbre;
-
-
-Arbre ast_new_for(Arbre inits,Arbre conditions,Arbre increments,Arbre instructions);
-Arbre ast_new_while(Arbre conditions, Arbre instructions);
-Arbre ast_new_and(Arbre operande1, Arbre operande2);
-Arbre ast_new_or(Arbre operande1, Arbre operande2);
-Arbre ast_new_not(Arbre operande);
-Arbre ast_new_equal(Arbre operande1, Arbre operande2);
-Arbre ast_new_nequal(Arbre operande1, Arbre operande2);
-Arbre ast_new_greater(Arbre operande1, Arbre operande2);
-Arbre ast_new_greaterOrEqual(Arbre operande1, Arbre operande2);
-Arbre ast_new_less(Arbre operande1, Arbre operande2);
-Arbre ast_new_lessOrEqual(Arbre operande1, Arbre operande2);
-Arbre ast_new_if(Arbre ifCondition, Arbre ifInstructions, Arbre elseInstructions);
 
 
 //------- SPRINT 1 -------
@@ -132,6 +118,48 @@ Arbre ast_new_autoIncrement_moins(Arbre var);
 
 //Libere la mémoire de l'AST
 void ast_free(Arbre);
+
+
+//------- SPRINT 3 -------
+
+//Ajout d'un noeud &&
+Arbre ast_new_and(Arbre operande1, Arbre operande2);
+
+//Ajout d'un noeud ||
+Arbre ast_new_or(Arbre operande1, Arbre operande2);
+
+//Ajout d'un noeud !
+Arbre ast_new_not(Arbre operande);
+
+//Ajout d'un noeud ==
+Arbre ast_new_equal(Arbre operande1, Arbre operande2);
+
+//Ajout d'un noeud !=
+Arbre ast_new_nequal(Arbre operande1, Arbre operande2);
+
+//Ajout d'un noeud >
+Arbre ast_new_greater(Arbre operande1, Arbre operande2);
+
+//Ajout d'un noeud >=
+Arbre ast_new_greaterOrEqual(Arbre operande1, Arbre operande2);
+
+//Ajout d'un noeud <
+Arbre ast_new_less(Arbre operande1, Arbre operande2);
+
+//Ajout d'un noeud <=
+Arbre ast_new_lessOrEqual(Arbre operande1, Arbre operande2);
+
+//Ajout d'un noeud de condition IF
+Arbre ast_new_if(Arbre ifCondition, Arbre ifInstructions, Arbre elseInstructions);
+
+
+//------- SPRINT 4 -------
+
+//Ajout d'un noeud de boucle for
+Arbre ast_new_for(Arbre inits,Arbre conditions,Arbre increments,Arbre instructions);
+
+//Ajout d'un noeud de boucle while
+Arbre ast_new_while(Arbre conditions, Arbre instructions);
 
 
 //------- All sprints -------
