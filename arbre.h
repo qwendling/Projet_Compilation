@@ -67,7 +67,6 @@ typedef struct str_arbre{
 } std_arbre,*Arbre;
 
 
-Arbre ast_new_tableau(char* id, Arbre dimension);
 
 //------- SPRINT 1 -------
 
@@ -167,6 +166,10 @@ Arbre ast_new_for(Arbre inits,Arbre conditions,Arbre increments,Arbre instructio
 //Ajout d'un noeud de boucle while
 Arbre ast_new_while(Arbre conditions, Arbre instructions);
 
+//------- SPRINT 5 -------
+Arbre ast_new_tableauDeclare(char* id, Arbre dimension);
+
+Arbre ast_new_tableauAffec(char* id, Arbre dimension, Arbre affect);
 
 //------- All sprints -------
 //Affiche dans le terminal l'AST général avec ses frères et fils

@@ -124,7 +124,7 @@ Declaration: INT Affectation{$$=ast_new_declaration(new_var($2->fils->val.str));
 	| Tableau {$$=$1;}
 	;
 
-Tableau:INT ID ListeDim {$$=ast_new_tableau($2,$3);}
+Tableau:INT ID ListeDim {$$=ast_new_tableauDeclare($2,$3);}
 	;
 
 ListeDim: '['NOMBRE']' ListeDim {$$=concat(new_const($2),$4);}
@@ -132,10 +132,10 @@ ListeDim: '['NOMBRE']' ListeDim {$$=concat(new_const($2),$4);}
 	;
 
 
-AffectationTableau: ID ListeDimAffect '=' Expression {;};
+AffectationTableau: ID ListeDimAffect '=' Expression {$$=ast_new_tableauAffec($1,$2,$4);};
 
-ListeDimAffect: '['Expression']' ListeDimAffect {;}
-	|'['Expression']' {;}
+ListeDimAffect: '['Expression']' ListeDimAffect {$$=concat($2,$4);}
+	|'['Expression']' {$$=$2;}
 	;
 
 

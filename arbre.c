@@ -298,13 +298,25 @@ Arbre ast_new_while(Arbre conditions, Arbre instructions){
 
 
 //------- SPRINT 5 -------
-Arbre ast_new_tableau(char* id, Arbre dimension){
+Arbre ast_new_tableauDeclare(char* id, Arbre dimension){
 	Arbre new = calloc(1,sizeof(std_arbre));
 	new->type = ast_declaration;
 	new->fils =  calloc(1,sizeof(std_arbre));
   new->fils->type = ast_tableau;
   new->fils->val.str = id;
 	new->fils->fils = dimension;
+	return new;
+
+}
+
+Arbre ast_new_tableauAffec(char* id, Arbre dimension, Arbre affect){
+	Arbre new = calloc(1,sizeof(std_arbre));
+	new->type = ast_affectation;
+	new->fils =  calloc(1,sizeof(std_arbre));
+  new->fils->type = ast_tableau;
+  new->fils->val.str = id;
+	new->fils->fils = dimension;
+  new->fils->freres = affect;
 	return new;
 
 }
@@ -449,4 +461,3 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
   int tmp2 = ast_semantique(a->freres,sym_table);
 	return !(!tmp && !tmp2);
 }
-
