@@ -64,6 +64,7 @@ test: all
 
 # Clean repository
 clean:
+	@rm Test_Script/*.s
 	@rm *.yy.*
 	@rm *.tab.*
 	@rm ${EXEC}

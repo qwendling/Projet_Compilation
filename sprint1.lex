@@ -160,8 +160,9 @@ int main(int argc, char **argv )
 	print_quad(code);
 
 	printf("\n########## MIPS ##########\n\n");
-	// Generation du code assembleur dans le fichier test.s
-	FILE* file = fopen("test.s","w");
+	// Generation du code assembleur dans le fichier donné
+  char* filePath = strcat(argv[1],"_Assembly.s");
+	FILE* file = fopen(filePath,"w");
 	// 1.Header
 	genAssembleur_header(sym_Table,file);
 	// 2.Generation a partir des quads
