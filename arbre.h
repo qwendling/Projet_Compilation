@@ -25,7 +25,7 @@ typedef enum arbre_type{
   ast_autoIncrementPlus,
   ast_autoIncrementMoins,
 
-  //--- Sprint3
+  //--- Sprint 3
   ast_and,
   ast_or,
   ast_not,
@@ -38,9 +38,13 @@ typedef enum arbre_type{
   ast_if,
   ast_bloc,
 
-  //--- Sprint4
+  //--- Sprint 4
   ast_while,
   ast_for,
+
+	//--- Sprint 5
+	ast_tableau
+
 }arbre_type;
 
 // Union definissant les valeurs possibles d'une feuille
@@ -62,6 +66,8 @@ typedef struct str_arbre{
   tree_value val;
 } std_arbre,*Arbre;
 
+
+Arbre ast_new_tableau(char* id, Arbre dimension);
 
 //------- SPRINT 1 -------
 

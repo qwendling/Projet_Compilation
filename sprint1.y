@@ -66,6 +66,10 @@
 %type <ast> ListeInit
 %type <ast> ListeIncrement
 %type <ast> InitMember
+%type <ast> Tableau
+%type <ast> AffectationTableau
+%type <ast> ListeDim
+%type <ast> ListeDimAffect
 
 // ---- Gestion de la priorite
 %left NOT
@@ -110,13 +114,30 @@ Instruction: RETURN Expression { $$=ast_new_return($2);}
 	|Declaration { $$=$1;}
 	|Affectation { $$=$1;}
 	|AutoIncremente {$$=$1;}
+	|AffectationTableau {$$=$1;}
 	;
 
 //---------- DECLARATION VARIABLE -------------//
 // Declaration de variable soit par une affectation de valeur soit vide
 Declaration: INT Affectation{$$=ast_new_declaration(new_var($2->fils->val.str)); $$->freres = $2;}
 	| INT ID {$$=ast_new_declaration(new_var($2));}
+	| Tableau {$$=$1;}
 	;
+
+Tableau:INT ID ListeDim {$$=ast_new_tableau($2,$3);}
+	;
+
+ListeDim: '['NOMBRE']' ListeDim {$$=concat(new_const($2),$4);}
+	|'['NOMBRE']' {$$=new_const($2);}
+	;
+
+
+AffectationTableau: ID ListeDimAffect '=' Expression {;};
+
+ListeDimAffect: '['Expression']' ListeDimAffect {;}
+	|'['Expression']' {;}
+	;
+
 
 //---------- AFFECTATION VARIABLE -------------//
 // Une affectation correspond a un ID prenant comme valeur une expression
@@ -205,6 +226,12 @@ InitMember: Affectation {$$=$1;}
 ListeIncrement: AutoIncremente',' ListeIncrement {$$=concat($1,$3);}
 	| AutoIncremente {$$=$1;}
 	;
+
+
+
+//---------- DECLARATION TABLEAU -------------//
+
+
 
 %%
 

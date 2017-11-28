@@ -296,6 +296,20 @@ Arbre ast_new_while(Arbre conditions, Arbre instructions){
 	return new;
 }
 
+
+//------- SPRINT 5 -------
+Arbre ast_new_tableau(char* id, Arbre dimension){
+	Arbre new = calloc(1,sizeof(std_arbre));
+	new->type = ast_declaration;
+	new->fils =  calloc(1,sizeof(std_arbre));
+  new->fils->type = ast_tableau;
+  new->fils->val.str = id;
+	new->fils->fils = dimension;
+	return new;
+
+}
+
+
 //------- All sprints -------
 
 //Affiche dans le terminal l'AST général avec ses frères et fils
@@ -396,6 +410,8 @@ void ast_print_aux(Arbre a,int profondeur){
   case ast_while:
   printf("ast_while\n");
   break;
+	case ast_tableau:
+	printf("ast_tableau\n");
   }
 
   //Affiche de manière recursive et ajoute une profondeur si possède des fils
@@ -430,31 +446,3 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
 	return !(!tmp && !tmp2);
 }
 
-
-/*int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
-	if(a == NULL){
-		return 0;
-	}
-	char* name = malloc(1024);
-	switch(a->type){
-		case ast_declaration:
-			snprintf(name,1024,"%sVAR",a->fils->val.str);
-			if(sym_existe_table(sym_table,name)){
-				return 2;
-			}
-			sym_add(name,sym_table);
-			break;
-		case ast_var:
-			snprintf(name,1024,"%sVAR",a->val.str);
-			free(a->val.str);
-			a->val.str = strdup(name);
-			if(!sym_existe_table(sym_table,name)){
-				return 1;
-			}
-			break;
-	}
-	free(name);
-  int tmp = ast_semantique(a->fils,sym_table);
-  int tmp2 = ast_semantique(a->freres,sym_table);
-	return !(!tmp && !tmp2);
-}*/

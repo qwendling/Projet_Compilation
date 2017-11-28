@@ -85,7 +85,7 @@ FOR "for"
 printf {return PRINTF;}
 printi {return PRINTI;}
 
-[\{\}\(\)\;] {return yytext[0];}
+[\{\}\(\)\[\]\;] {printf("Envoie de : %s \n",yytext);return yytext[0];}
 =		{return yytext[0];}
 [+-/*] {return yytext[0];}
 
