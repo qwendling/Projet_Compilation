@@ -426,6 +426,7 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
 		return 0;
 	}
 	char* name;
+	Symbole s;
 	switch(a->type){
 		case ast_declaration:
 			name = a->fils->val.str;
@@ -436,9 +437,12 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
 			break;
 		case ast_var:
 			name = a->val.str;
-			if(!sym_existe_table(sym_table,name)){
+			s = sym_find(name,sym_table);
+			if(s == NULL || s->type != sym_var){
 				return 1;
 			}
+			break;
+		case ast_tableau:
 			break;
 	}
   int tmp = ast_semantique(a->fils,sym_table);

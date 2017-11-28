@@ -4,6 +4,10 @@
 // Taille de la table des symboles
 #define TAILLE_TABLE 4096
 
+typedef struct std_dim{
+	int size;
+	struct std_dim* next;
+}std_dim,*Dim;
 
 // Enumeration des types de symboles
 typedef enum sym_type{
@@ -11,6 +15,7 @@ typedef enum sym_type{
   sym_const,
   sym_string,
   sym_label,
+  sym_tab,
 } sym_type;
 
 // Structure des symboles
@@ -20,6 +25,7 @@ typedef struct std_symbole{
   union{
     int entier;
     char* str;
+    Dim dimension;
   } val;
   sym_type type; // type du symbole
   struct std_symbole* next;
