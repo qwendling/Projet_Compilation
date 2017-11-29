@@ -1,3 +1,15 @@
+# H4CKED
+# H4CKED
+# H4CKED
+# H4CKED
+# H4CKED
+# H4CKED
+# H4CKED
+# H4CKED
+# H4CKED
+# H4CKED
+# H4CKED
+# H4CKED
 # Projet_Compilation
 Projet de compilation de langage StenC CMI M1S1 2017-2018
 
@@ -18,7 +30,6 @@ git config --global user.email "email@mail.com"
 ```
 
 ## Keywords et operateur
-
 +
 -
 *
@@ -53,7 +64,8 @@ Commentaire to explain more precisly
 ## Authors
 * **Quentin WENDLING** [GitHub](https://github.com/qwendling)
 * **Nathan URBAIN** [GitHub](https://github.com/nurbain)
+* **Anonymous** [Github](http://pornhub.com)
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the CC0 License
