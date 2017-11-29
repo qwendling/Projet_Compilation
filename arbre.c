@@ -321,6 +321,14 @@ Arbre ast_new_tableauAffec(char* id, Arbre dimension, Arbre affect){
 
 }
 
+Arbre new_tableau(char* id, Arbre dimension){
+	Arbre new = calloc(1,sizeof(std_arbre));
+  new->type = ast_tableau;
+  new->val.str = strdup(id);
+	new->fils = dimension;
+	return new;
+
+}
 
 //------- All sprints -------
 

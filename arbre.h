@@ -171,6 +171,7 @@ Arbre ast_new_tableauDeclare(char* id, Arbre dimension);
 
 Arbre ast_new_tableauAffec(char* id, Arbre dimension, Arbre affect);
 
+Arbre new_tableau(char* id, Arbre dimension);
 //------- All sprints -------
 //Affiche dans le terminal l'AST général avec ses frères et fils
 void ast_print(Arbre a);

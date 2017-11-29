@@ -177,6 +177,7 @@ AutoIncremente:	INCREMENTPLUSAFTER {$$=ast_new_autoIncrement_plus(new_var($1));}
 B: NOMBRE {$$=new_const($1);}
 	| ID { $$ = new_var($1);}
 	| AutoIncremente {$$ = $1;}
+	| ID ListeDimAffect {$$ = new_tableau($1,$2);}
 	;
 
 
