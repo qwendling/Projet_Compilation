@@ -432,9 +432,33 @@ void ast_print_aux(Arbre a,int profondeur){
 
 }
 
-void ast_create_tab(Arbre a,Symbole s){
+Dim add_dim(Dim d,int size){
+  if(d == NULL){
+    Dim tmp=calloc(1,sizeof(std_dim));
+    tmp->size=size;
+    tmp->next = NULL;
+    return tmp;
+  }
+  d->next = add_dim(d->next,size);
+  return d;
+}
+
+void create_tab(Arbre a,Symbole s){
 	Arbre tmp = a->fils;
-	return;
+  s->val.dimension=NULL;
+  while(tmp != NULL){
+    s->val.dimension=add_dim(s->val.dimension,tmp->val.constante);
+    tmp = tmp->freres;
+  }
+}
+
+void print_tab(Symbole s){
+  Dim tmp = s->val.dimension;
+  while(tmp != NULL){
+    printf("%d ",tmp->size);
+    tmp = tmp->next;
+  }
+  printf("\n");
 }
 
 // Repère si il y'a une erreur de sémantique dans le programme
@@ -459,6 +483,8 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
 				case ast_tableau:
 					printf("declaration tab\n");
 					s->type = sym_tab;
+          create_tab(a->fils,s);
+          print_tab(s);
 					break;
 			}
 			break;
