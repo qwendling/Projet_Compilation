@@ -29,6 +29,9 @@ typedef enum quad_op{
   q_lessOrEqual,
   q_create_label,
   q_goto,
+
+  //Sprint5
+  affectation_tab,
 } quad_op;
 
 // structure des quads

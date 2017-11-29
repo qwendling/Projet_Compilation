@@ -188,7 +188,7 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
         codegen = add_quad(codegen,quad_add(NULL,print_f,quad_res(arg),NULL,NULL));
         break;
     case ast_printi:
-  		printf("CI printi\n");
+  		  printf("CI printi\n");
         // on genere le quad de la constante a afficher
         arg = genCode(ast->fils,sym_table);
         codegen = arg;
@@ -204,7 +204,7 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
         codegen = add_quad(codegen,quad_add(NULL,return_prog,quad_res(arg),NULL,NULL));
         break;
     case ast_main:
-  		printf("CI main\n");
+  		  printf("CI main\n");
         codegen = quad_add(codegen,create_main,NULL,NULL,NULL);
         fils = ast->fils;
         // On parcoure l'AST pour générer tout les quads du main
@@ -220,12 +220,22 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
   		break;
   	case ast_affectation:
   		printf("CI affecVar %s\n",ast->fils->val.str);
+      arg2 = genCode(ast->fils,sym_table);
   		arg = genCode(ast->fils->freres,sym_table);
   		printf("test arg : %s\n",quad_res(arg)->name);
   		codegen = arg;
       // On génère le quad d'affectation de variable
-		printf("\n\n############FIND %s %p\n\n",ast->fils->val.str,sym_find(ast->fils->val.str,sym_table));
-  		codegen = add_quad(codegen,quad_add(NULL,affectation_var,quad_res(arg),NULL,sym_find(ast->fils->val.str,sym_table)));
+		  printf("\n\n############FIND %s %p\n\n",ast->fils->val.str,sym_find(ast->fils->val.str,sym_table));
+      quad_op q_op= affectation_var;
+      switch(ast->fils->type){
+        case ast_tableau:
+          q_op = affectation_tab;
+          break;
+        case ast_var:
+          q_op = affectation_var;
+          break;
+      }
+  		codegen = add_quad(codegen,quad_add(NULL,q_op,quad_res(arg),NULL,quad_res(arg2)));
   		break;
   	case ast_div:
   	  printf("CI /\n");
@@ -453,6 +463,31 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
 		codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl3));
 
 		break;
+  case ast_tableau:
+  /*  sym_arg1 = sym_find(ast->val.str,sym_table);
+    arg=genCode(ast->fils,sym_table);
+    sym_arg2=quad_res(arg);
+    codegen = add_quad(codegen,arg);
+    Arbre parcours_dim = ast->fils->freres;
+    Dim dim_tab = sym_arg1->dimension->next;
+    int size_dim;
+
+    while(parcours_dim != NULL){
+      if(dim_tab != NULL){
+        size_dim = dim_tab->size;
+        dim_tab = dim_tab->next;
+      }else{
+        size_dim = 0;
+      }
+      tmp = sym_new_tmp(sym_table);
+      tmp->type = sym_const;
+      tmp->val.entier = size_dim;
+      codegen = add_quad(codegen,quad_add(NULL,q_mul,quad_res(codegen),sym_new_tmp(sym_table)));
+      arg=genCode(parcours_dim,sym_table);
+    }
+    codegen = add_quad(codegen,quad_add(NULL,sym_arg1,sym_arg2,sym_new_tmp(sym_table)));
+    */
+    break;
   }
   return codegen;
 }
