@@ -303,7 +303,7 @@ Arbre ast_new_tableauDeclare(char* id, Arbre dimension){
 	new->type = ast_declaration;
 	new->fils =  calloc(1,sizeof(std_arbre));
   new->fils->type = ast_tableau;
-  new->fils->val.str = id;
+  new->fils->val.str = strdup(id);
 	new->fils->fils = dimension;
 	return new;
 
@@ -314,7 +314,7 @@ Arbre ast_new_tableauAffec(char* id, Arbre dimension, Arbre affect){
 	new->type = ast_affectation;
 	new->fils =  calloc(1,sizeof(std_arbre));
   new->fils->type = ast_tableau;
-  new->fils->val.str = id;
+  new->fils->val.str = strdup(id);
 	new->fils->fils = dimension;
   new->fils->freres = affect;
 	return new;
@@ -432,6 +432,11 @@ void ast_print_aux(Arbre a,int profondeur){
 
 }
 
+void ast_create_tab(Arbre a,Symbole s){
+	Arbre tmp = a->fils;
+	return;
+}
+
 // Repère si il y'a une erreur de sémantique dans le programme
 int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
 	if(a == NULL){
@@ -446,6 +451,16 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
 				return 2;
 			}
 			sym_add(name,sym_table);
+			s=sym_find(name,sym_table);
+			switch(a->fils->type){
+				case ast_var:
+					s->type = sym_var;
+					break;
+				case ast_tableau:
+					printf("declaration tab\n");
+					s->type = sym_tab;
+					break;
+			}
 			break;
 		case ast_var:
 			name = a->val.str;
@@ -455,6 +470,12 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
 			}
 			break;
 		case ast_tableau:
+			printf("sem ast_tableau\n");
+			name = a->val.str;
+			s = sym_find(name,sym_table);
+			if(s == NULL || s->type != sym_tab){
+				return 1;
+			}
 			break;
 	}
   int tmp = ast_semantique(a->fils,sym_table);
