@@ -480,6 +480,7 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
 		case ast_declaration:
 			name = a->fils->val.str;
 			if(sym_existe_table(sym_table,name)){
+        printf("%s deja defini\n",name);
 				return 2;
 			}
 			sym_add(name,sym_table);
@@ -500,6 +501,7 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
 			name = a->val.str;
 			s = sym_find(name,sym_table);
 			if(s == NULL || s->type != sym_var){
+        printf("%s pas ast_var\n",name );
 				return 1;
 			}
 			break;
@@ -508,8 +510,11 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
 			name = a->val.str;
 			s = sym_find(name,sym_table);
 			if(s == NULL || s->type != sym_tab){
+        printf("%s pas ast_tableau\n",name );
 				return 1;
 			}
+
+        printf("%s ast_tableau\n",name );
 			break;
 	}
   int tmp = ast_semantique(a->fils,sym_table);

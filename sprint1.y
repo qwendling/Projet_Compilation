@@ -121,7 +121,7 @@ Instruction: RETURN Expression { $$=ast_new_return($2);}
 // Declaration de variable soit par une affectation de valeur soit vide
 Declaration: INT Affectation{$$=ast_new_declaration(new_var($2->fils->val.str)); $$->freres = $2;}
 	| INT ID {$$=ast_new_declaration(new_var($2));}
-	| Tableau {$$=$1;}
+	| Tableau {printf("declaration de tab\n");$$=$1;}
 	;
 
 Tableau:INT ID ListeDim {$$=ast_new_tableauDeclare($2,$3);}

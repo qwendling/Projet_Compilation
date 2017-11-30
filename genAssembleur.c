@@ -132,7 +132,8 @@ void gen_affecTab(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 	load_var("$t0",code->arg1,file);
 	printf("\n%d\n",code->res->index);
 	// On sauvgarde t0 a l'adresse de l'index
-	snprintf(str_code,1024,"sw $t0 (%s)\n",code->res->name);
+	load_var("$t1",code->res,file);
+	snprintf(str_code,1024,"sw $t0 ($t1)\n");
 	fwrite(str_code,sizeof(char),strlen(str_code),file);
 	free(str_code);
 }
@@ -434,6 +435,17 @@ void genAssembleur(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
   genAssembleur(code->next,sym_table,file);
 }
 
+int sizeTab(Symbole s){
+	Dim tmpDim = s->val.dimension;
+	int size=0;
+	do{
+		size += tmpDim->size;
+		tmpDim = tmpDim->next;
+	}while(tmpDim != NULL);
+	
+	return size;
+}
+
 // Ajout de tout les symboles dans le .data
 void gen_sym(Symbole s,FILE* file){
 	if(s == NULL)
@@ -444,12 +456,12 @@ void gen_sym(Symbole s,FILE* file){
 			snprintf(str_code,1024,"%s: .word 0\n",s->name);
 			fwrite(str_code,sizeof(char),strlen(str_code),file);
 			break;
-		case sym_const:
-			snprintf(str_code,1024,"%s: .word %d\n",s->name,s->val.entier);
-			fwrite(str_code,sizeof(char),strlen(str_code),file);
-			break;
 		case sym_string:
 			snprintf(str_code,1024,"%s: .asciiz %s\n",s->name,s->val.str);
+			fwrite(str_code,sizeof(char),strlen(str_code),file);
+			break;
+		case sym_tab:
+			snprintf(str_code,1024,"%s: .space %d\n",s->name,sizeTab(s)*4);
 			fwrite(str_code,sizeof(char),strlen(str_code),file);
 			break;
 	}

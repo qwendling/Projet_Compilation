@@ -501,8 +501,12 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
 
       parcours_dim = parcours_dim->freres;
     }
-    codegen = add_quad(codegen,quad_add(NULL,q_add,sym_arg1,quad_res(codegen),sym_new_tmp(sym_table)));
+    tmp = sym_new_tmp(sym_table);
+    tmp->type = sym_const;
+    tmp->val.entier = 4;
+    codegen = add_quad(codegen,quad_add(NULL,q_mul,tmp,quad_res(codegen),sym_new_tmp(sym_table)));
     
+    codegen = add_quad(codegen,quad_add(NULL,q_add,sym_arg1,quad_res(codegen),sym_new_tmp(sym_table)));
 
     printf("#######TAB######\n\n");
     print_quad(codegen);

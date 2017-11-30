@@ -93,15 +93,15 @@ printi {return PRINTI;}
 
 
 {INT}	{return INT;}
-{ID}	{snprintf(name_id,1024,"%sVAR",yytext);yylval.string=name_id; return ID;}
+{ID}	{snprintf(name_id,1024,"%sVAR",yytext);yylval.string=strdup(name_id); return ID;}
 {ID}{INCREMENTMOINS} {yytext[strlen(yytext)-2]='\0';
-                      snprintf(name_id,1024,"%sVAR",yytext);yylval.string=name_id;
+                      snprintf(name_id,1024,"%sVAR",yytext);yylval.string=strdup(name_id);
                       return INCREMENTMOINSAFTER;}
-{INCREMENTMOINS}{ID} {snprintf(name_id,1024,"%sVAR",yytext+2);yylval.string=name_id;return INCREMENTMOINSBEFORE;}
+{INCREMENTMOINS}{ID} {snprintf(name_id,1024,"%sVAR",yytext+2);yylval.string=strdup(name_id);return INCREMENTMOINSBEFORE;}
 {ID}{INCREMENTPLUS}  {yytext[strlen(yytext)-2]='\0';
-                      snprintf(name_id,1024,"%sVAR",yytext);yylval.string=name_id;
+                      snprintf(name_id,1024,"%sVAR",yytext);yylval.string=strdup(name_id);
                       return INCREMENTPLUSAFTER;}
-{INCREMENTPLUS}{ID}  {snprintf(name_id,1024,"%sVAR",yytext+2);yylval.string=name_id;return INCREMENTPLUSBEFORE;}
+{INCREMENTPLUS}{ID}  {snprintf(name_id,1024,"%sVAR",yytext+2);yylval.string=strdup(name_id);return INCREMENTPLUSBEFORE;}
 
 
 
