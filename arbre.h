@@ -81,6 +81,8 @@ ListeDefine new_define(char* id, int constante);
 
 ListeDefine concat_define(ListeDefine d,ListeDefine r);
 
+void replaceDefineInAST(Arbre ast,ListeDefine d);
+
 int isInDefine(ListeDefine d, char* id);
 int findInDefine(ListeDefine d, char* id);
 
@@ -197,6 +199,6 @@ void ast_print(Arbre a);
 void ast_print_aux(Arbre a,int profondeur);
 
 //return 0 si l'analyse et bonne sinon ficher non semantiquement correct
-int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]);
+int ast_semantique(Arbre a,ListeDefine def,Symbole sym_table[TAILLE_TABLE]);
 
 #endif

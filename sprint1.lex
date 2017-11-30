@@ -72,7 +72,7 @@ DEFINE "#define"
 /*####### REGLE SYNTAXIQUE ##########*/
 /*###################################*/
 %%
-{DEFINE} {printf("define\n");return DEFINE;}
+{DEFINE} {return DEFINE;}
 
 {IF} { return IF; }
 {ELSE} { return ELSE;}
@@ -144,17 +144,19 @@ int main(int argc, char **argv )
 	yyparse();
 	fclose(yyin);
 	free(name_id);
-	
+
   if(return_value)
     return_value;
-	
+
 	printf("\n########## DEFINE ##########\n\n");
-	print_define(listedef);	
+  print_define(listedef);
+  replaceDefineInAST(ast,listedef);
+
 
 	printf("\n########## AST ##########\n\n");
 	ast_print(ast);
 
-	if(ast_semantique(ast,sym_Table)){
+	if(ast_semantique(ast,listedef,sym_Table)){
 		printf("erreur semantique \n");
 		return 1;
 	}

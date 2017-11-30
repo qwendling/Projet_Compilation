@@ -29,9 +29,9 @@ ListeDefine concat_define(ListeDefine d,ListeDefine r)
 
 int isInDefine(ListeDefine d, char* id){
 	ListeDefine tmp=d;
-  while(tmp->next != NULL){
+  while(tmp != NULL){
 		if(strcmp(tmp->id,id)==0)
-			return 0;  
+			return 0;
 		tmp=tmp->next;
   }
 	return 1;
@@ -39,11 +39,28 @@ int isInDefine(ListeDefine d, char* id){
 
 int findInDefine(ListeDefine d, char* id){
 	ListeDefine tmp=d;
-  while(tmp->next != NULL){
+  while(tmp != NULL){
 		if(strcmp(tmp->id,id)==0)
-			return tmp->cst;  
+			return tmp->cst;
 		tmp=tmp->next;
   }
+
+	return 0;
+}
+
+void replaceDefineInAST(Arbre a,ListeDefine d){
+	if(a==NULL)
+    return;
+
+	if(a->type == ast_var){
+		if(isInDefine(d,a->val.str) == 0){
+			int cst = findInDefine(d,a->val.str);
+		  a->type = ast_constant;
+		  a->val.constante = cst;
+		}
+	}
+	replaceDefineInAST(a->freres,d);
+	replaceDefineInAST(a->fils,d);
 }
 
 void print_define(ListeDefine d){
@@ -521,7 +538,7 @@ void print_tab(Symbole s){
 }
 
 // Repère si il y'a une erreur de sémantique dans le programme
-int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
+int ast_semantique(Arbre a,ListeDefine def,Symbole sym_table[TAILLE_TABLE]){
 	if(a == NULL){
 		return 0;
 	}
@@ -552,8 +569,10 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
 			name = a->val.str;
 			s = sym_find(name,sym_table);
 			if(s == NULL || s->type != sym_var){
-        printf("%s pas ast_var\n",name );
-				return 1;
+				if(isInDefine(def,name)!=0){
+	        printf("%s pas ast_var\n",name );
+					return 1;
+				}
 			}
 			break;
 		case ast_tableau:
@@ -568,7 +587,7 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
         printf("%s ast_tableau\n",name );
 			break;
 	}
-  int tmp = ast_semantique(a->fils,sym_table);
-  int tmp2 = ast_semantique(a->freres,sym_table);
+  int tmp = ast_semantique(a->fils,def,sym_table);
+  int tmp2 = ast_semantique(a->freres,def,sym_table);
 	return !(!tmp && !tmp2);
 }
