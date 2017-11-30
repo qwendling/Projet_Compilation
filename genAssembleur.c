@@ -2,6 +2,28 @@
 #include <string.h>
 #include <stdlib.h>
 
+void load_var(const char* registre,const Symbole s,FILE* file){
+	char* str_code = calloc(1024,sizeof(char));
+	switch(s->type){
+		case sym_var:
+			snprintf(str_code,1024,"lw %s %s\n",registre,s->name);
+			fwrite(str_code,sizeof(char),strlen(str_code),file);
+			free(str_code);
+			break;
+		case sym_const:
+			snprintf(str_code,1024,"li %s %d\n",registre,s->val.entier);
+			fwrite(str_code,sizeof(char),strlen(str_code),file);
+			free(str_code);
+			break;
+		case sym_string:
+		case sym_tab:
+			snprintf(str_code,1024,"la %s %s\n",registre,s->name);
+			fwrite(str_code,sizeof(char),strlen(str_code),file);
+			free(str_code);
+			break;
+	}
+}
+
 // FOnction de generation de printf
 void gen_printf(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 	char* str_code = calloc(1024,sizeof(char));
@@ -12,6 +34,7 @@ void gen_printf(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 	// On charge l'argument a print en cherchant avec son index
 	snprintf(str_code,1024,"la $a0 %s\n",code->arg1->name);
 	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	load_var("$a0",code->arg1,file);
 	free(str_code);
 
 	// On affiche le string
@@ -29,8 +52,7 @@ void gen_printi(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 
 	printf("gen printi\n\n");
 	// On charge l'argument a print en cherchant avec son index
-	snprintf(str_code,1024,"lw $a0 %s\n",code->arg1->name);
-	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	load_var("$a0",code->arg1,file);
 	free(str_code);
 
 
@@ -65,8 +87,7 @@ void gen_return(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 		exit(1);
 
 	printf("gen return\n");
-	snprintf(str_code,1024,"lw $a0 %s\n",code->arg1->name);
-	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	load_var("$a0",code->arg1,file);
 	free(str_code);
 
 	str_code = "li $v0 17\n";
@@ -91,11 +112,27 @@ void gen_affecVar(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 		exit(1);
 
 	// On sauvgarde la valeur dans le registre t0
-	snprintf(str_code,1024,"lw $t0 %s\n",code->arg1->name);
-	fwrite(str_code,sizeof(char),strlen(str_code),file);
+
+	load_var("$t0",code->arg1,file);
+
 	printf("\n%d\n",code->res->index);
 	// On sauvgarde t0 a l'adresse de l'index
 	snprintf(str_code,1024,"sw $t0 %s\n",code->res->name);
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	free(str_code);
+}
+
+// FOnction de generation de l'affectation de tableau
+void gen_affecTab(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
+	char* str_code = calloc(1024,sizeof(char));
+	if(str_code == NULL)
+		exit(1);
+
+	// On sauvgarde la valeur dans le registre t0
+	load_var("$t0",code->arg1,file);
+	printf("\n%d\n",code->res->index);
+	// On sauvgarde t0 a l'adresse de l'index
+	snprintf(str_code,1024,"sw $t0 (%s)\n",code->res->name);
 	fwrite(str_code,sizeof(char),strlen(str_code),file);
 	free(str_code);
 }
@@ -107,12 +144,10 @@ void gen_add(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 		exit(1);
 
 	// On sauvgarde la valeur dans le registre t0
-	snprintf(str_code,1024,"lw $t0 %s\n",code->arg1->name);
-	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	load_var("$t0",code->arg1,file);
 
-	// On sauvgarde la valeur dans le registre t0
-	snprintf(str_code,1024,"lw $t1 %s\n",code->arg2->name);
-	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	// On sauvgarde la valeur dans le registre t1
+	load_var("$t1",code->arg2,file);
 
 	// On sauvgarde la valeur dans le registre t0
 	snprintf(str_code,1024,"add $t0 $t0 $t1\n");
@@ -132,12 +167,10 @@ void gen_sub(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 		exit(1);
 
 	// On sauvgarde la valeur dans le registre t0
-	snprintf(str_code,1024,"lw $t0 %s\n",code->arg1->name);
-	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	load_var("$t0",code->arg1,file);
 
-	// On sauvgarde la valeur dans le registre t0
-	snprintf(str_code,1024,"lw $t1 %s\n",code->arg2->name);
-	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	// On sauvgarde la valeur dans le registre t1
+	load_var("$t1",code->arg2,file);
 
 	// On sauvgarde la valeur dans le registre t0
 	snprintf(str_code,1024,"sub $t0 $t0 $t1\n");
@@ -157,12 +190,10 @@ void gen_mul(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 		exit(1);
 
 	// On sauvgarde la valeur dans le registre t0
-	snprintf(str_code,1024,"lw $t0 %s\n",code->arg1->name);
-	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	load_var("$t0",code->arg1,file);
 
-	// On sauvgarde la valeur dans le registre t0
-	snprintf(str_code,1024,"lw $t1 %s\n",code->arg2->name);
-	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	// On sauvgarde la valeur dans le registre t1
+	load_var("$t1",code->arg2,file);
 
 	// On sauvgarde la valeur dans le registre t0
 	snprintf(str_code,1024,"mul $t0 $t0 $t1\n");
@@ -182,12 +213,10 @@ void gen_div(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 		exit(1);
 
 	// On sauvgarde la valeur dans le registre t0
-	snprintf(str_code,1024,"lw $t0 %s\n",code->arg1->name);
-	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	load_var("$t0",code->arg1,file);
 
-	// On sauvgarde la valeur dans le registre t0
-	snprintf(str_code,1024,"lw $t1 %s\n",code->arg2->name);
-	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	// On sauvgarde la valeur dans le registre t1
+	load_var("$t1",code->arg2,file);
 
 	// On sauvgarde la valeur dans le registre t0
 	snprintf(str_code,1024,"div $t0 $t0 $t1\n");
@@ -207,12 +236,10 @@ void gen_equal(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 		exit(1);
 
 	// On sauvgarde la valeur dans le registre t0
-	snprintf(str_code,1024,"lw $t0 %s\n",code->arg1->name);
-	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	load_var("$t0",code->arg1,file);
 
-	// On sauvgarde la valeur dans le registre t0
-	snprintf(str_code,1024,"lw $t1 %s\n",code->arg2->name);
-	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	// On sauvgarde la valeur dans le registre t1
+	load_var("$t1",code->arg2,file);
 
 	// On sauvgarde la valeur dans le registre t0
 	snprintf(str_code,1024,"beq $t0 $t1 %s\n",code->res->name);
@@ -227,12 +254,10 @@ void gen_nequal(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 		exit(1);
 
 	// On sauvgarde la valeur dans le registre t0
-	snprintf(str_code,1024,"lw $t0 %s\n",code->arg1->name);
-	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	load_var("$t0",code->arg1,file);
 
-	// On sauvgarde la valeur dans le registre t0
-	snprintf(str_code,1024,"lw $t1 %s\n",code->arg2->name);
-	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	// On sauvgarde la valeur dans le registre t1
+	load_var("$t1",code->arg2,file);
 
 	// On sauvgarde la valeur dans le registre t0
 	snprintf(str_code,1024,"bne $t0 $t1 %s\n",code->res->name);
@@ -247,12 +272,10 @@ void gen_greater(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 		exit(1);
 
 	// On sauvgarde la valeur dans le registre t0
-	snprintf(str_code,1024,"lw $t0 %s\n",code->arg1->name);
-	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	load_var("$t0",code->arg1,file);
 
-	// On sauvgarde la valeur dans le registre t0
-	snprintf(str_code,1024,"lw $t1 %s\n",code->arg2->name);
-	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	// On sauvgarde la valeur dans le registre t1
+	load_var("$t1",code->arg2,file);
 
 	// On sauvgarde la valeur dans le registre t0
 	snprintf(str_code,1024,"bgt $t0 $t1 %s\n",code->res->name);
@@ -267,12 +290,10 @@ void gen_greaterOrEqual(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 		exit(1);
 
 	// On sauvgarde la valeur dans le registre t0
-	snprintf(str_code,1024,"lw $t0 %s\n",code->arg1->name);
-	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	load_var("$t0",code->arg1,file);
 
-	// On sauvgarde la valeur dans le registre t0
-	snprintf(str_code,1024,"lw $t1 %s\n",code->arg2->name);
-	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	// On sauvgarde la valeur dans le registre t1
+	load_var("$t1",code->arg2,file);
 
 	// On sauvgarde la valeur dans le registre t0
 	snprintf(str_code,1024,"bge $t0 $t1 %s\n",code->res->name);
@@ -287,12 +308,10 @@ void gen_less(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 		exit(1);
 
 	// On sauvgarde la valeur dans le registre t0
-	snprintf(str_code,1024,"lw $t0 %s\n",code->arg1->name);
-	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	load_var("$t0",code->arg1,file);
 
-	// On sauvgarde la valeur dans le registre t0
-	snprintf(str_code,1024,"lw $t1 %s\n",code->arg2->name);
-	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	// On sauvgarde la valeur dans le registre t1
+	load_var("$t1",code->arg2,file);
 
 	// On sauvgarde la valeur dans le registre t0
 	snprintf(str_code,1024,"blt $t0 $t1 %s\n",code->res->name);
@@ -307,12 +326,10 @@ void gen_lessOrEqual(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 		exit(1);
 
 	// On sauvgarde la valeur dans le registre t0
-	snprintf(str_code,1024,"lw $t0 %s\n",code->arg1->name);
-	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	load_var("$t0",code->arg1,file);
 
-	// On sauvgarde la valeur dans le registre t0
-	snprintf(str_code,1024,"lw $t1 %s\n",code->arg2->name);
-	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	// On sauvgarde la valeur dans le registre t1
+	load_var("$t1",code->arg2,file);
 
 	// On sauvgarde la valeur dans le registre t0
 	snprintf(str_code,1024,"ble $t0 $t1 %s\n",code->res->name);
@@ -370,6 +387,10 @@ void genAssembleur(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 			break;
 		case affectation_var:
 			gen_affecVar(code,sym_table,file);
+			break;
+		case affectation_tab:
+			printf("gen affec tab\n");
+			gen_affecTab(code,sym_table,file);
 			break;
 		case q_add:
 			gen_add(code,sym_table,file);
