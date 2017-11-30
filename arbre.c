@@ -3,6 +3,57 @@
 #include <stdio.h>
 #include <string.h>
 
+
+
+ListeDefine newListeDefine(){
+	return NULL;
+}
+
+ListeDefine new_define(char* id, int constante){
+	ListeDefine new = calloc(1,sizeof(std_define));
+	new->id = strdup(id);
+	new->cst = constante;
+	return new;
+}
+
+ListeDefine concat_define(ListeDefine d,ListeDefine r)
+{
+  ListeDefine tmp=d;
+  while(d->next != NULL){
+    d=d->next;
+  }
+  d->next=r;
+  return tmp;
+}
+
+
+int isInDefine(ListeDefine d, char* id){
+	ListeDefine tmp=d;
+  while(tmp->next != NULL){
+		if(strcmp(tmp->id,id)==0)
+			return 0;  
+		tmp=tmp->next;
+  }
+	return 1;
+}
+
+int findInDefine(ListeDefine d, char* id){
+	ListeDefine tmp=d;
+  while(tmp->next != NULL){
+		if(strcmp(tmp->id,id)==0)
+			return tmp->cst;  
+		tmp=tmp->next;
+  }
+}
+
+void print_define(ListeDefine d){
+	if(d == NULL)
+		return;
+
+	printf("Define %s %d \n",d->id,d->cst);
+	print_define(d->next);
+}
+
 //------- SPRINT 1 -------
 
 //creation d'un arbre vide

@@ -68,6 +68,23 @@ typedef struct str_arbre{
 
 
 
+typedef struct str_define{
+	char* id;
+	int cst;
+	struct str_define* next;
+} std_define, *ListeDefine;
+
+
+ListeDefine newListeDefine();
+
+ListeDefine new_define(char* id, int constante);
+
+ListeDefine concat_define(ListeDefine d,ListeDefine r);
+
+int isInDefine(ListeDefine d, char* id);
+int findInDefine(ListeDefine d, char* id);
+
+void print_define(ListeDefine d);
 //------- SPRINT 1 -------
 
 //creation d'un arbre vide

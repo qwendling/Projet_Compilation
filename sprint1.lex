@@ -16,6 +16,7 @@
 
 /*----------- Variables globales --------------*/
 Arbre ast;
+ListeDefine listedef;
 Symbole sym_Table[TAILLE_TABLE];
 //Liste chainé stockant les strings
 ConstString string_const = NULL;
@@ -33,7 +34,7 @@ int return_value = 0;
 
 MAIN "int main"
 NOMBRE [0-9]*
-COMMENT ([^\\]\/\/.*[\n])|\/\*(.|[\n])*\*\/
+COMMENT ([^\\]\/\/.*[\n])|\/\*(.|\n)*\*\/
 STRING   \"([^\"\\]|\\.)*\"
 RETURN return
 
@@ -65,11 +66,14 @@ OR "||"
 WHILE "while"
 FOR "for"
 
+DEFINE "#define"
 
 /*###################################*/
 /*####### REGLE SYNTAXIQUE ##########*/
 /*###################################*/
 %%
+{DEFINE} {printf("define\n");return DEFINE;}
+
 {IF} { return IF; }
 {ELSE} { return ELSE;}
 
@@ -118,7 +122,6 @@ printi {return PRINTI;}
 
 
 
-
 . {;}
 %%
 
@@ -141,8 +144,12 @@ int main(int argc, char **argv )
 	yyparse();
 	fclose(yyin);
 	free(name_id);
+	
   if(return_value)
     return_value;
+	
+	printf("\n########## DEFINE ##########\n\n");
+	print_define(listedef);	
 
 	printf("\n########## AST ##########\n\n");
 	ast_print(ast);

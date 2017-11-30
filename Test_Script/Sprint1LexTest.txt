@@ -1,8 +1,9 @@
+#define test 5
 int main() {
 	// Coucou le test
-
+	int bay = 4;
 	printf("printf reconnu");
-	printi(42);
+	printi(bay);
 	/* Fin du test */
 	return 0;
 }

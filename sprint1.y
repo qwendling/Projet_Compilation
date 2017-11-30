@@ -6,13 +6,14 @@
 	#include <stdio.h>
 	#include "arbre.h"
 	extern Arbre ast;
+	extern ListeDefine listedef;
 	int yylex();
 	void yyerror(const char*);
 	extern int return_value;
 %}
 
 /*--------- Declaration tokens et récuperation regex LEX---------*/
-%union {int nombre;char* string;char ope; Arbre ast;}
+%union {int nombre;char* string;char ope; Arbre ast; ListeDefine def;}
 
 // ---- Sprint 1 Tokens
 %token MAIN
@@ -47,6 +48,8 @@
 %token WHILE
 %token FOR
 
+%token DEFINE
+
 // ---- AST
 %type <ast> B
 %type <ast> Instruction
@@ -70,6 +73,7 @@
 %type <ast> AffectationTableau
 %type <ast> ListeDim
 %type <ast> ListeDimAffect
+%type <def> Define
 
 // ---- Gestion de la priorite
 %left NOT
@@ -92,7 +96,11 @@
 
 //---------- STRUCTURE PROGRAMME -------------//
 // Le program est une fonction qu'on considère comme un arbre ast
-program: fonction {ast=$1;};
+program: Define fonction {listedef= $1 ; ast=$2;};
+
+Define : DEFINE ID NOMBRE Define {$$=concat_define(new_define($2,$3),$4);}
+	|  {$$=NULL;}
+	;
 
 // La fonction main prend comme valeur la liste des instructions
 fonction: MAIN'('')''{'ListeInstr'}' {$$=ast_new_main($5);}
@@ -175,7 +183,16 @@ AutoIncremente:	INCREMENTPLUSAFTER {$$=ast_new_autoIncrement_plus(new_var($1));}
 //---------- ETAT TERMINAL -------------//
 // Etat terminal qui peut etre soit un nombre, un variable ou une incrementation de variable
 B: NOMBRE {$$=new_const($1);}
-	| ID { $$ = new_var($1);}
+	| ID  {$$ = new_var($1);}	
+/*	
+	if(isInDefine(listedef,$1)==0){
+		printf("#########define ok : %d \n",findInDefine(listedef,$1));
+		$$ = new_var($1);
+	}
+	else{
+		printf("#########define NOP");
+		$$ = new_var($1);
+	} }*/
 	| AutoIncremente {$$ = $1;}
 	| ID ListeDimAffect {$$ = new_tableau($1,$2);}
 	;
