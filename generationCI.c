@@ -64,6 +64,9 @@ void print_quad(quad q){
 		printf("WTFFF %s %p\n",q->arg1->name,q->res);
 		printf("affectation %s NULL %s\n",q->arg1->name,q->res->name);
 		break;
+    case affectation_tab:
+      printf("affectation_tab %s NULL %s\n",q->arg1->name,q->res->name);
+      break;
     case q_add:
 		printf("add %s %s %s\n",q->arg1->name,q->arg2->name,q->res->name);
 		break;
@@ -223,7 +226,12 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
       arg2 = genCode(ast->fils,sym_table);
   		arg = genCode(ast->fils->freres,sym_table);
   		printf("test arg : %s\n",quad_res(arg)->name);
-  		codegen = arg;
+
+      sym_arg1 = quad_res(arg);
+      sym_arg2 = quad_res(arg2);
+
+  		codegen = arg2;
+      codegen = add_quad(codegen,arg);
       // On génère le quad d'affectation de variable
 		  printf("\n\n############FIND %s %p\n\n",ast->fils->val.str,sym_find(ast->fils->val.str,sym_table));
       quad_op q_op= affectation_var;
@@ -235,7 +243,7 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
           q_op = affectation_var;
           break;
       }
-  		codegen = add_quad(codegen,quad_add(NULL,q_op,quad_res(arg),NULL,quad_res(arg2)));
+  		codegen = add_quad(codegen,quad_add(NULL,q_op,sym_arg1,NULL,sym_arg2));
   		break;
   	case ast_div:
   	  printf("CI /\n");
@@ -464,29 +472,41 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
 
 		break;
   case ast_tableau:
-  /*  sym_arg1 = sym_find(ast->val.str,sym_table);
+  printf("GEN CI tab\n");
+    sym_arg1 = sym_find(ast->val.str,sym_table);
     arg=genCode(ast->fils,sym_table);
+
     sym_arg2=quad_res(arg);
     codegen = add_quad(codegen,arg);
+
     Arbre parcours_dim = ast->fils->freres;
-    Dim dim_tab = sym_arg1->dimension->next;
+    Dim dim_tab = sym_arg1->val.dimension->next;
     int size_dim;
 
-    while(parcours_dim != NULL){
-      if(dim_tab != NULL){
-        size_dim = dim_tab->size;
-        dim_tab = dim_tab->next;
-      }else{
-        size_dim = 0;
-      }
+    while(parcours_dim != NULL && dim_tab != NULL){
+
+      size_dim = dim_tab->size;
+      dim_tab = dim_tab->next;
+
       tmp = sym_new_tmp(sym_table);
       tmp->type = sym_const;
       tmp->val.entier = size_dim;
-      codegen = add_quad(codegen,quad_add(NULL,q_mul,quad_res(codegen),sym_new_tmp(sym_table)));
+      codegen = add_quad(codegen,quad_add(NULL,q_mul,quad_res(codegen),tmp,sym_new_tmp(sym_table)));
+      sym_arg2=quad_res(codegen);
       arg=genCode(parcours_dim,sym_table);
+ 
+      codegen = add_quad(codegen,arg);
+
+      codegen = add_quad(codegen,quad_add(NULL,q_add,quad_res(codegen),sym_arg2,sym_new_tmp(sym_table)));
+
+      parcours_dim = parcours_dim->freres;
     }
-    codegen = add_quad(codegen,quad_add(NULL,sym_arg1,sym_arg2,sym_new_tmp(sym_table)));
-    */
+    codegen = add_quad(codegen,quad_add(NULL,q_add,sym_arg1,quad_res(codegen),sym_new_tmp(sym_table)));
+    
+
+    printf("#######TAB######\n\n");
+    print_quad(codegen);
+
     break;
   }
   return codegen;
