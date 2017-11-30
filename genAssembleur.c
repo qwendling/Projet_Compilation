@@ -5,6 +5,13 @@
 void load_var(const char* registre,const Symbole s,FILE* file){
 	char* str_code = calloc(1024,sizeof(char));
 	switch(s->type){
+		case sym_tabRes:
+			snprintf(str_code,1024,"lw %s %s\n",registre,s->name);
+			fwrite(str_code,sizeof(char),strlen(str_code),file);
+			snprintf(str_code,1024,"lw %s (%s)\n",registre,registre);
+			fwrite(str_code,sizeof(char),strlen(str_code),file);
+			free(str_code);
+			break;
 		case sym_var:
 			snprintf(str_code,1024,"lw %s %s\n",registre,s->name);
 			fwrite(str_code,sizeof(char),strlen(str_code),file);
@@ -32,8 +39,6 @@ void gen_printf(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 
 	printf("gen printf\n");
 	// On charge l'argument a print en cherchant avec son index
-	snprintf(str_code,1024,"la $a0 %s\n",code->arg1->name);
-	fwrite(str_code,sizeof(char),strlen(str_code),file);
 	load_var("$a0",code->arg1,file);
 	free(str_code);
 
@@ -131,8 +136,10 @@ void gen_affecTab(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 	// On sauvgarde la valeur dans le registre t0
 	load_var("$t0",code->arg1,file);
 	printf("\n%d\n",code->res->index);
-	// On sauvgarde t0 a l'adresse de l'index
-	load_var("$t1",code->res,file);
+
+	snprintf(str_code,1024,"lw $t1 %s\n",code->res->name);
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+
 	snprintf(str_code,1024,"sw $t0 ($t1)\n");
 	fwrite(str_code,sizeof(char),strlen(str_code),file);
 	free(str_code);
@@ -437,12 +444,12 @@ void genAssembleur(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 
 int sizeTab(Symbole s){
 	Dim tmpDim = s->val.dimension;
-	int size=0;
+	int size=1;
 	do{
-		size += tmpDim->size;
+		size *= tmpDim->size;
 		tmpDim = tmpDim->next;
 	}while(tmpDim != NULL);
-	
+
 	return size;
 }
 
@@ -452,6 +459,7 @@ void gen_sym(Symbole s,FILE* file){
 		return;
 	char* str_code = calloc(1024,sizeof(char));
 	switch(s->type){
+		case sym_tabRes:
 		case sym_var:
 			snprintf(str_code,1024,"%s: .word 0\n",s->name);
 			fwrite(str_code,sizeof(char),strlen(str_code),file);
@@ -461,6 +469,7 @@ void gen_sym(Symbole s,FILE* file){
 			fwrite(str_code,sizeof(char),strlen(str_code),file);
 			break;
 		case sym_tab:
+			printf("Size tableau : %d\n",sizeTab(s));
 			snprintf(str_code,1024,"%s: .space %d\n",s->name,sizeTab(s)*4);
 			fwrite(str_code,sizeof(char),strlen(str_code),file);
 			break;

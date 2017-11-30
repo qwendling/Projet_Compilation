@@ -462,9 +462,9 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
 		//Label true
 		codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl2));
 		//Bloc de code
-		codegen = add_quad(codegen,arg3);
-		//iteration
 		codegen = add_quad(codegen,arg4);
+		//iteration
+		codegen = add_quad(codegen,arg3);
 		//gotoCond
 		codegen = add_quad(codegen,quad_add(NULL,q_goto,NULL,NULL,lbl));
 		//label false
@@ -494,8 +494,9 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
       codegen = add_quad(codegen,quad_add(NULL,q_mul,quad_res(codegen),tmp,sym_new_tmp(sym_table)));
       sym_arg2=quad_res(codegen);
       arg=genCode(parcours_dim,sym_table);
- 
+
       codegen = add_quad(codegen,arg);
+
 
       codegen = add_quad(codegen,quad_add(NULL,q_add,quad_res(codegen),sym_arg2,sym_new_tmp(sym_table)));
 
@@ -505,8 +506,10 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
     tmp->type = sym_const;
     tmp->val.entier = 4;
     codegen = add_quad(codegen,quad_add(NULL,q_mul,tmp,quad_res(codegen),sym_new_tmp(sym_table)));
-    
-    codegen = add_quad(codegen,quad_add(NULL,q_add,sym_arg1,quad_res(codegen),sym_new_tmp(sym_table)));
+
+    tmp = sym_new_tmp(sym_table);
+    tmp->type = sym_tabRes;
+    codegen = add_quad(codegen,quad_add(NULL,q_add,sym_arg1,quad_res(codegen),tmp));
 
     printf("#######TAB######\n\n");
     print_quad(codegen);

@@ -16,6 +16,7 @@ typedef enum sym_type{
   sym_string,
   sym_label,
   sym_tab,
+	sym_tabRes,
 } sym_type;
 
 // Structure des symboles

@@ -4,9 +4,31 @@ int main() {
 	intVar1_[4][2] = 5+4;
 
 	int intVar2_;
-	//intVar2_ = intVar1_[2+2][1+1] + 4;
+	intVar2_ = intVar1_[2+2][1+1] + 4;
 
-	//printi(intVar2_);
+	printf("\n");
+	printi(intVar2_);
+	printf("\n");
+
+	int i;
+	int j;
+	for(i=0;i<5;i++){
+		for(j=0;j<6;j++){
+			printf(" i : ");
+			printi(i);
+			printf(" j : ");
+			printi(j);
+			intVar1_[i][j] = i*j;
+		}
+		printf("\n");
+	}
+
+	for(i=0;i<5;i++){
+		for(j=0;j<6;j++){
+			printi(intVar1_[i][j]);
+			printf("\n");
+		}
+	}
 
 
 

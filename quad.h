@@ -32,6 +32,7 @@ typedef enum quad_op{
 
   //Sprint5
   affectation_tab,
+  q_addrTab,
 } quad_op;
 
 // structure des quads
