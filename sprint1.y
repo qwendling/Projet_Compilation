@@ -52,6 +52,9 @@
 
 %token DEFINE
 
+// ---- Sprint 6 Tokens
+%token STENCIL
+
 // ---- AST
 %type <ast> B
 %type <ast> Instruction
@@ -76,6 +79,9 @@
 %type <ast> ListeDim
 %type <ast> ListeDimAffect
 %type <def> Define
+%type <ast> ListeBlockStencil
+%type <ast> ListeStencilBlockMember
+%type <ast> ListeStencilMember
 
 // ---- Gestion de la priorite
 %left NOT
@@ -132,7 +138,18 @@ Instruction: RETURN Expression { $$=ast_new_return($2);}
 Declaration: INT Affectation{$$=ast_new_declaration(new_var($2->fils->val.str)); $$->freres = $2;}
 	| INT ID {$$=ast_new_declaration(new_var($2));}
 	| Tableau {printf("declaration de tab\n");$$=$1;}
+	| STENCIL ID'{'NOMBRE','NOMBRE'}''=''{' ListeBlockStencil '}' {$$=ast_new_stencilDeclare($2,$10,$4,$6);}
 	;
+
+ListeBlockStencil: ListeStencilBlockMember {$$=$1;}
+	| ListeStencilMember {$$=$1;}
+
+ListeStencilBlockMember: '{'ListeBlockStencil'}'','ListeStencilBlockMember {$$=concat(ast_new_blocStencil($2),$5);}
+	| '{'ListeBlockStencil'}' {$$=ast_new_blocStencil($2);}
+
+ListeStencilMember: Expression','ListeStencilMember {$$=concat($1,$3);}
+	| Expression {$$=$1;}
+
 
 Tableau:INT ID ListeDim {$$=ast_new_tableauDeclare($2,$3);}
 	;

@@ -5,62 +5,38 @@
 
 
 
-ListeDefine newListeDefine(){
-	return NULL;
-}
+Arbre ast_new_stencilDeclare(char* id,Arbre member,int n,int prof){
+	Arbre new = calloc(1,sizeof(std_arbre));
+	new->type = ast_declaration;
+	new->fils =  calloc(1,sizeof(std_arbre));
+  new->fils->type = ast_stencil;
+  new->fils->val.str = strdup(id);
+	new->fils->fils = member;
 
-ListeDefine new_define(char* id, int constante){
-	ListeDefine new = calloc(1,sizeof(std_define));
-	new->id = strdup(id);
-	new->cst = constante;
+
+	//Stencil qui sert a l'analyse semeantique
+	new->fils->stencil = calloc(1,sizeof(std_stencil));
+	new->fils->stencil->ast = member;
+  new->fils->stencil->profondeurs = prof;
+	new->fils->stencil->member = 2*n+1;
+	new->fils->stencil->freres = 2*n;
+
 	return new;
 }
 
-ListeDefine concat_define(ListeDefine d,ListeDefine r)
-{
-  ListeDefine tmp=d;
-  while(d->next != NULL){
-    d=d->next;
-  }
-  d->next=r;
-  return tmp;
+
+Arbre ast_new_blocStencil(Arbre a){
+	Arbre new = calloc(1,sizeof(std_arbre));
+	new->type = ast_bloc;
+	new->fils = a;
+	return new;
 }
 
-ListeDefine findInDefine(ListeDefine d, char* id){
-	ListeDefine tmp=d;
-  while(tmp != NULL){
-		if(strcmp(tmp->id,id)==0)
-			return tmp;
-		tmp=tmp->next;
-  }
 
-	return NULL;
+int verifStencil(Stencil stencil){
+	// Le bordel des verification des dims ect c'est ici !
+	return 0;
 }
-
-void replaceDefineInAST(Arbre a,ListeDefine d){
-	if(a==NULL)
-    return;
-
-	if(a->type == ast_var){
-		ListeDefine define = findInDefine(d,a->val.str);
-		if(define != NULL){
-			int cst = define->cst;
-		  a->type = ast_constant;
-		  a->val.constante = cst;
-		}
-	}
-	replaceDefineInAST(a->freres,d);
-	replaceDefineInAST(a->fils,d);
-}
-
-void print_define(ListeDefine d){
-	if(d == NULL)
-		return;
-
-	printf("Define %s %d \n",d->id,d->cst);
-	print_define(d->next);
-}
-
 //------- SPRINT 1 -------
 
 //creation d'un arbre vide
@@ -388,6 +364,67 @@ Arbre new_tableau(char* id, Arbre dimension){
 
 }
 
+
+// ------ DEFINE -----
+
+ListeDefine newListeDefine(){
+	return NULL;
+}
+
+ListeDefine new_define(char* id, int constante){
+	ListeDefine new = calloc(1,sizeof(std_define));
+	new->id = strdup(id);
+	new->cst = constante;
+	return new;
+}
+
+ListeDefine concat_define(ListeDefine d,ListeDefine r)
+{
+  ListeDefine tmp=d;
+  while(d->next != NULL){
+    d=d->next;
+  }
+  d->next=r;
+  return tmp;
+}
+
+ListeDefine findInDefine(ListeDefine d, char* id){
+	ListeDefine tmp=d;
+  while(tmp != NULL){
+		if(strcmp(tmp->id,id)==0)
+			return tmp;
+		tmp=tmp->next;
+  }
+
+	return NULL;
+}
+
+void replaceDefineInAST(Arbre a,ListeDefine d){
+	if(a==NULL)
+    return;
+
+	if(a->type == ast_var){
+		ListeDefine define = findInDefine(d,a->val.str);
+		if(define != NULL){
+			int cst = define->cst;
+		  a->type = ast_constant;
+		  a->val.constante = cst;
+		}
+	}
+	replaceDefineInAST(a->freres,d);
+	replaceDefineInAST(a->fils,d);
+}
+
+void print_define(ListeDefine d){
+	if(d == NULL)
+		return;
+
+	printf("Define %s %d \n",d->id,d->cst);
+	print_define(d->next);
+}
+
+
+
 //------- All sprints -------
 
 //Affiche dans le terminal l'AST général avec ses frères et fils
@@ -490,6 +527,13 @@ void ast_print_aux(Arbre a,int profondeur){
   break;
 	case ast_tableau:
 	printf("ast_tableau\n");
+	case ast_stencil:
+	printf("ast_stencil : %s \n",a->val);
+	printf(" info stencil : n: %d  dim : %d  frere: %d\n",a->stencil->member,a->stencil->profondeurs,a->stencil->freres);
+	printf("   AST du stencil : \n");
+	ast_print_aux(a->stencil->ast,0);
+	printf("   FIN AST du stencil : \n");
+	break;
   }
 
   //Affiche de manière recursive et ajoute une profondeur si possède des fils
@@ -553,6 +597,12 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
           create_tab(a->fils,s);
           print_tab(s);
 					break;
+				case ast_stencil:
+				if(verifStencil(a->fils->stencil)){
+					printf("Stencil mal definie !\n",name);
+					return 3;
+				}
+				break;
 			}
 			break;
 		case ast_var:
@@ -573,6 +623,9 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
 			}
 
         printf("%s ast_tableau\n",name );
+			break;
+
+
 			break;
 	}
   int tmp = ast_semantique(a->fils,sym_table);

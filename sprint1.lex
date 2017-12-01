@@ -2,6 +2,12 @@
 %option noyywrap
 
 %{
+//{n,k} 2n+1 elem par bloc et k
+// <- p ->   : {n,1}
+//    |
+// <- p ->  : {n,2}
+//    |
+
 //###################################
 //####### 	DECLARATION C ###########
 //###################################
@@ -68,6 +74,10 @@ FOR "for"
 
 DEFINE "#define"
 
+
+/* --------- SPRINT 6 --------- */
+STENCIL "stencil"
+
 /*###################################*/
 /*####### REGLE SYNTAXIQUE ##########*/
 /*###################################*/
@@ -79,6 +89,9 @@ DEFINE "#define"
 
 {WHILE} {printf("debut while \n");return WHILE;}
 {FOR} {printf("debut for \n");return FOR;}
+
+{STENCIL}	{return STENCIL;}
+{INT}	{return INT;}
 
 {COMMENT} {printf(" Commentaire %s\n",yytext);}
 {MAIN} {return MAIN;}
@@ -96,7 +109,7 @@ printi {return PRINTI;}
 
 
 
-{INT}	{return INT;}
+
 {ID}	{snprintf(name_id,1024,"%sVAR",yytext);yylval.string=strdup(name_id); return ID;}
 {ID}{INCREMENTMOINS} {yytext[strlen(yytext)-2]='\0';
                       snprintf(name_id,1024,"%sVAR",yytext);yylval.string=strdup(name_id);

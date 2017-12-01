@@ -43,7 +43,8 @@ typedef enum arbre_type{
   ast_for,
 
 	//--- Sprint 5
-	ast_tableau
+	ast_tableau,
+  ast_stencil
 
 }arbre_type;
 
@@ -64,6 +65,7 @@ typedef struct str_arbre{
   struct str_arbre* fils;
   struct str_arbre* freres;
   tree_value val;
+  struct str_stencil* stencil;
 } std_arbre,*Arbre;
 
 
@@ -74,6 +76,31 @@ typedef struct str_define{
 	struct str_define* next;
 } std_define, *ListeDefine;
 
+
+typedef struct str_stencil{
+	Arbre ast;
+	int profondeurs;
+  int member;
+  int freres;
+} std_stencil, *Stencil;
+
+//Verifie que c'est les bonnes dim
+int verifStencilDim(Arbre ast);
+
+//Verifie que c'est les bons nombre de membre
+int verifStencilMember(Arbre ast);
+
+//Verifie que c'est les bons nombre de freres
+int verifStencilFrere(Arbre ast);
+
+//Verifie que le stencil est bon
+int verifStencil(Stencil stencil);
+
+Arbre ast_new_stencilDeclare(char* id,Arbre member,int n,int prof);
+
+Arbre ast_new_blocStencil(Arbre a);
+
+//------- DEFINE -------
 
 ListeDefine newListeDefine();
 
@@ -86,6 +113,8 @@ void replaceDefineInAST(Arbre ast,ListeDefine d);
 ListeDefine findInDefine(ListeDefine d, char* id);
 
 void print_define(ListeDefine d);
+
+
 //------- SPRINT 1 -------
 
 //creation d'un arbre vide
