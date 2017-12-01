@@ -16,10 +16,8 @@ Arbre ast_new_stencilDeclare(char* id,Arbre member,int n,int prof){
 
 	//Stencil qui sert a l'analyse semeantique
 	new->fils->stencil = calloc(1,sizeof(std_stencil));
-	new->fils->stencil->ast = member;
   new->fils->stencil->profondeurs = prof;
-	new->fils->stencil->member = 2*n+1;
-	new->fils->stencil->freres = 2*n;
+	new->fils->stencil->member = n;
 
 	return new;
 }
@@ -529,10 +527,7 @@ void ast_print_aux(Arbre a,int profondeur){
 	printf("ast_tableau\n");
 	case ast_stencil:
 	printf("ast_stencil : %s \n",a->val);
-	printf(" info stencil : n: %d  dim : %d  frere: %d\n",a->stencil->member,a->stencil->profondeurs,a->stencil->freres);
-	// printf("   AST du stencil : \n");
-	// ast_print_aux(a->stencil->ast,0);
-	// printf("   FIN AST du stencil : \n");
+	printf(" info stencil : n: %d  dim : %d  \n",a->stencil->member,a->stencil->profondeurs);
 	break;
   }
 

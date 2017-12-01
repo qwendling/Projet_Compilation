@@ -78,10 +78,8 @@ typedef struct str_define{
 
 
 typedef struct str_stencil{
-	Arbre ast;
 	int profondeurs;
   int member;
-  int freres;
 } std_stencil, *Stencil;
 
 //Verifie que c'est les bonnes dim
