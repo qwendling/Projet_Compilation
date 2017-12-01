@@ -156,7 +156,7 @@ int main(int argc, char **argv )
 	printf("\n########## AST ##########\n\n");
 	ast_print(ast);
 
-	if(ast_semantique(ast,listedef,sym_Table)){
+	if(ast_semantique(ast,sym_Table)){
 		printf("erreur semantique \n");
 		return 1;
 	}

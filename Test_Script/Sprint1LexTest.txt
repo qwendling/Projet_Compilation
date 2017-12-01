@@ -1,14 +1,12 @@
-#define define1 8
-#define define2 10
-#define define3 2
-
 int main() {
-	// Coucou le test
-	int bay = define1;
-	int bay2 = define3 + bay;
-	printf("printf reconnu");
-	printi(bay2);
-	printi(define3);
-	/* Fin du test */
-	return 0;
+ 	// Coucou le test
+
+	/* Comment sur plusieur ligne
+	et oui jamie ! */
+ 	printf("printf reconnu");
+ 	printf("printf reconnu");
+  printi(42);
+
+ 	/* Fin du test */
+ 	return 0;
 }
