@@ -530,9 +530,9 @@ void ast_print_aux(Arbre a,int profondeur){
 	case ast_stencil:
 	printf("ast_stencil : %s \n",a->val);
 	printf(" info stencil : n: %d  dim : %d  frere: %d\n",a->stencil->member,a->stencil->profondeurs,a->stencil->freres);
-	printf("   AST du stencil : \n");
-	ast_print_aux(a->stencil->ast,0);
-	printf("   FIN AST du stencil : \n");
+	// printf("   AST du stencil : \n");
+	// ast_print_aux(a->stencil->ast,0);
+	// printf("   FIN AST du stencil : \n");
 	break;
   }
 
