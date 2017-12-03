@@ -616,7 +616,7 @@ void ast_print_aux(Arbre a,int profondeur){
 	case ast_tableau:
 	printf("ast_tableau\n");
 	case ast_stencil:
-	printf("ast_stencil : %s \n",a->val);
+	printf("ast_stencil : %s \n",a->val.str);
 	printf(" info stencil : n: %d  dim : %d  \n",a->stencil->member,a->stencil->profondeurs);
 	break;
   }
@@ -685,7 +685,7 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
 				case ast_stencil:
 				printf("Declaration stencil\n" );
 				if(verifStencil(a->fils->fils,a->fils->stencil->member,a->fils->stencil->profondeurs)){
-					printf("Stencil mal definie !\n",name);
+					printf("Stencil mal definie !\n");
 					return 3;
 				}
 				break;
