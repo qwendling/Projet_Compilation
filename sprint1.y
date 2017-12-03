@@ -204,17 +204,6 @@ AutoIncremente:	INCREMENTPLUSAFTER {$$=ast_new_autoIncrement_plus(new_var($1));}
 // Etat terminal qui peut etre soit un nombre, un variable ou une incrementation de variable
 B: NOMBRE {$$=new_const($1);}
 	| ID { $$ = new_var($1);}
-		/*print_define(listedef);
-		printf("ALORS JE CHERCHE %s et normaleme testVAR c'est %d\n",defineId,findInDefine(listedef,"testVAR"));
-		if(isInDefine(listedef,defineId)==0){
-			cstOfDefine = findInDefine(listedef,defineId);
-			printf("########ICI JE DEFINIE %d \n",cstOfDefine);
-			$$ = new_const(cstOfDefine);
-		}else{
-			printf("########ICI JE CHERCHE %s et j'ai %d \n",defineId,findInDefine(listedef,defineId));
-			$$ = new_var($1);
-			printf("ICI j'affiche les defines notament %d\n",listedef->id);
-		}}*/
 	| AutoIncremente {$$ = $1;}
 	| ID ListeDimAffect {$$ = new_tableau($1,$2);}
 	;

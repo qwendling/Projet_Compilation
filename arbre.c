@@ -30,11 +30,101 @@ Arbre ast_new_blocStencil(Arbre a){
 	return new;
 }
 
+int verifStencilDim(Arbre ast,int dim){
+	Arbre tmp = ast;
+	int cptdim = 0;
+	while(tmp->type == ast_bloc){
+		tmp=tmp->fils;
+		cptdim++;
+	}
 
-int verifStencil(Stencil stencil){
-	// Le bordel des verification des dims ect c'est ici !
+	if(cptdim == dim-1){
+		return 0;
+	}
+
+	return 1;
+}
+
+int verifStencilMember(Arbre ast, int member){
+	Arbre tmp = ast;
+	int cptmember = 0;
+	while (tmp != NULL){
+		tmp = tmp->freres;
+		cptmember++;
+	}
+
+	if(cptmember==member){
+		return 0;
+	}
+	return 1;
+}
+
+int verifStencilMemberRecu(Arbre astStencil, int member){
+	if(astStencil == NULL){
+		return 0;
+	}
+
+	int res1;
+	int res2;
+	int membre;
+	switch(astStencil->type){
+		case ast_bloc:
+			res1 = verifStencilMemberRecu(astStencil->fils,member);
+			res2 = verifStencilMemberRecu(astStencil->freres,member);
+			return !(!res1 && !res2);
+		break;
+
+		default :
+			membre = verifStencilMember(astStencil, 2*member+1);
+			return membre;
+		break;
+	}
+
 	return 0;
 }
+
+int verifStencilFrere(Arbre ast,int frere){
+	Arbre tmp = ast;
+	int cptfreres = 0;
+	while (tmp != NULL) {
+		tmp = tmp->freres;
+		cptfreres++;
+	}
+
+	if(cptfreres==frere){
+		return 0;
+	}
+	return 1;
+}
+
+int verifStencilFrereRecu(Arbre astStencil, int member){
+	int res1;
+	int res2;
+	switch(astStencil->type){
+		case ast_bloc:
+			res1 = verifStencilFrere(astStencil,member);
+			if(astStencil->fils->type==ast_bloc){
+				 res2 = verifStencilFrereRecu(astStencil->fils,member);
+				return !(!res2 && !res1);
+			}
+
+			return res1;
+		break;
+	}
+
+	return 0;
+}
+
+int verifStencil(Arbre astStencil, int member, int dim){
+
+	int resMember = verifStencilMemberRecu(astStencil,member);
+	int resFrere = verifStencilFrereRecu(astStencil,2*member+1);
+	int resDim = verifStencilDim(astStencil,dim);
+
+	return !(!resMember && !resFrere && !resDim);
+}
+
+
 //------- SPRINT 1 -------
 
 //creation d'un arbre vide
@@ -593,7 +683,8 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
           print_tab(s);
 					break;
 				case ast_stencil:
-				if(verifStencil(a->fils->stencil)){
+				printf("Declaration stencil\n" );
+				if(verifStencil(a->fils->fils,a->fils->stencil->member,a->fils->stencil->profondeurs)){
 					printf("Stencil mal definie !\n",name);
 					return 3;
 				}

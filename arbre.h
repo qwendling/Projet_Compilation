@@ -83,16 +83,19 @@ typedef struct str_stencil{
 } std_stencil, *Stencil;
 
 //Verifie que c'est les bonnes dim
-int verifStencilDim(Arbre ast);
+int verifStencilDim(Arbre ast,int dim);
 
 //Verifie que c'est les bons nombre de membre
-int verifStencilMember(Arbre ast);
+int verifStencilMember(Arbre ast, int member);
 
 //Verifie que c'est les bons nombre de freres
-int verifStencilFrere(Arbre ast);
+int verifStencilFrere(Arbre ast,int frere);
+
 
 //Verifie que le stencil est bon
-int verifStencil(Stencil stencil);
+int verifStencilMemberRecu(Arbre astStencil, int member);
+
+int verifStencil(Arbre astStencil, int member, int dim);
 
 Arbre ast_new_stencilDeclare(char* id,Arbre member,int n,int prof);
 
