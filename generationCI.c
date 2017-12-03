@@ -158,6 +158,33 @@ quad genCodeRelop(quad_op relop,Arbre ast,Symbole sym_table[TAILLE_TABLE]){
   return codegen;
 }
 
+quad declare_stencil(Arbre ast,Symbole sym_table[TAILLE_TABLE],Symbole* addr_stencil){
+  if(ast == NULL)
+    return NULL;
+  quad codegen=NULL,tmp_quad=NULL;
+  Symbole sym_arg1,sym_tmp,tmp;
+  switch(ast->type){
+    case ast_bloc:
+      codegen = declare_stencil(ast->fils,sym_table,addr_stencil);
+      break;
+    default:
+      tmp_quad = genCode(ast,sym_table);
+      sym_arg1 = quad_res(tmp_quad);
+      codegen = add_quad(codegen,tmp_quad);
+      codegen = add_quad(codegen,quad_add(NULL,affectation_tab,sym_arg1,NULL,*addr_stencil));
+      tmp = sym_new_tmp(sym_table);
+      tmp->type = sym_const;
+      tmp->val.entier = 4;
+
+      sym_tmp = sym_new_tmp(sym_table);
+      codegen = add_quad(codegen,quad_add(NULL,q_add,tmp,*addr_stencil,sym_tmp));
+      *addr_stencil=sym_tmp;
+      break;
+  }
+  codegen = add_quad(codegen,declare_stencil(ast->freres,sym_table,addr_stencil));
+  return codegen;
+}
+
 // genere les quads depuis l'AST en stockant dans la table des symboles
 quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
   if(ast == NULL)
@@ -515,7 +542,13 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
       print_quad(codegen);
 
       break;
-    }
+    case ast_declaration:
+      if(ast->fils->type == ast_stencil){
+        sym_arg1 = sym_find(ast->fils->val.stencil.name,sym_table);
+        codegen = declare_stencil(ast->fils->fils,sym_table,&sym_arg1);
+      }
+      break;
+  }
   return codegen;
 }
 

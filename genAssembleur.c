@@ -23,6 +23,7 @@ void load_var(const char* registre,const Symbole s,FILE* file){
 			free(str_code);
 			break;
 		case sym_string:
+		case sym_stencil:
 		case sym_tab:
 			snprintf(str_code,1024,"la %s %s\n",registre,s->name);
 			fwrite(str_code,sizeof(char),strlen(str_code),file);
@@ -137,8 +138,14 @@ void gen_affecTab(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 	load_var("$t0",code->arg1,file);
 	printf("\n%d\n",code->res->index);
 
-	snprintf(str_code,1024,"lw $t1 %s\n",code->res->name);
-	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	if(code->res->type == sym_stencil){
+		snprintf(str_code,1024,"la $t1 %s\n",code->res->name);
+		fwrite(str_code,sizeof(char),strlen(str_code),file);
+	}
+	else{
+		snprintf(str_code,1024,"lw $t1 %s\n",code->res->name);
+		fwrite(str_code,sizeof(char),strlen(str_code),file);
+	}
 
 	snprintf(str_code,1024,"sw $t0 ($t1)\n");
 	fwrite(str_code,sizeof(char),strlen(str_code),file);
@@ -471,6 +478,11 @@ void gen_sym(Symbole s,FILE* file){
 		case sym_tab:
 			printf("Size tableau : %d\n",sizeTab(s));
 			snprintf(str_code,1024,"%s: .space %d\n",s->name,sizeTab(s)*4);
+			fwrite(str_code,sizeof(char),strlen(str_code),file);
+			break;
+		case sym_stencil:
+			printf("Size stencil : %d\n",s->val.entier);
+			snprintf(str_code,1024,"%s: .space %d\n",s->name,s->val.entier*4);
 			fwrite(str_code,sizeof(char),strlen(str_code),file);
 			break;
 	}
