@@ -82,6 +82,7 @@
 %type <ast> ListeBlockStencil
 %type <ast> ListeStencilBlockMember
 %type <ast> ListeStencilMember
+%type <ast> ApplyStencil
 
 // ---- Gestion de la priorite
 %left NOT
@@ -165,7 +166,6 @@ ListeDimAffect: '['Expression']' ListeDimAffect {$$=concat($2,$4);}
 	|'['Expression']' {$$=$2;}
 	;
 
-
 //---------- AFFECTATION VARIABLE -------------//
 // Une affectation correspond a un ID prenant comme valeur une expression
 Affectation: ID '=' Expression {$$=ast_new_affectation(new_var($1),$3);}
@@ -176,6 +176,7 @@ Affectation: ID '=' Expression {$$=ast_new_affectation(new_var($1),$3);}
 Expression: Expression'+'Terme {$$ = ast_new_plus($1,$3);}
 	|	Expression'-'Terme {$$ = ast_new_moins($1,$3);}
 	|	Terme {$$ = $1;}
+	| ApplyStencil {$$=$1;}
 	;
 
 // Expressions arithmétiques * /, avec respect de la priorité
@@ -200,7 +201,6 @@ AutoIncremente:	INCREMENTPLUSAFTER {$$=ast_new_autoIncrement_plus(new_var($1));}
 	;
 
 //---------- ETAT TERMINAL -------------//
-//	{printf("test bhbhhbb \n");  ; printf("#########define ok %s  %d \n",defineId,cstOfDefine);
 // Etat terminal qui peut etre soit un nombre, un variable ou une incrementation de variable
 B: NOMBRE {$$=new_const($1);}
 	| ID { $$ = new_var($1);}
@@ -256,7 +256,8 @@ ListeIncrement: AutoIncremente',' ListeIncrement {$$=concat($1,$3);}
 	| AutoIncremente {$$=$1;}
 	;
 
-
+ApplyStencil: ID'$'ID ListeDimAffect {$$=ast_new_applyStencilD(new_stencil($1),new_tableau($3,$4)) ;}
+	| ID ListeDimAffect'$'ID {$$= ast_new_applyStencilG(new_tableau($1,$2),new_stencil($1));}
 
 //---------- DECLARATION TABLEAU -------------//
 

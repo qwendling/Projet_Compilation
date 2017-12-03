@@ -104,7 +104,7 @@ printi {return PRINTI;}
 
 [\{\}\(\)\[\]\;] {printf("Envoie de : %s \n",yytext);return yytext[0];}
 =		{return yytext[0];}
-[+-/*] {return yytext[0];}
+[+-/*$] {return yytext[0];}
 
 
 

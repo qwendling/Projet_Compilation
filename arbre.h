@@ -44,8 +44,8 @@ typedef enum arbre_type{
 
 	//--- Sprint 5
 	ast_tableau,
-  ast_stencil
-
+  ast_stencil,
+  ast_applyStencil
 }arbre_type;
 
 typedef struct str_stencil{
@@ -83,8 +83,10 @@ typedef struct str_define{
 } std_define, *ListeDefine;
 
 
-
-
+Arbre ast_new_applyStencilD(Arbre stencil, Arbre tableau);
+Arbre ast_new_applyStencilG(Arbre tableau,Arbre stencil);
+Arbre ast_new_applyStencil(Arbre stencil, Arbre Tableau);
+Arbre new_stencil(char* id);
 //Verifie que c'est les bonnes dim
 int verifStencilDim(Arbre ast,int dim);
 

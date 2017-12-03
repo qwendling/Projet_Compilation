@@ -4,7 +4,29 @@
 #include <string.h>
 #include <math.h>
 
+Arbre ast_new_applyStencilD(Arbre stencil, Arbre tableau){
+	Arbre new = calloc(1,sizeof(std_arbre));
+	new->type = ast_applyStencil;
+	new->fils = stencil;
+	new->fils->freres = tableau;
 
+	return new;
+}
+
+Arbre ast_new_applyStencilG(Arbre tableau,Arbre stencil){
+	Arbre new = calloc(1,sizeof(std_arbre));
+	new->type = ast_applyStencil;
+	new->fils = tableau;
+	new->fils->freres = stencil;
+
+	return new;
+}
+
+Arbre new_stencil(char* id){
+	Arbre new = calloc(1,sizeof(std_arbre));
+	new->type = ast_stencil;
+	new->val.str = strdup(id);
+}
 
 Arbre ast_new_stencilDeclare(char* id,Arbre member,int n,int prof){
 	Arbre new = calloc(1,sizeof(std_arbre));
@@ -617,6 +639,9 @@ void ast_print_aux(Arbre a,int profondeur){
 	printf("ast_tableau\n");
 	case ast_stencil:
 	printf("ast_stencil : %s {%d,%d}\n",a->val.stencil.name,a->val.stencil.member,a->val.stencil.profondeurs);
+	break;
+	case ast_applyStencil:
+	printf("ast_applyStencil\n");
 	break;
   }
 
