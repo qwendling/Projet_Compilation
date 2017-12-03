@@ -10,14 +10,13 @@ Arbre ast_new_stencilDeclare(char* id,Arbre member,int n,int prof){
 	new->type = ast_declaration;
 	new->fils =  calloc(1,sizeof(std_arbre));
   new->fils->type = ast_stencil;
-  new->fils->val.str = strdup(id);
+  new->fils->val.stencil.name = strdup(id);
 	new->fils->fils = member;
 
 
 	//Stencil qui sert a l'analyse semeantique
-	new->fils->stencil = calloc(1,sizeof(std_stencil));
-  new->fils->stencil->profondeurs = prof;
-	new->fils->stencil->member = n;
+  new->fils->val.stencil.profondeurs = prof;
+	new->fils->val.stencil.member = n;
 
 	return new;
 }
@@ -616,8 +615,7 @@ void ast_print_aux(Arbre a,int profondeur){
 	case ast_tableau:
 	printf("ast_tableau\n");
 	case ast_stencil:
-	printf("ast_stencil : %s \n",a->val.str);
-	printf(" info stencil : n: %d  dim : %d  \n",a->stencil->member,a->stencil->profondeurs);
+	printf("ast_stencil : %s {%d,%d}\n",a->val.stencil.name,a->val.stencil.member,a->val.stencil.profondeurs);
 	break;
   }
 
@@ -665,7 +663,10 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
 	Symbole s;
 	switch(a->type){
 		case ast_declaration:
-			name = a->fils->val.str;
+			if(a->fils->type == ast_stencil)
+				name = a->fils->val.stencil.name;
+			else
+				name = a->fils->val.str;
 			if(sym_existe_table(sym_table,name)){
         printf("%s deja defini\n",name);
 				return 2;
@@ -684,7 +685,7 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
 					break;
 				case ast_stencil:
 				printf("Declaration stencil\n" );
-				if(verifStencil(a->fils->fils,a->fils->stencil->member,a->fils->stencil->profondeurs)){
+				if(verifStencil(a->fils->fils,a->fils->val.stencil.member,a->fils->val.stencil.profondeurs)){
 					printf("Stencil mal definie !\n");
 					return 3;
 				}

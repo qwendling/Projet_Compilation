@@ -48,6 +48,12 @@ typedef enum arbre_type{
 
 }arbre_type;
 
+typedef struct str_stencil{
+	int profondeurs;
+  int member;
+  char* name;
+} std_stencil, *Stencil;
+
 // Union definissant les valeurs possibles d'une feuille
 typedef union tree_value{
   char* str;
@@ -57,6 +63,7 @@ typedef union tree_value{
     quad trueList;
     quad falseList;
   } boolList;
+  std_stencil stencil;
 }tree_value;
 
 // Structure de l'AST
@@ -65,7 +72,6 @@ typedef struct str_arbre{
   struct str_arbre* fils;
   struct str_arbre* freres;
   tree_value val;
-  struct str_stencil* stencil;
 } std_arbre,*Arbre;
 
 
@@ -77,10 +83,7 @@ typedef struct str_define{
 } std_define, *ListeDefine;
 
 
-typedef struct str_stencil{
-	int profondeurs;
-  int member;
-} std_stencil, *Stencil;
+
 
 //Verifie que c'est les bonnes dim
 int verifStencilDim(Arbre ast,int dim);

@@ -411,111 +411,111 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
         fils = fils->freres;
       }
       break;
-	case ast_while:
-    //quad condition
-		arg=genCode(ast->fils,sym_table);
-    //quad instructions
-		arg2 = genCode(ast->fils->freres,sym_table);
-		lbl = sym_new_lbl(sym_table);
-		lbl2 = sym_new_lbl(sym_table);
-		lbl3 = sym_new_lbl(sym_table);
+  	case ast_while:
+      //quad condition
+  		arg=genCode(ast->fils,sym_table);
+      //quad instructions
+  		arg2 = genCode(ast->fils->freres,sym_table);
+  		lbl = sym_new_lbl(sym_table);
+  		lbl2 = sym_new_lbl(sym_table);
+  		lbl3 = sym_new_lbl(sym_table);
 
-    // quad quand condition vrai
-		quad_complete(ast->fils->val.boolList.trueList,lbl);
-    //quad quand faux
-		quad_complete(ast->fils->val.boolList.falseList,lbl2);
+      // quad quand condition vrai
+  		quad_complete(ast->fils->val.boolList.trueList,lbl);
+      //quad quand faux
+  		quad_complete(ast->fils->val.boolList.falseList,lbl2);
 
-    // hummm le lbl3 why ?
-		codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl3));
-		codegen= add_quad(codegen,arg);
-		codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl));
-		codegen = add_quad(codegen,arg2);
-		codegen = add_quad(codegen,quad_add(NULL,q_goto,NULL,NULL,lbl3));
-		codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl2));
+      // hummm le lbl3 why ?
+  		codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl3));
+  		codegen= add_quad(codegen,arg);
+  		codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl));
+  		codegen = add_quad(codegen,arg2);
+  		codegen = add_quad(codegen,quad_add(NULL,q_goto,NULL,NULL,lbl3));
+  		codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl2));
 
-		break;
-	case ast_for:
-    //quad inits
-		arg=genCode(ast->fils,sym_table);
-    //quad condition
-		arg2=genCode(ast->fils->freres,sym_table);
-    //quad increment
-		arg3=genCode(ast->fils->freres->freres,sym_table);
-    //quad instructions
-		arg4=genCode(ast->fils->freres->freres->freres,sym_table);
+  		break;
+  	case ast_for:
+      //quad inits
+  		arg=genCode(ast->fils,sym_table);
+      //quad condition
+  		arg2=genCode(ast->fils->freres,sym_table);
+      //quad increment
+  		arg3=genCode(ast->fils->freres->freres,sym_table);
+      //quad instructions
+  		arg4=genCode(ast->fils->freres->freres->freres,sym_table);
 
-		lbl = sym_new_lbl(sym_table);
-		lbl2 = sym_new_lbl(sym_table);
-		lbl3 = sym_new_lbl(sym_table);
+  		lbl = sym_new_lbl(sym_table);
+  		lbl2 = sym_new_lbl(sym_table);
+  		lbl3 = sym_new_lbl(sym_table);
 
-    // quad quand condition verifié
-		quad_complete(ast->fils->freres->val.boolList.trueList,lbl2);
-    //quad quand fini boucle
-		quad_complete(ast->fils->freres->val.boolList.falseList,lbl3);
+      // quad quand condition verifié
+  		quad_complete(ast->fils->freres->val.boolList.trueList,lbl2);
+      //quad quand fini boucle
+  		quad_complete(ast->fils->freres->val.boolList.falseList,lbl3);
 
-		//Code Init
-		codegen = add_quad(codegen,arg);
-		//Label condition
-		codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl));
-		//Condition
-		codegen = add_quad(codegen,arg2);
-		//Label true
-		codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl2));
-		//Bloc de code
-		codegen = add_quad(codegen,arg4);
-		//iteration
-		codegen = add_quad(codegen,arg3);
-		//gotoCond
-		codegen = add_quad(codegen,quad_add(NULL,q_goto,NULL,NULL,lbl));
-		//label false
-		codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl3));
+  		//Code Init
+  		codegen = add_quad(codegen,arg);
+  		//Label condition
+  		codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl));
+  		//Condition
+  		codegen = add_quad(codegen,arg2);
+  		//Label true
+  		codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl2));
+  		//Bloc de code
+  		codegen = add_quad(codegen,arg4);
+  		//iteration
+  		codegen = add_quad(codegen,arg3);
+  		//gotoCond
+  		codegen = add_quad(codegen,quad_add(NULL,q_goto,NULL,NULL,lbl));
+  		//label false
+  		codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl3));
 
-		break;
-  case ast_tableau:
-  printf("GEN CI tab\n");
-    sym_arg1 = sym_find(ast->val.str,sym_table);
-    arg=genCode(ast->fils,sym_table);
+  		break;
+    case ast_tableau:
+      printf("GEN CI tab\n");
+      sym_arg1 = sym_find(ast->val.str,sym_table);
+      arg=genCode(ast->fils,sym_table);
 
-    sym_arg2=quad_res(arg);
-    codegen = add_quad(codegen,arg);
-
-    Arbre parcours_dim = ast->fils->freres;
-    Dim dim_tab = sym_arg1->val.dimension->next;
-    int size_dim;
-
-    while(parcours_dim != NULL && dim_tab != NULL){
-
-      size_dim = dim_tab->size;
-      dim_tab = dim_tab->next;
-
-      tmp = sym_new_tmp(sym_table);
-      tmp->type = sym_const;
-      tmp->val.entier = size_dim;
-      codegen = add_quad(codegen,quad_add(NULL,q_mul,quad_res(codegen),tmp,sym_new_tmp(sym_table)));
-      sym_arg2=quad_res(codegen);
-      arg=genCode(parcours_dim,sym_table);
-
+      sym_arg2=quad_res(arg);
       codegen = add_quad(codegen,arg);
 
+      Arbre parcours_dim = ast->fils->freres;
+      Dim dim_tab = sym_arg1->val.dimension->next;
+      int size_dim;
 
-      codegen = add_quad(codegen,quad_add(NULL,q_add,quad_res(codegen),sym_arg2,sym_new_tmp(sym_table)));
+      while(parcours_dim != NULL && dim_tab != NULL){
 
-      parcours_dim = parcours_dim->freres;
+        size_dim = dim_tab->size;
+        dim_tab = dim_tab->next;
+
+        tmp = sym_new_tmp(sym_table);
+        tmp->type = sym_const;
+        tmp->val.entier = size_dim;
+        codegen = add_quad(codegen,quad_add(NULL,q_mul,quad_res(codegen),tmp,sym_new_tmp(sym_table)));
+        sym_arg2=quad_res(codegen);
+        arg=genCode(parcours_dim,sym_table);
+
+        codegen = add_quad(codegen,arg);
+
+
+        codegen = add_quad(codegen,quad_add(NULL,q_add,quad_res(codegen),sym_arg2,sym_new_tmp(sym_table)));
+
+        parcours_dim = parcours_dim->freres;
+      }
+      tmp = sym_new_tmp(sym_table);
+      tmp->type = sym_const;
+      tmp->val.entier = 4;
+      codegen = add_quad(codegen,quad_add(NULL,q_mul,tmp,quad_res(codegen),sym_new_tmp(sym_table)));
+
+      tmp = sym_new_tmp(sym_table);
+      tmp->type = sym_tabRes;
+      codegen = add_quad(codegen,quad_add(NULL,q_add,sym_arg1,quad_res(codegen),tmp));
+
+      printf("#######TAB######\n\n");
+      print_quad(codegen);
+
+      break;
     }
-    tmp = sym_new_tmp(sym_table);
-    tmp->type = sym_const;
-    tmp->val.entier = 4;
-    codegen = add_quad(codegen,quad_add(NULL,q_mul,tmp,quad_res(codegen),sym_new_tmp(sym_table)));
-
-    tmp = sym_new_tmp(sym_table);
-    tmp->type = sym_tabRes;
-    codegen = add_quad(codegen,quad_add(NULL,q_add,sym_arg1,quad_res(codegen),tmp));
-
-    printf("#######TAB######\n\n");
-    print_quad(codegen);
-
-    break;
-  }
   return codegen;
 }
 
