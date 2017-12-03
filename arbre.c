@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 
 
@@ -689,6 +690,8 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
 					printf("Stencil mal definie !\n");
 					return 3;
 				}
+				s->type = sym_stencil;
+				s->val.entier = pow(a->fils->val.stencil.member,a->fils->val.stencil.profondeurs);
 				break;
 			}
 			break;
@@ -711,8 +714,13 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
 
         printf("%s ast_tableau\n",name );
 			break;
-
-
+		case ast_stencil:
+			name = a->val.stencil.name;
+			s = sym_find(name,sym_table);
+			if(s == NULL || s->type != sym_stencil){
+				printf("%s pas ast_stencil\n",name );
+				return 1;
+			}
 			break;
 	}
   int tmp = ast_semantique(a->fils,sym_table);

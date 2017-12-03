@@ -45,7 +45,7 @@ all: ${LEX} ${YACC} ${FILE_C}
 	@printf "${CYAN}\t\t LEX Compiled ${END} \n"
 	@#######
 	@printf "${YELLOW}Project Compiling... ${END} \n"
-	@gcc -o ${EXEC} lex.yy.c ${EXEC}.tab.c ${FILE_C} -ly
+	@gcc -o ${EXEC} lex.yy.c ${EXEC}.tab.c ${FILE_C} -ly -lm
 	@printf "\n${CYAN}\t\t Project Compiled ${END} \n\n"
 	@#######
 
