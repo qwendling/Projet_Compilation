@@ -257,7 +257,7 @@ ListeIncrement: AutoIncremente',' ListeIncrement {$$=concat($1,$3);}
 	;
 
 ApplyStencil: ID'$'ID ListeDimAffect {$$=ast_new_applyStencilD(new_stencil($1),new_tableau($3,$4)) ;}
-	| ID ListeDimAffect'$'ID {$$= ast_new_applyStencilG(new_tableau($1,$2),new_stencil($1));}
+	| ID ListeDimAffect'$'ID {$$= ast_new_applyStencilG(new_tableau($1,$2),new_stencil($4));}
 
 //---------- DECLARATION TABLEAU -------------//
 
