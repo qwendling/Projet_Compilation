@@ -25,7 +25,7 @@ Arbre ast_new_applyStencilG(Arbre tableau,Arbre stencil){
 Arbre new_stencil(char* id){
 	Arbre new = calloc(1,sizeof(std_arbre));
 	new->type = ast_stencil;
-	new->val.str = strdup(id);
+	new->val.stencil.name = strdup(id);
 }
 
 Arbre ast_new_stencilDeclare(char* id,Arbre member,int n,int prof){
@@ -637,6 +637,7 @@ void ast_print_aux(Arbre a,int profondeur){
   break;
 	case ast_tableau:
 	printf("ast_tableau\n");
+	break;
 	case ast_stencil:
 	printf("ast_stencil : %s {%d,%d}\n",a->val.stencil.name,a->val.stencil.member,a->val.stencil.profondeurs);
 	break;
