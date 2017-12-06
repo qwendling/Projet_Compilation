@@ -198,6 +198,46 @@ int produitDim(Dim d){
   return d->size*produitDim(d->next);
 }
 
+quad genForStencil(Arbre indexTab,Dim dimTab,Symbole sym_sten,int profondeur,Symbole addrSten,Symbole addrTab,Symbole result,Symbole sym_table[TAILLE_TABLE]){
+	Symbole sym_i,tmp1,tmp2,tmp3,lbl_condition,lbl_debut,lbl_fin;
+	quad codegen = NULL;
+	int n = sym_sten->val.stencil.voisin;
+	
+	sym_i=sym_new_tmp(sym_table);
+	
+	tmp1=sym_new_tmp(sym_table);
+	tmp1->type=sym_const;
+	tmp1->val.entier=-n;
+	
+	tmp2=sym_new_tmp(sym_table);
+	tmp2->type=sym_const;
+	tmp2->val.entier=n;
+	
+	lbl_condition = sym_new_lbl(sym_table);
+	lbl_debut = sym_new_lbl(sym_table);
+	lbl_fin = sym_new_lbl(sym_table);
+	
+	codegen = add_quad(codegen,quad_add(NULL,affectation_var,tmp1,NULL,sym_i));
+	codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl_condition));
+	codegen = add_quad(codegen,quad_add(NULL,q_lessOrEqual,sym_i,tmp2,lbl_debut));
+	codegen = add_quad(codegen,quad_add(NULL,q_goto,NULL,NULL,lbl_fin));
+	codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl_debut));
+	
+	tmp3=sym_new_tmp(sym_table);
+	tmp3->type=sym_const;
+	tmp3->val.entier=produitDim(dimTab->next)*4;
+	
+	dimTab = (dimTab)?dimTab->next:NULL;
+	
+	
+	genCode(indexTab,sym_table);
+	
+	codegen = add_quad(codegen,quad_add(NULL,q_goto,NULL,NULL,lbl_debut));
+	codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl_fin));
+	
+	return codegen;
+}
+
 
 // genere les quads depuis l'AST en stockant dans la table des symboles
 quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
@@ -379,7 +419,7 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
       ast->val.boolList.falseList = add_bool(ast->fils->val.boolList.falseList,ast->fils->freres->val.boolList.falseList);
 
       codegen = add_quad(codegen,arg);
-      /// mmmmh je bug la
+      // mmmmh je bug la
       codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl));
       codegen = add_quad(codegen,arg2);
       break;
@@ -602,7 +642,7 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
         dimTab = (dimTab)?dimTab->next:NULL;
       }
 
-      //codegen = add_quad(codegen,genForStencil(indexTab,dimTab,sym_sten,1,sym_sten,addrTab));
+      codegen = add_quad(codegen,genForStencil(indexTab,dimTab,sym_sten,1,sym_sten,addrTab,result,sym_table));
 
       /*printf("#########PETITE VERIF CODEGEN\n");
       print_quad(codegen);
