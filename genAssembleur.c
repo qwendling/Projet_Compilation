@@ -132,7 +132,7 @@ void gen_affecTab(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 	// On sauvgarde la valeur dans le registre t0
 	load_var("$t0",code->arg1,file);
 
-	if(code->res->type == sym_stencil){
+	if(code->res->type == sym_stencil || code->res->type == sym_tab){
 		snprintf(str_code,1024,"la $t1 %s\n",code->res->name);
 		fwrite(str_code,sizeof(char),strlen(str_code),file);
 	}
