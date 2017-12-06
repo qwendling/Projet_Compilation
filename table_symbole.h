@@ -28,6 +28,11 @@ typedef struct std_symbole{
     int entier;
     char* str;
     Dim dimension;
+		struct {
+			int voisin;
+			int dim;
+			int size;
+		} stencil;
   } val;
   sym_type type; // type du symbole
   struct std_symbole* next;

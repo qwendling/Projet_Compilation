@@ -185,14 +185,28 @@ quad declare_stencil(Arbre ast,Symbole sym_table[TAILLE_TABLE],Symbole* addr_ste
   return codegen;
 }
 
+int nbFreres(Arbre a){
+  if(a== NULL)
+    return 0;
+  return 1+nbFreres(a->freres);
+}
+
+int produitDim(Dim d){
+  if(d==NULL){
+    return 1;
+  }
+  return d->size*produitDim(d->next);
+}
+
+
 // genere les quads depuis l'AST en stockant dans la table des symboles
 quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
   if(ast == NULL)
     return NULL;
   //nouveau symbole du quad
-  Symbole tmp,tmp2,sym_arg1,sym_arg2,lbl,lbl2,lbl3;
+  Symbole tmp,tmp2,sym_arg1,sym_arg2,lbl,lbl2,lbl3,result;
   quad codegen = NULL,arg = NULL,arg2=NULL,arg3=NULL,arg4=NULL,tmpQuad=NULL,tmpQuad2=NULL;
-  Arbre fils;
+  Arbre fils,tmp_sten,tmp_tab;
   //Suivant le type de l'AST le quad est différent
   switch(ast->type){
     case ast_constant:
@@ -244,13 +258,14 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
         }
         break;
     case ast_var:
-  		printf("CI Var\n");
+  		printf("CI Var %s\n",ast->val.str);
       // On génère le quad de variable déja initialisé
   		codegen = quad_add(codegen,use_var,NULL,NULL,sym_find(ast->val.str,sym_table));
-  		break;
+      break;
   	case ast_affectation:
   		printf("CI affecVar %s\n",ast->fils->val.str);
       arg2 = genCode(ast->fils,sym_table);
+      printf("test arg2 affecVar\n");
   		arg = genCode(ast->fils->freres,sym_table);
   		printf("test arg : %s\n",quad_res(arg)->name);
 
@@ -547,6 +562,53 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
         sym_arg1 = sym_find(ast->fils->val.stencil.name,sym_table);
         codegen = declare_stencil(ast->fils->fils,sym_table,&sym_arg1);
       }
+      break;
+    case ast_applyStencil:
+      printf("CI apply stencil\n");
+      if(ast->fils->type == ast_stencil){
+        tmp_tab = ast->fils->freres;
+        tmp_sten = ast->fils;
+      }else{
+        tmp_sten = ast->fils->freres;
+        tmp_tab = ast->fils;
+      }
+
+      Symbole sym_sten = sym_find(tmp_sten->val.stencil.name,sym_table);
+      Symbole addrTab = sym_find(tmp_tab->val.str,sym_table);
+      Dim dimTab = addrTab->val.dimension;
+
+      Arbre indexTab = tmp_tab->fils;
+
+      result = sym_new_tmp(sym_table);
+      printf("nb dim du tab = %d\n",nbFreres(indexTab));
+
+
+      while(nbFreres(indexTab) > sym_sten->val.stencil.dim){
+        printf("Ok test\n");
+        arg = genCode(indexTab,sym_table);
+        sym_arg1=quad_res(arg);
+
+        codegen = add_quad(codegen,arg);
+
+        tmp = sym_new_tmp(sym_table);
+        tmp->type = sym_const;
+        tmp->val.entier = produitDim(dimTab->next)*4;
+
+        codegen = add_quad(codegen,quad_add(NULL,q_mul,sym_arg1,tmp,sym_new_tmp(sym_table)));
+        codegen = add_quad(codegen,quad_add(NULL,q_add,addrTab,quad_res(codegen),sym_new_tmp(sym_table)));
+        addrTab = quad_res(codegen);
+
+        indexTab = indexTab->freres;
+        dimTab = (dimTab)?dimTab->next:NULL;
+      }
+
+      //codegen = add_quad(codegen,genForStencil(indexTab,dimTab,sym_sten,1,sym_sten,addrTab));
+
+      /*printf("#########PETITE VERIF CODEGEN\n");
+      print_quad(codegen);
+      printf("\n\n");*/
+
+      codegen = quad_add(codegen,use_var,NULL,NULL,result);
       break;
   }
   return codegen;

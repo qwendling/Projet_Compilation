@@ -27,7 +27,7 @@ ARBRE_H = arbre.h
 SYMBOLE_C = table_symbole.c
 SYMBOLE_H = table_symbole.h
 GENERATIONCI_C = generationCI.c
-FILE_C = arbre.c table_symbole.c generationCI.c genAssembleur.c
+FILE_C = arbre.c table_symbole.c generationCI.c genAssembleur.c 
 
 ############################
 # 		Makefile Action			#

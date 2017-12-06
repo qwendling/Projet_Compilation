@@ -32,13 +32,12 @@ void load_var(const char* registre,const Symbole s,FILE* file){
 	}
 }
 
-// FOnction de generation de printf
+// FOnction de generation de
 void gen_printf(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 	char* str_code = calloc(1024,sizeof(char));
 	if(str_code == NULL)
 		exit(1);
 
-	printf("gen printf\n");
 	// On charge l'argument a print en cherchant avec son index
 	load_var("$a0",code->arg1,file);
 	free(str_code);
@@ -56,7 +55,6 @@ void gen_printi(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 	if(str_code == NULL)
 		exit(1);
 
-	printf("gen printi\n\n");
 	// On charge l'argument a print en cherchant avec son index
 	load_var("$a0",code->arg1,file);
 	free(str_code);
@@ -92,7 +90,6 @@ void gen_return(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 	if(str_code == NULL)
 		exit(1);
 
-	printf("gen return\n");
 	load_var("$a0",code->arg1,file);
 	free(str_code);
 
@@ -106,7 +103,6 @@ void gen_return(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 void gen_main(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 	char* str_code;
 
-	printf("gen main");
 	str_code = "main:\n";
 	fwrite(str_code,sizeof(char),strlen(str_code),file);
 }
@@ -121,7 +117,6 @@ void gen_affecVar(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 
 	load_var("$t0",code->arg1,file);
 
-	printf("\n%d\n",code->res->index);
 	// On sauvgarde t0 a l'adresse de l'index
 	snprintf(str_code,1024,"sw $t0 %s\n",code->res->name);
 	fwrite(str_code,sizeof(char),strlen(str_code),file);
@@ -136,7 +131,6 @@ void gen_affecTab(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 
 	// On sauvgarde la valeur dans le registre t0
 	load_var("$t0",code->arg1,file);
-	printf("\n%d\n",code->res->index);
 
 	if(code->res->type == sym_stencil){
 		snprintf(str_code,1024,"la $t1 %s\n",code->res->name);
@@ -381,8 +375,6 @@ void gen_goto(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 void genAssembleur(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
   if(code == NULL)
     return;
-
-  printf("Debut gen \n");
   // Switch en fonction de l'operéation du quad
   switch(code->op){
     case print_i: // Assembleur pour le printi
@@ -404,7 +396,6 @@ void genAssembleur(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 			gen_affecVar(code,sym_table,file);
 			break;
 		case affectation_tab:
-			printf("gen affec tab\n");
 			gen_affecTab(code,sym_table,file);
 			break;
 		case q_add:
@@ -476,13 +467,12 @@ void gen_sym(Symbole s,FILE* file){
 			fwrite(str_code,sizeof(char),strlen(str_code),file);
 			break;
 		case sym_tab:
-			printf("Size tableau : %d\n",sizeTab(s));
 			snprintf(str_code,1024,"%s: .space %d\n",s->name,sizeTab(s)*4);
 			fwrite(str_code,sizeof(char),strlen(str_code),file);
 			break;
 		case sym_stencil:
-			printf("Size stencil : %d\n",s->val.entier);
-			snprintf(str_code,1024,"%s: .space %d\n",s->name,s->val.entier*4);
+			printf("Size stencil : %d\n",s->val.stencil.size);
+			snprintf(str_code,1024,"%s: .space %d\n",s->name,s->val.stencil.size*4);
 			fwrite(str_code,sizeof(char),strlen(str_code),file);
 			break;
 	}

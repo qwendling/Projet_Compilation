@@ -717,7 +717,9 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
 					return 3;
 				}
 				s->type = sym_stencil;
-				s->val.entier = pow(a->fils->val.stencil.member*2+1,a->fils->val.stencil.profondeurs);
+				s->val.stencil.size = pow(a->fils->val.stencil.member*2+1,a->fils->val.stencil.profondeurs);
+				s->val.stencil.voisin = a->fils->val.stencil.member;
+				s->val.stencil.dim = a->fils->val.stencil.profondeurs;
 				break;
 			}
 			break;
