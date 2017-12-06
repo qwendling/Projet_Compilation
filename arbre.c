@@ -4,148 +4,6 @@
 #include <string.h>
 #include <math.h>
 
-Arbre ast_new_applyStencilD(Arbre stencil, Arbre tableau){
-	Arbre new = calloc(1,sizeof(std_arbre));
-	new->type = ast_applyStencil;
-	new->fils = stencil;
-	new->fils->freres = tableau;
-
-	return new;
-}
-
-Arbre ast_new_applyStencilG(Arbre tableau,Arbre stencil){
-	Arbre new = calloc(1,sizeof(std_arbre));
-	new->type = ast_applyStencil;
-	new->fils = tableau;
-	new->fils->freres = stencil;
-
-	return new;
-}
-
-Arbre new_stencil(char* id){
-	Arbre new = calloc(1,sizeof(std_arbre));
-	new->type = ast_stencil;
-	new->val.stencil.name = strdup(id);
-}
-
-Arbre ast_new_stencilDeclare(char* id,Arbre member,int n,int prof){
-	Arbre new = calloc(1,sizeof(std_arbre));
-	new->type = ast_declaration;
-	new->fils =  calloc(1,sizeof(std_arbre));
-  new->fils->type = ast_stencil;
-  new->fils->val.stencil.name = strdup(id);
-	new->fils->fils = member;
-
-
-	//Stencil qui sert a l'analyse semeantique
-  new->fils->val.stencil.profondeurs = prof;
-	new->fils->val.stencil.member = n;
-
-	return new;
-}
-
-
-Arbre ast_new_blocStencil(Arbre a){
-	Arbre new = calloc(1,sizeof(std_arbre));
-	new->type = ast_bloc;
-	new->fils = a;
-	return new;
-}
-
-int verifStencilDim(Arbre ast,int dim){
-	Arbre tmp = ast;
-	int cptdim = 0;
-	while(tmp->type == ast_bloc){
-		tmp=tmp->fils;
-		cptdim++;
-	}
-
-	if(cptdim == dim-1){
-		return 0;
-	}
-
-	return 1;
-}
-
-int verifStencilMember(Arbre ast, int member){
-	Arbre tmp = ast;
-	int cptmember = 0;
-	while (tmp != NULL){
-		tmp = tmp->freres;
-		cptmember++;
-	}
-
-	if(cptmember==member){
-		return 0;
-	}
-	return 1;
-}
-
-int verifStencilMemberRecu(Arbre astStencil, int member){
-	if(astStencil == NULL){
-		return 0;
-	}
-
-	int res1;
-	int res2;
-	int membre;
-	switch(astStencil->type){
-		case ast_bloc:
-			res1 = verifStencilMemberRecu(astStencil->fils,member);
-			res2 = verifStencilMemberRecu(astStencil->freres,member);
-			return !(!res1 && !res2);
-		break;
-
-		default :
-			membre = verifStencilMember(astStencil, 2*member+1);
-			return membre;
-		break;
-	}
-
-	return 0;
-}
-
-int verifStencilFrere(Arbre ast,int frere){
-	Arbre tmp = ast;
-	int cptfreres = 0;
-	while (tmp != NULL) {
-		tmp = tmp->freres;
-		cptfreres++;
-	}
-
-	if(cptfreres==frere){
-		return 0;
-	}
-	return 1;
-}
-
-int verifStencilFrereRecu(Arbre astStencil, int member){
-	int res1;
-	int res2;
-	switch(astStencil->type){
-		case ast_bloc:
-			res1 = verifStencilFrere(astStencil,member);
-			if(astStencil->fils->type==ast_bloc){
-				 res2 = verifStencilFrereRecu(astStencil->fils,member);
-				return !(!res2 && !res1);
-			}
-
-			return res1;
-		break;
-	}
-
-	return 0;
-}
-
-int verifStencil(Arbre astStencil, int member, int dim){
-
-	int resMember = verifStencilMemberRecu(astStencil,member);
-	int resFrere = verifStencilFrereRecu(astStencil,2*member+1);
-	int resDim = verifStencilDim(astStencil,dim);
-
-	return !(!resMember && !resFrere && !resDim);
-}
-
 
 //------- SPRINT 1 -------
 
@@ -442,13 +300,20 @@ Arbre ast_new_while(Arbre conditions, Arbre instructions){
 
 
 //------- SPRINT 5 -------
-Arbre ast_new_tableauDeclare(char* id, Arbre dimension){
+Arbre ast_new_tableauDeclare(char* id, Arbre dimension, Arbre affect){
 	Arbre new = calloc(1,sizeof(std_arbre));
 	new->type = ast_declaration;
 	new->fils =  calloc(1,sizeof(std_arbre));
-  new->fils->type = ast_tableau;
-  new->fils->val.str = strdup(id);
+	new->fils->type = ast_tableau;
+	new->fils->val.str = strdup(id);
 	new->fils->fils = dimension;
+	
+	if(affect!=NULL){
+		new->fils->freres = calloc(1,sizeof(std_arbre));
+		new->fils->freres->type = ast_listTableau;
+		new->fils->freres->fils = affect;
+	}
+	
 	return new;
 
 }
@@ -457,12 +322,11 @@ Arbre ast_new_tableauAffec(char* id, Arbre dimension, Arbre affect){
 	Arbre new = calloc(1,sizeof(std_arbre));
 	new->type = ast_affectation;
 	new->fils =  calloc(1,sizeof(std_arbre));
-  new->fils->type = ast_tableau;
-  new->fils->val.str = strdup(id);
+	new->fils->type = ast_tableau;
+	new->fils->val.str = strdup(id);
 	new->fils->fils = dimension;
-  new->fils->freres = affect;
+	new->fils->freres = affect;
 	return new;
-
 }
 
 Arbre new_tableau(char* id, Arbre dimension){
@@ -472,6 +336,69 @@ Arbre new_tableau(char* id, Arbre dimension){
 	new->fils = dimension;
 	return new;
 
+}
+
+Arbre ast_new_blocTableau(Arbre a){
+	Arbre new = calloc(1,sizeof(std_arbre));
+	new->type = ast_bloc;
+	new->fils = a;
+	return new;
+}
+
+
+Arbre verifBlocInRecu(int dim,Arbre list){
+	Arbre bloc = list;
+	
+	
+	
+	return bloc;
+}
+
+int verifDimTab(int dim,Arbre list,int type){
+	int nbElem = dim;
+	
+	switch(type){
+	case 1 :
+			while(nbElem>0){
+		nbElem--;
+		if(list->freres == NULL){
+			return 1;			
+		}
+	}
+	break;
+		
+		
+	}
+
+	return 0;
+}
+
+int verifTableau(Arbre tableau){
+	Arbre dim = tableau->fils;
+	Arbre dimtmp = tableau->fils->freres;
+	//1er bloc
+	Arbre list = tableau->freres->fils;
+	
+	int actualDim = 0;
+	
+	//prend la derniere dim en valeur
+	while(dimtmp != NULL){
+		dimtmp = dimtmp->freres;
+		actualDim++;
+	}
+	
+	//verifie que les membres sont bon [x][y][z] -> verifie y,z
+	while (actualDim > 0){
+		
+	}
+
+	//verifie la dernier ou seul dimension
+	//type 1 = member , type 0 = bloc 
+	if(verifDimTab(dim->val.constante,list,1) == 1){
+		return 1;
+	}
+	
+	return 0;
 }
 
 
@@ -488,8 +415,7 @@ ListeDefine new_define(char* id, int constante){
 	return new;
 }
 
-ListeDefine concat_define(ListeDefine d,ListeDefine r)
-{
+ListeDefine concat_define(ListeDefine d,ListeDefine r){
   ListeDefine tmp=d;
   while(d->next != NULL){
     d=d->next;
@@ -533,6 +459,152 @@ void print_define(ListeDefine d){
 	print_define(d->next);
 }
 
+
+//------- Sprint 6 -------
+
+Arbre new_stencil(char* id){
+	Arbre new = calloc(1,sizeof(std_arbre));
+	new->type = ast_stencil;
+	new->val.stencil.name = strdup(id);
+}
+
+Arbre ast_new_blocStencil(Arbre a){
+	Arbre new = calloc(1,sizeof(std_arbre));
+	new->type = ast_bloc;
+	new->fils = a;
+	return new;
+}
+
+
+Arbre ast_new_stencilDeclare(char* id,Arbre member,int n,int prof){
+	Arbre new = calloc(1,sizeof(std_arbre));
+	new->type = ast_declaration;
+	new->fils =  calloc(1,sizeof(std_arbre));
+  new->fils->type = ast_stencil;
+  new->fils->val.stencil.name = strdup(id);
+	new->fils->fils = member;
+
+
+	//Stencil qui sert a l'analyse semeantique
+  new->fils->val.stencil.profondeurs = prof;
+	new->fils->val.stencil.member = n;
+
+	return new;
+}
+
+
+int verifStencilDim(Arbre ast,int dim){
+	Arbre tmp = ast;
+	int cptdim = 0;
+	while(tmp->type == ast_bloc){
+		tmp=tmp->fils;
+		cptdim++;
+	}
+
+	if(cptdim == dim-1){
+		return 0;
+	}
+
+	return 1;
+}
+
+int verifStencilMember(Arbre ast, int member){
+	Arbre tmp = ast;
+	int cptmember = 0;
+	while (tmp != NULL){
+		tmp = tmp->freres;
+		cptmember++;
+	}
+
+	if(cptmember==member){
+		return 0;
+	}
+	return 1;
+}
+
+int verifStencilMemberRecu(Arbre astStencil, int member){
+	if(astStencil == NULL){
+		return 0;
+	}
+
+	int res1;
+	int res2;
+	int membre;
+	switch(astStencil->type){
+		case ast_bloc:
+			res1 = verifStencilMemberRecu(astStencil->fils,member);
+			res2 = verifStencilMemberRecu(astStencil->freres,member);
+			return !(!res1 && !res2);
+		break;
+
+		default :
+			membre = verifStencilMember(astStencil, 2*member+1);
+			return membre;
+		break;
+	}
+
+	return 0;
+}
+
+int verifStencilFrere(Arbre ast,int frere){
+	Arbre tmp = ast;
+	int cptfreres = 0;
+	while (tmp != NULL) {
+		tmp = tmp->freres;
+		cptfreres++;
+	}
+
+	if(cptfreres==frere){
+		return 0;
+	}
+	return 1;
+}
+
+int verifStencilFrereRecu(Arbre astStencil, int member){
+	int res1;
+	int res2;
+	switch(astStencil->type){
+		case ast_bloc:
+			res1 = verifStencilFrere(astStencil,member);
+			if(astStencil->fils->type==ast_bloc){
+				 res2 = verifStencilFrereRecu(astStencil->fils,member);
+				return !(!res2 && !res1);
+			}
+
+			return res1;
+		break;
+	}
+
+	return 0;
+}
+
+int verifStencil(Arbre astStencil, int member, int dim){
+
+	int resMember = verifStencilMemberRecu(astStencil,member);
+	int resFrere = verifStencilFrereRecu(astStencil,2*member+1);
+	int resDim = verifStencilDim(astStencil,dim);
+
+	return !(!resMember && !resFrere && !resDim);
+}
+
+
+Arbre ast_new_applyStencilD(Arbre stencil, Arbre tableau){
+	Arbre new = calloc(1,sizeof(std_arbre));
+	new->type = ast_applyStencil;
+	new->fils = stencil;
+	new->fils->freres = tableau;
+
+	return new;
+}
+
+Arbre ast_new_applyStencilG(Arbre tableau,Arbre stencil){
+	Arbre new = calloc(1,sizeof(std_arbre));
+	new->type = ast_applyStencil;
+	new->fils = tableau;
+	new->fils->freres = stencil;
+
+	return new;
+}
 
 
 //------- All sprints -------
@@ -644,6 +716,9 @@ void ast_print_aux(Arbre a,int profondeur){
 	case ast_applyStencil:
 	printf("ast_applyStencil\n");
 	break;
+	case ast_listTableau: 
+	printf("ast_listTableau\n");
+	break;
   }
 
   //Affiche de manière recursive et ajoute une profondeur si possède des fils
@@ -681,7 +756,7 @@ void print_tab(Symbole s){
   printf("\n");
 }
 
-// Repère si il y'a une erreur de sémantique dans le programme
+// Repère si il y'a une erreur de sArbre verifStencil(Arbre list, Arbre dim)émantique dans le programme
 int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
 	if(a == NULL){
 		return 0;
@@ -707,8 +782,20 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
 				case ast_tableau:
 					printf("declaration tab\n");
 					s->type = sym_tab;
-          create_tab(a->fils,s);
-          print_tab(s);
+				  create_tab(a->fils,s);
+				  print_tab(s);
+					if(a->fils->freres != NULL){
+						if(a->fils->freres->type == ast_listTableau){
+							/*if(verifTableau(a->fils)){
+								printf("Liste d'affectation de tableau fausse");
+								return 4;
+							}*/
+						}
+						else{
+							printf("Tableau mal défini, mauvaise type d'affecctation");
+							return 4;
+						}
+					}
 					break;
 				case ast_stencil:
 				printf("Declaration stencil\n" );

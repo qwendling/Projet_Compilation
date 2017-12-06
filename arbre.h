@@ -44,10 +44,16 @@ typedef enum arbre_type{
 
 	//--- Sprint 5
 	ast_tableau,
+	ast_listTableau,
+	
+  //--- Sprint 6
   ast_stencil,
   ast_applyStencil
+
+  
 }arbre_type;
 
+// Structure du stencil
 typedef struct str_stencil{
 	int profondeurs;
   int member;
@@ -74,51 +80,12 @@ typedef struct str_arbre{
   tree_value val;
 } std_arbre,*Arbre;
 
-
-
+// Structure de la liste de Define
 typedef struct str_define{
 	char* id;
 	int cst;
 	struct str_define* next;
 } std_define, *ListeDefine;
-
-
-Arbre ast_new_applyStencilD(Arbre stencil, Arbre tableau);
-Arbre ast_new_applyStencilG(Arbre tableau,Arbre stencil);
-Arbre ast_new_applyStencil(Arbre stencil, Arbre Tableau);
-Arbre new_stencil(char* id);
-//Verifie que c'est les bonnes dim
-int verifStencilDim(Arbre ast,int dim);
-
-//Verifie que c'est les bons nombre de membre
-int verifStencilMember(Arbre ast, int member);
-
-//Verifie que c'est les bons nombre de freres
-int verifStencilFrere(Arbre ast,int frere);
-
-
-//Verifie que le stencil est bon
-int verifStencilMemberRecu(Arbre astStencil, int member);
-
-int verifStencil(Arbre astStencil, int member, int dim);
-
-Arbre ast_new_stencilDeclare(char* id,Arbre member,int n,int prof);
-
-Arbre ast_new_blocStencil(Arbre a);
-
-//------- DEFINE -------
-
-ListeDefine newListeDefine();
-
-ListeDefine new_define(char* id, int constante);
-
-ListeDefine concat_define(ListeDefine d,ListeDefine r);
-
-void replaceDefineInAST(Arbre ast,ListeDefine d);
-
-ListeDefine findInDefine(ListeDefine d, char* id);
-
-void print_define(ListeDefine d);
 
 
 //------- SPRINT 1 -------
@@ -219,12 +186,34 @@ Arbre ast_new_for(Arbre inits,Arbre conditions,Arbre increments,Arbre instructio
 //Ajout d'un noeud de boucle while
 Arbre ast_new_while(Arbre conditions, Arbre instructions);
 
+
 //------- SPRINT 5 -------
-Arbre ast_new_tableauDeclare(char* id, Arbre dimension);
+Arbre ast_new_tableauDeclare(char* id, Arbre dimension, Arbre affect);
 
 Arbre ast_new_tableauAffec(char* id, Arbre dimension, Arbre affect);
 
 Arbre new_tableau(char* id, Arbre dimension);
+
+Arbre ast_new_blocTableau(Arbre a);
+
+int verifTableau(Arbre tableau);
+
+
+//------- SPRINT 6 -------
+
+Arbre new_stencil(char* id);
+
+Arbre ast_new_stencilDeclare(char* id,Arbre member,int n,int prof);
+
+Arbre ast_new_blocStencil(Arbre a);
+
+Arbre ast_new_applyStencilD(Arbre stencil, Arbre tableau);
+
+Arbre ast_new_applyStencilG(Arbre tableau,Arbre stencil);
+
+int verifStencil(Arbre astStencil, int member, int dim);
+
+
 //------- All sprints -------
 //Affiche dans le terminal l'AST général avec ses frères et fils
 void ast_print(Arbre a);
@@ -234,5 +223,23 @@ void ast_print_aux(Arbre a,int profondeur);
 
 //return 0 si l'analyse et bonne sinon ficher non semantiquement correct
 int ast_semantique(Arbre a ,Symbole sym_table[TAILLE_TABLE]);
+
+
+//------- DEFINE -------
+
+ListeDefine newListeDefine();
+
+ListeDefine new_define(char* id, int constante);
+
+ListeDefine concat_define(ListeDefine d,ListeDefine r);
+
+void replaceDefineInAST(Arbre ast,ListeDefine d);
+
+ListeDefine findInDefine(ListeDefine d, char* id);
+
+void print_define(ListeDefine d);
+
+
+
 
 #endif

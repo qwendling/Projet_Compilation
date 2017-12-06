@@ -75,6 +75,9 @@
 %type <ast> ListeIncrement
 %type <ast> InitMember
 %type <ast> Tableau
+%type <ast> ListeTableauBlocMember
+%type <ast> ListeBlocTableau
+%type <ast> ListeTableauMember
 %type <ast> AffectationTableau
 %type <ast> ListeDim
 %type <ast> ListeDimAffect
@@ -83,6 +86,7 @@
 %type <ast> ListeStencilBlockMember
 %type <ast> ListeStencilMember
 %type <ast> ApplyStencil
+
 
 // ---- Gestion de la priorite
 %left NOT
@@ -142,17 +146,24 @@ Declaration: INT Affectation{$$=ast_new_declaration(new_var($2->fils->val.str));
 	| STENCIL ID'{'NOMBRE','NOMBRE'}''=''{' ListeBlockStencil '}' {$$=ast_new_stencilDeclare($2,$10,$4,$6);}
 	;
 
+
+//--------- Declaration Stencil ----------//
 ListeBlockStencil: ListeStencilBlockMember {$$=$1;}
 	| ListeStencilMember {$$=$1;}
+	;
 
 ListeStencilBlockMember: '{'ListeBlockStencil'}'','ListeStencilBlockMember {$$=concat(ast_new_blocStencil($2),$5);}
 	| '{'ListeBlockStencil'}' {$$=ast_new_blocStencil($2);}
+	;
 
 ListeStencilMember: Expression','ListeStencilMember {$$=concat($1,$3);}
 	| Expression {$$=$1;}
+	;
 
 
-Tableau:INT ID ListeDim {$$=ast_new_tableauDeclare($2,$3);}
+//--------- Declaration Tableau ----------//
+Tableau:INT ID ListeDim {$$=ast_new_tableauDeclare($2,$3,NULL);}
+	| INT ID ListeDim '=''{' ListeBlocTableau  '}' {$$=ast_new_tableauDeclare($2,$3,$6);}
 	;
 
 ListeDim: '['NOMBRE']' ListeDim {$$=concat(new_const($2),$4);}
@@ -160,16 +171,35 @@ ListeDim: '['NOMBRE']' ListeDim {$$=concat(new_const($2),$4);}
 	;
 
 
-AffectationTableau: ID ListeDimAffect '=' Expression {$$=ast_new_tableauAffec($1,$2,$4);};
-
-ListeDimAffect: '['Expression']' ListeDimAffect {$$=concat($2,$4);}
-	|'['Expression']' {$$=$2;}
+ListeBlocTableau: ListeTableauBlocMember {$$=$1;}
+	| ListeTableauMember {$$=$1;}
 	;
+
+ListeTableauMember: Expression','ListeTableauMember {$$=concat($1,$3);}
+	| Expression {$$=$1;}
+	;
+
+ListeTableauBlocMember: '{'ListeBlocTableau'}'','ListeTableauBlocMember {$$=concat(ast_new_blocTableau($2),$5);}
+	| '{'ListeBlocTableau'}' {$$=ast_new_blocTableau($2);}
+	;
+
+
+
 
 //---------- AFFECTATION VARIABLE -------------//
 // Une affectation correspond a un ID prenant comme valeur une expression
 Affectation: ID '=' Expression {$$=ast_new_affectation(new_var($1),$3);}
 	;
+
+
+//--------- Affectation Tableau --------------//
+AffectationTableau: ID ListeDimAffect '=' Expression {$$=ast_new_tableauAffec($1,$2,$4);};
+
+
+ListeDimAffect: '['Expression']' ListeDimAffect {$$=concat($2,$4);}
+	|'['Expression']' {$$=$2;}
+	;
+
 
 //---------- EXPRESSION ARITHMETIQUE -------------//
 // Expressions arithmétiques + -, avec respect de la priorité
@@ -191,6 +221,10 @@ Facteur: '('Expression')' {$$ = $2;}
 	| B {$$ = $1;}
 	| '-'B {$$ = ast_new_fois(new_const(-1),$2);} %prec UMOINS
 	;
+
+ApplyStencil: ID'$'ID ListeDimAffect {$$=ast_new_applyStencilD(new_stencil($1),new_tableau($3,$4)) ;}
+	| ID ListeDimAffect'$'ID {$$= ast_new_applyStencilG(new_tableau($1,$2),new_stencil($4));}
+
 
 //---------- AUTO INCREMENTATION -------------//
 // Gestion de l'AutoIncrementation avant (BEFORE) et aprés (AFTER) la variable a incrémenter
@@ -255,12 +289,6 @@ InitMember: Affectation {$$=$1;}
 ListeIncrement: AutoIncremente',' ListeIncrement {$$=concat($1,$3);}
 	| AutoIncremente {$$=$1;}
 	;
-
-ApplyStencil: ID'$'ID ListeDimAffect {$$=ast_new_applyStencilD(new_stencil($1),new_tableau($3,$4)) ;}
-	| ID ListeDimAffect'$'ID {$$= ast_new_applyStencilG(new_tableau($1,$2),new_stencil($4));}
-
-//---------- DECLARATION TABLEAU -------------//
-
 
 
 %%
