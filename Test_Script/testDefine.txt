@@ -1,0 +1,17 @@
+#define define1 8
+#define define2 10
+#define define3 2
+#define define4 12
+
+int main() {
+	// Coucou le test
+	int bay = define1;
+	int bay2 = define3 + bay;
+	printf("printf reconnu");
+	printi(bay2);
+	printi(define3);
+  printi(define4);
+  printi(define4+define2);
+	/* Fin du test */
+	return 0;
+}
