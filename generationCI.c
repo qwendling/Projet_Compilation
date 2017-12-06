@@ -204,68 +204,68 @@ quad genForStencil(Arbre indexTab,Dim dimTab,Symbole sym_sten,int profondeur,Sym
 	Symbole lbl_condition,lbl_debut,lbl_fin;
 	quad codegen = NULL,arg=NULL;
 	int n = sym_sten->val.stencil.voisin;
-	
+
 	sym_i=sym_new_tmp(sym_table);
-	
+
 	tmp1=sym_new_tmp(sym_table);
 	tmp1->type=sym_const;
 	tmp1->val.entier=-n;
-	
+
 	tmp2=sym_new_tmp(sym_table);
 	tmp2->type=sym_const;
 	tmp2->val.entier=n;
-	
+
 	lbl_condition = sym_new_lbl(sym_table);
 	lbl_debut = sym_new_lbl(sym_table);
 	lbl_fin = sym_new_lbl(sym_table);
-	
+
 	codegen = add_quad(codegen,quad_add(NULL,affectation_var,tmp1,NULL,sym_i));
 	codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl_condition));
 	codegen = add_quad(codegen,quad_add(NULL,q_lessOrEqual,sym_i,tmp2,lbl_debut));
 	codegen = add_quad(codegen,quad_add(NULL,q_goto,NULL,NULL,lbl_fin));
 	codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl_debut));
-	
+
 	tmp3=sym_new_tmp(sym_table);
 	tmp3->type=sym_const;
 	tmp3->val.entier=produitDim(dimTab->next)*4;
-	
-	
-	
-	
+
+
+
+
 	arg = genCode(indexTab,sym_table);
 	sym_arg1 = quad_res(arg);
-	
+
 	codegen = add_quad(codegen,arg);
 	codegen = add_quad(codegen,quad_add(NULL,q_add,sym_i,sym_arg1,sym_new_tmp(sym_table)));
 	sym_idTab = quad_res(codegen);
-	
+
 	sym_checkinf=sym_new_tmp(sym_table);
 	sym_checkinf->type=sym_const;
 	sym_checkinf->val.entier=0;
-	
+
 	sym_checksup=sym_new_tmp(sym_table);
 	sym_checksup->type=sym_const;
 	sym_checksup->val.entier=dimTab->size;
-	
+
 	dimTab = (dimTab)?dimTab->next:NULL;
-	
+
 	codegen = add_quad(codegen,quad_add(NULL,q_less,sym_idTab,sym_checkinf,lbl_condition));
 	codegen = add_quad(codegen,quad_add(NULL,q_greaterOrEqual,sym_idTab,sym_checksup,lbl_fin));
-	
-	
+
+
 	codegen = add_quad(codegen,quad_add(NULL,q_mul,tmp3,sym_idTab,sym_new_tmp(sym_table)));
 	codegen = add_quad(codegen,quad_add(NULL,q_add,addrTab,quad_res(codegen),sym_new_tmp(sym_table)));
 	addrTab = quad_res(codegen);
-	
+
 	tmp4=sym_new_tmp(sym_table);
 	tmp4->type=sym_const;
-	tmp4->val.entier=pow(2*sym_sten->val.stencil.voisin+1,sym_sten->val.stencil.dim-profondeur);
-	
+	tmp4->val.entier=pow(2*sym_sten->val.stencil.voisin+1,sym_sten->val.stencil.dim-profondeur)*4;
+
 	codegen = add_quad(codegen,quad_add(NULL,q_add,sym_i,tmp2,sym_new_tmp(sym_table)));
 	codegen = add_quad(codegen,quad_add(NULL,q_mul,tmp4,quad_res(codegen),sym_new_tmp(sym_table)));
 	codegen = add_quad(codegen,quad_add(NULL,q_add,addrSten,quad_res(codegen),sym_new_tmp(sym_table)));
 	addrSten = quad_res(codegen);
-	
+
 	if(indexTab->freres == NULL){
 		addrSten->type = sym_tabRes;
 		addrTab->type = sym_tabRes;
@@ -274,16 +274,16 @@ quad genForStencil(Arbre indexTab,Dim dimTab,Symbole sym_sten,int profondeur,Sym
 	}else{
 		codegen = add_quad(codegen,genForStencil(indexTab->freres,dimTab,sym_sten,profondeur+1,addrSten,addrTab,result,sym_table));
 	}
-	
+
 	tmp5=sym_new_tmp(sym_table);
 	tmp5->type=sym_const;
 	tmp5->val.entier=1;
-	
+
 	codegen = add_quad(codegen,quad_add(NULL,q_add,sym_i,tmp5,sym_i));
-	
+
 	codegen = add_quad(codegen,quad_add(NULL,q_goto,NULL,NULL,lbl_debut));
 	codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl_fin));
-	
+
 	return codegen;
 }
 
@@ -697,7 +697,7 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
       print_quad(codegen);
       printf("\n\n");*/
 
-      codegen = quad_add(codegen,use_var,NULL,NULL,result);
+      codegen = add_quad(codegen,quad_add(NULL,use_var,NULL,NULL,result));
       break;
   }
   return codegen;
