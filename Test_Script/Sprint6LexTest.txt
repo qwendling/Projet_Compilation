@@ -8,7 +8,7 @@ int main() {
   int testTab[2][3][4];
   testTab[1][1][0]=2;
 
-  int testApply = test$testTab[1][1][3][4];
+  int testApply = test$testTab[1][1][3];
   int testApply2 = testTab[1][1]$test;
 
  	/* Fin du test */
