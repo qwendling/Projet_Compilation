@@ -1,0 +1,14 @@
+int main() {
+	// Coucou le test
+	int intVar1_[4] = {4,5,3,5};
+	int intVar2_[2][3][4] = {{ {2,2,4,4}, {2,2,5,5}, {2,2,5,5}},
+                          { {2,5,5,2}, {2,2,5,4}, {2,2,5,5}}};
+
+  intVar2_[1][2][1] = 12;
+  printi(intVar1_[1]);
+	printi(intVar2_[1][2][1]);
+
+
+
+	return 0;
+}

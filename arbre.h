@@ -45,12 +45,12 @@ typedef enum arbre_type{
 	//--- Sprint 5
 	ast_tableau,
 	ast_listTableau,
-	
+
   //--- Sprint 6
   ast_stencil,
   ast_applyStencil
 
-  
+
 }arbre_type;
 
 // Structure du stencil
@@ -196,7 +196,7 @@ Arbre new_tableau(char* id, Arbre dimension);
 
 Arbre ast_new_blocTableau(Arbre a);
 
-int verifTableau(Arbre tableau);
+int verifTableau(Arbre Dim , Arbre tableau);
 
 
 //------- SPRINT 6 -------

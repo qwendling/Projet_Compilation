@@ -307,13 +307,13 @@ Arbre ast_new_tableauDeclare(char* id, Arbre dimension, Arbre affect){
 	new->fils->type = ast_tableau;
 	new->fils->val.str = strdup(id);
 	new->fils->fils = dimension;
-	
+
 	if(affect!=NULL){
 		new->fils->freres = calloc(1,sizeof(std_arbre));
 		new->fils->freres->type = ast_listTableau;
 		new->fils->freres->fils = affect;
 	}
-	
+
 	return new;
 
 }
@@ -345,61 +345,71 @@ Arbre ast_new_blocTableau(Arbre a){
 	return new;
 }
 
-
-Arbre verifBlocInRecu(int dim,Arbre list){
-	Arbre bloc = list;
-	
-	
-	
-	return bloc;
-}
-
-int verifDimTab(int dim,Arbre list,int type){
+//Verifie que pour l'arbre donné et la dimension donné on a le meme nombre d'élément attendu
+int verifDimTab(int dim,Arbre list){
 	int nbElem = dim;
-	
-	switch(type){
-	case 1 :
-			while(nbElem>0){
-		nbElem--;
-		if(list->freres == NULL){
-			return 1;			
-		}
-	}
-	break;
-		
-		
-	}
+  Arbre listTmp = list;
+
+  // Verifie les frères
+  for(int i=0;i<nbElem;i++){
+  //Si moins que prevu renvoie faux
+    if(listTmp == NULL){
+      return 1;
+    }
+  //Si bloc alors qu'on est dans la verif de membre renvoie faux
+    if(listTmp->type == ast_bloc){
+      return 1;
+    }
+    listTmp = listTmp->freres;
+  }
+  // Si un frère en plus est la on renvoie faux
+  if(listTmp != NULL){
+    return 1;
+  }
 
 	return 0;
 }
 
-int verifTableau(Arbre tableau){
-	Arbre dim = tableau->fils;
-	Arbre dimtmp = tableau->fils->freres;
-	//1er bloc
-	Arbre list = tableau->freres->fils;
-	
-	int actualDim = 0;
-	
-	//prend la derniere dim en valeur
-	while(dimtmp != NULL){
-		dimtmp = dimtmp->freres;
-		actualDim++;
-	}
-	
-	//verifie que les membres sont bon [x][y][z] -> verifie y,z
-	while (actualDim > 0){
-		
-	}
+int verifTableau(Arbre Dim, Arbre Bloctableau){
+  if(Bloctableau == NULL){
+    return 1;
+  }
+  int nbrMember = Dim->val.constante;
+  Arbre tmpBloctableau = Bloctableau;
+  Arbre nextDim = Dim->freres;
+  //si on est dans un bloc de membre on verifie son contenu
+  if(tmpBloctableau->type != ast_bloc){
+    // Ca doit etre la derniere ou seul dimension sinon c'est faux
+    if(nextDim == NULL){
+      if(verifDimTab(nbrMember,tmpBloctableau) == 1){
+        return 1;
+      }
+    }
+    else return 1;
+  }
+  //Verifie de manière recursive les blocs
+  if(tmpBloctableau->type == ast_bloc){
+    //permet de tester le nombre attendu
+    for(int i=0;i<nbrMember;i++){
+      //si null alors on a pas le bon nombre de freres
+      if(tmpBloctableau == NULL){
+        return 1;
+      }
+      //verifie en recursif
+      if(verifTableau(nextDim,tmpBloctableau->fils) == 1){
+        return 1;
+      }
+      tmpBloctableau = tmpBloctableau->freres;
+    }
+    // si on a un frere de trop ca bug
+    if(tmpBloctableau != NULL){
+      return 1;
+    }
+  }
 
-	//verifie la dernier ou seul dimension
-	//type 1 = member , type 0 = bloc 
-	if(verifDimTab(dim->val.constante,list,1) == 1){
-		return 1;
-	}
-	
-	return 0;
+  return 0;
 }
+
 
 
 // ------ DEFINE -----
@@ -716,7 +726,7 @@ void ast_print_aux(Arbre a,int profondeur){
 	case ast_applyStencil:
 	printf("ast_applyStencil\n");
 	break;
-	case ast_listTableau: 
+	case ast_listTableau:
 	printf("ast_listTableau\n");
 	break;
   }
@@ -786,13 +796,14 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
 				  print_tab(s);
 					if(a->fils->freres != NULL){
 						if(a->fils->freres->type == ast_listTableau){
-							/*if(verifTableau(a->fils)){
-								printf("Liste d'affectation de tableau fausse");
+              //on donne ll'arbre des constantes de DIM et l'arbre de la liste
+							if(verifTableau(a->fils->fils,a->fils->freres->fils)==1){
+								printf("Liste d'affectation de tableau fausse \n");
 								return 4;
-							}*/
+							}
 						}
 						else{
-							printf("Tableau mal défini, mauvaise type d'affecctation");
+							printf("Tableau mal défini, mauvaise type d'affecctation\n");
 							return 4;
 						}
 					}
