@@ -13,6 +13,12 @@ int replaceIdVarFct(char *id, Arbre ast){
   if(ast->type == ast_var){
     ast->val.str = strcat(ast->val.str,id);
   }
+  if(ast->type == ast_stencil){
+    ast->val.stencil.name = strcat(ast->val.stencil.name,id);
+  }
+  if(ast->type == ast_tableau){
+    ast->val.str = strcat(ast->val.str,id);
+  }
 
   if(ast->fils != NULL){
       replaceIdVarFct(id,ast->fils);
@@ -49,6 +55,12 @@ int replaceIdMain(Arbre ast){
   }
 
   if(ast->type == ast_var){
+    ast->val.str = strcat(ast->val.str,"MAINFCT");
+  }
+  if(ast->type == ast_stencil){
+    ast->val.stencil.name = strcat(ast->val.stencil.name,"MAINFCT");
+  }
+  if(ast->type == ast_tableau){
     ast->val.str = strcat(ast->val.str,"MAINFCT");
   }
 
@@ -805,7 +817,7 @@ void ast_print_aux(Arbre a,int profondeur){
   printf("ast_while\n");
   break;
 	case ast_tableau:
-	printf("ast_tableau\n");
+	printf("ast_tableau  %s\n",a->val.str);
 	break;
 	case ast_stencil:
 	printf("ast_stencil : %s {%d,%d}\n",a->val.stencil.name,a->val.stencil.member,a->val.stencil.profondeurs);
