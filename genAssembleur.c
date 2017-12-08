@@ -463,16 +463,16 @@ void gen_sym(Symbole s,FILE* file){
 			fwrite(str_code,sizeof(char),strlen(str_code),file);
 			break;
 		case sym_string:
-			snprintf(str_code,1024,"%s: .asciiz %s\n",s->name,s->val.str);
+			snprintf(str_code,1024,"%s: .align 2\n.asciiz %s\n",s->name,s->val.str);
 			fwrite(str_code,sizeof(char),strlen(str_code),file);
 			break;
 		case sym_tab:
-			snprintf(str_code,1024,"%s: .space %d\n",s->name,sizeTab(s)*4);
+			snprintf(str_code,1024,"%s: .align 2\n.space %d\n",s->name,sizeTab(s)*4);
 			fwrite(str_code,sizeof(char),strlen(str_code),file);
 			break;
 		case sym_stencil:
 			printf("Size stencil : %d\n",s->val.stencil.size);
-			snprintf(str_code,1024,"%s: .space %d\n",s->name,s->val.stencil.size*4);
+			snprintf(str_code,1024,"%s: .align 2\n.space %d\n",s->name,s->val.stencil.size*4);
 			fwrite(str_code,sizeof(char),strlen(str_code),file);
 			break;
 	}

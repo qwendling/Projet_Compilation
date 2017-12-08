@@ -40,7 +40,7 @@ int return_value = 0;
 
 MAIN "int main"
 NOMBRE [0-9]*
-COMMENT ([^\\]\/\/.*[\n])|\/\*(.|\n)*\*\/
+COMMENT ([^\\]\/\/.*[\n])|\/\*([^\*]|\n|\*[^\/])*\*\/
 STRING   \"([^\"\\]|\\.)*\"
 RETURN return
 
@@ -169,7 +169,7 @@ int main(int argc, char **argv )
 	printf("\n########## AST ##########\n\n");
   repaceIdInAST(ast);
   ast_print(ast);
-  
+
   if(ast_semantique(ast,sym_Table)){
 		printf("erreur semantique \n");
 		return 1;
