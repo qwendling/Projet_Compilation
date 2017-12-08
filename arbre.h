@@ -48,8 +48,11 @@ typedef enum arbre_type{
 
   //--- Sprint 6
   ast_stencil,
-  ast_applyStencil
+  ast_applyStencil,
 
+  ast_fonction,
+  ast_args,
+  ast_instruction
 
 }arbre_type;
 
@@ -87,7 +90,13 @@ typedef struct str_define{
 	struct str_define* next;
 } std_define, *ListeDefine;
 
+Arbre new_ast_instruction(Arbre instruction);
+Arbre new_ast_args(Arbre args);
+Arbre new_ast_fonction(char* id, Arbre args, Arbre fct);
+int replaceIdMain(Arbre ast);
 
+int replaceIdVarFct(char *id, Arbre ast);
+int repaceIdInAST(Arbre ast);
 //------- SPRINT 1 -------
 
 //creation d'un arbre vide

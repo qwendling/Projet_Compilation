@@ -1,0 +1,27 @@
+int fctTest(int id1, int id2){
+  printf("fcttest reconnu");
+  int ok = 12;
+  return 0;
+}
+
+
+int main() {
+	// Coucou le test
+	int intVar1_ = 20 ;
+	int intVar2_ ;
+
+	intVar1_ = 4 + 3;
+	intVar1_ = intVar1_ * 2;
+	intVar2_ = 10 /2;
+	intVar2_++;
+	intVar1_ = intVar1_ - intVar2_;
+	intVar1_--;
+	printi(intVar1_);
+
+	printf("printf reconnu");
+	printi(42);
+	printi(52+9);
+	/* Fin du test */
+
+	return 0;
+}

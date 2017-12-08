@@ -5,6 +5,86 @@
 #include <math.h>
 
 
+int replaceIdVarFct(char *id, Arbre ast){
+  if (ast == NULL){
+    return 0;
+  }
+
+  if(ast->type == ast_var){
+    ast->val.str = strcat(ast->val.str,id);
+  }
+
+  if(ast->fils != NULL){
+      replaceIdVarFct(id,ast->fils);
+  }
+
+  if(ast->freres != NULL){
+      replaceIdVarFct(id,ast->freres);
+  }
+
+  return 0;
+}
+
+
+int repaceIdInAST(Arbre ast){
+  Arbre astRacine = ast;
+
+  while(ast != NULL){
+    if(ast->type == ast_fonction){
+      replaceIdVarFct(ast->val.str,ast->fils);
+    }
+    if(ast->type == ast_main){
+      replaceIdMain(ast->fils);
+    }
+    ast = ast->freres;
+  }
+
+  ast = astRacine;
+  return 0;
+}
+
+int replaceIdMain(Arbre ast){
+  if (ast == NULL){
+    return 0;
+  }
+
+  if(ast->type == ast_var){
+    ast->val.str = strcat(ast->val.str,"MAINFCT");
+  }
+
+  if(ast->fils != NULL){
+      replaceIdMain(ast->fils);
+  }
+
+  if(ast->freres != NULL){
+      replaceIdMain(ast->freres);
+  }
+
+  return 0;
+}
+
+
+Arbre new_ast_fonction(char* id, Arbre args, Arbre instruction){
+  printf("%s\n", id);
+  Arbre new = calloc(1,sizeof(std_arbre));
+  new->type = ast_fonction;
+  new->val.str = id;
+  new->fils = new_ast_args(args);
+  new->fils->freres = new_ast_instruction(instruction);
+  return new;
+}
+
+Arbre new_ast_args(Arbre args){
+  Arbre new = calloc(1,sizeof(std_arbre));
+  new->type = ast_args;
+  new->fils = args;
+}
+
+Arbre new_ast_instruction(Arbre instruction){
+  Arbre new = calloc(1,sizeof(std_arbre));
+  new->type = ast_instruction;
+  new->fils = instruction;
+}
 //------- SPRINT 1 -------
 
 //creation d'un arbre vide
@@ -41,7 +121,14 @@ Arbre ast_new_bloc(Arbre feuille){
 
 //ajout de a2 dans les frere de a1
 Arbre concat(Arbre a1,Arbre a2){
-  Arbre tmp=a1;
+  Arbre tmp ;
+  if(a1 == NULL){
+    tmp = a2;
+    return tmp;
+  }else{
+    tmp = a1;
+  }
+
   while(a1->freres != NULL){
     a1=a1->freres;
   }
@@ -729,6 +816,15 @@ void ast_print_aux(Arbre a,int profondeur){
 	case ast_listTableau:
 	printf("ast_listTableau\n");
 	break;
+  case ast_fonction:
+  printf("ast_fonction : %s\n",a->val.str);
+  break;
+  case ast_args:
+  printf("ast_args \n");
+  break;
+  case ast_instruction:
+  printf("ast_instruction \n");
+  break;
   }
 
   //Affiche de manière recursive et ajoute une profondeur si possède des fils

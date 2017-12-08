@@ -4,6 +4,7 @@
 	//###################################
 
 	#include <stdio.h>
+	#include<string.h>
 	#include "arbre.h"
 	extern Arbre ast;
 	extern ListeDefine listedef;
@@ -86,7 +87,8 @@
 %type <ast> ListeStencilBlockMember
 %type <ast> ListeStencilMember
 %type <ast> ApplyStencil
-
+%type <ast> ListeFonction
+%type <ast> ListeArgs
 
 // ---- Gestion de la priorite
 %left NOT
@@ -109,14 +111,24 @@
 
 //---------- STRUCTURE PROGRAMME -------------//
 // Le program est une fonction qu'on considère comme un arbre ast
-program: Define fonction {listedef= $1 ; ast=$2;};
+program: Define ListeFonction {listedef= $1 ; ast=$2;};
 
 Define : DEFINE ID NOMBRE Define {$$=concat_define(new_define($2,$3),$4);}
 	|  {$$=NULL;}
 	;
 
 // La fonction main prend comme valeur la liste des instructions
-fonction: MAIN'('')''{'ListeInstr'}' {$$=ast_new_main($5);}
+ListeFonction: fonction MAIN'('')''{'ListeInstr'}' fonction {$$=concat(concat($1,ast_new_main($6)),$8);}
+	;
+
+fonction: INT ID'('ListeArgs')''{'ListeInstr'}' fonction {$$=concat(new_ast_fonction(strcat($2,"FCT"),$4,$7),$9);}
+	| {$$=NULL;}
+	;
+
+
+ListeArgs: Declaration','Declaration {$$=concat($1,$3);}
+	| Declaration {$$ =$1;}
+	| {$$=NULL;}
 	;
 
 // Une liste d'instruction est une  succession d'instruction se terminant par ;
