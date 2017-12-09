@@ -6,6 +6,9 @@ int fctTest(int id1, int id2){
 
 
 int main() {
+
+  int intVa = fctTest (4+45/12, 4);
+
 	// Coucou le test
 	int intVar1_ = 20 ;
 	int intVar2_ ;

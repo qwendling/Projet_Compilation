@@ -90,13 +90,7 @@ typedef struct str_define{
 	struct str_define* next;
 } std_define, *ListeDefine;
 
-Arbre new_ast_instruction(Arbre instruction);
-Arbre new_ast_args(Arbre args);
-Arbre new_ast_fonction(char* id, Arbre args, Arbre fct);
-int replaceIdMain(Arbre ast);
 
-int replaceIdVarFct(char *id, Arbre ast);
-int repaceIdInAST(Arbre ast);
 //------- SPRINT 1 -------
 
 //creation d'un arbre vide
@@ -222,6 +216,15 @@ Arbre ast_new_applyStencilG(Arbre tableau,Arbre stencil);
 
 int verifStencil(Arbre astStencil, int member, int dim);
 
+
+//------- SPRINT 7 -------
+
+Arbre new_ast_appelFonction(char* id, Arbre arg);
+Arbre new_ast_fonction(char* id, Arbre args, Arbre fct);
+int replaceIdMain(Arbre ast);
+
+int replaceIdVarFct(char *id, Arbre ast);
+int repaceIdInAST(Arbre ast);
 
 //------- All sprints -------
 //Affiche dans le terminal l'AST général avec ses frères et fils

@@ -4,99 +4,6 @@
 #include <string.h>
 #include <math.h>
 
-
-int replaceIdVarFct(char *id, Arbre ast){
-  if (ast == NULL){
-    return 0;
-  }
-
-  if(ast->type == ast_var){
-    ast->val.str = strcat(ast->val.str,id);
-  }
-  if(ast->type == ast_stencil){
-    ast->val.stencil.name = strcat(ast->val.stencil.name,id);
-  }
-  if(ast->type == ast_tableau){
-    ast->val.str = strcat(ast->val.str,id);
-  }
-
-  if(ast->fils != NULL){
-      replaceIdVarFct(id,ast->fils);
-  }
-
-  if(ast->freres != NULL){
-      replaceIdVarFct(id,ast->freres);
-  }
-
-  return 0;
-}
-
-
-int repaceIdInAST(Arbre ast){
-  Arbre astRacine = ast;
-
-  while(ast != NULL){
-    if(ast->type == ast_fonction){
-      replaceIdVarFct(ast->val.str,ast->fils);
-    }
-    if(ast->type == ast_main){
-      replaceIdMain(ast->fils);
-    }
-    ast = ast->freres;
-  }
-
-  ast = astRacine;
-  return 0;
-}
-
-int replaceIdMain(Arbre ast){
-  if (ast == NULL){
-    return 0;
-  }
-
-  if(ast->type == ast_var){
-    ast->val.str = strcat(ast->val.str,"MAINFCT");
-  }
-  if(ast->type == ast_stencil){
-    ast->val.stencil.name = strcat(ast->val.stencil.name,"MAINFCT");
-  }
-  if(ast->type == ast_tableau){
-    ast->val.str = strcat(ast->val.str,"MAINFCT");
-  }
-
-  if(ast->fils != NULL){
-      replaceIdMain(ast->fils);
-  }
-
-  if(ast->freres != NULL){
-      replaceIdMain(ast->freres);
-  }
-
-  return 0;
-}
-
-
-Arbre new_ast_fonction(char* id, Arbre args, Arbre instruction){
-  printf("%s\n", id);
-  Arbre new = calloc(1,sizeof(std_arbre));
-  new->type = ast_fonction;
-  new->val.str = id;
-  new->fils = new_ast_args(args);
-  new->fils->freres = new_ast_instruction(instruction);
-  return new;
-}
-
-Arbre new_ast_args(Arbre args){
-  Arbre new = calloc(1,sizeof(std_arbre));
-  new->type = ast_args;
-  new->fils = args;
-}
-
-Arbre new_ast_instruction(Arbre instruction){
-  Arbre new = calloc(1,sizeof(std_arbre));
-  new->type = ast_instruction;
-  new->fils = instruction;
-}
 //------- SPRINT 1 -------
 
 //creation d'un arbre vide
@@ -713,6 +620,96 @@ Arbre ast_new_applyStencilG(Arbre tableau,Arbre stencil){
 	new->fils->freres = stencil;
 
 	return new;
+}
+
+
+//------- Sprint 7 -------
+
+Arbre new_ast_fonction(char* id, Arbre args, Arbre instruction){
+  printf("%s\n", id);
+  Arbre new = calloc(1,sizeof(std_arbre));
+  new->type = ast_fonction;
+  new->val.str = id;
+  new->fils = ast_new_bloc(args);
+  new->fils->freres = ast_new_bloc(instruction);
+  return new;
+}
+
+Arbre new_ast_appelFonction(char* id, Arbre args){
+  Arbre new = calloc(1,sizeof(std_arbre));
+  new->type = ast_fonction;
+  new->val.str = id;
+  new->fils = args;
+}
+
+
+int replaceIdVarFct(char *id, Arbre ast){
+  if (ast == NULL){
+    return 0;
+  }
+
+  if(ast->type == ast_var){
+    ast->val.str = strcat(ast->val.str,id);
+  }
+  if(ast->type == ast_stencil){
+    ast->val.stencil.name = strcat(ast->val.stencil.name,id);
+  }
+  if(ast->type == ast_tableau){
+    ast->val.str = strcat(ast->val.str,id);
+  }
+
+  if(ast->fils != NULL){
+      replaceIdVarFct(id,ast->fils);
+  }
+
+  if(ast->freres != NULL){
+      replaceIdVarFct(id,ast->freres);
+  }
+
+  return 0;
+}
+
+int repaceIdInAST(Arbre ast){
+  Arbre astRacine = ast;
+
+  while(ast != NULL){
+    if(ast->type == ast_fonction){
+      replaceIdVarFct(ast->val.str,ast->fils);
+    }
+    if(ast->type == ast_main){
+      replaceIdMain(ast->fils);
+    }
+    ast = ast->freres;
+  }
+
+  ast = astRacine;
+  return 0;
+}
+
+int replaceIdMain(Arbre ast){
+  if (ast == NULL){
+    return 0;
+  }
+
+  if(ast->type == ast_var){
+    ast->val.str = strcat(ast->val.str,"MAINFCT");
+  }
+  if(ast->type == ast_stencil){
+    ast->val.stencil.name = strcat(ast->val.stencil.name,"MAINFCT");
+  }
+  if(ast->type == ast_tableau){
+    ast->val.str = strcat(ast->val.str,"MAINFCT");
+  }
+
+  if(ast->fils != NULL){
+      replaceIdMain(ast->fils);
+  }
+
+  if(ast->freres != NULL){
+      replaceIdMain(ast->freres);
+  }
+
+  return 0;
 }
 
 

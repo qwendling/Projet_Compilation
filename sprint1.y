@@ -89,6 +89,7 @@
 %type <ast> ApplyStencil
 %type <ast> ListeFonction
 %type <ast> ListeArgs
+%type <ast> ListeExpression
 
 // ---- Gestion de la priorite
 %left NOT
@@ -252,8 +253,12 @@ B: NOMBRE {$$=new_const($1);}
 	| ID { $$ = new_var($1);}
 	| AutoIncremente {$$ = $1;}
 	| ID ListeDimAffect {$$ = new_tableau($1,$2);}
+	| ID'('ListeExpression')' {$$ = new_ast_appelFonction($1,$3);}
 	;
 
+ListeExpression: Expression','ListeExpression {$$=concat($1,$3);}
+	| Expression {$$=$1;}
+	| {$$=NULL;}
 
 //---------- CONDITIONS -------------//
 // Gestion des IF types possible
