@@ -371,6 +371,39 @@ void gen_goto(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 	free(str_code);
 }
 
+void gen_empile(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
+	char* str_code = calloc(1024,sizeof(char));
+	if(str_code == NULL)
+		exit(1);
+
+	// On sauvgarde la valeur dans le registre t0
+	snprintf(str_code,1024,"lw $t0 %s\n",code->res->name);
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	snprintf(str_code,1024,"sw $t0 ($sp)\n");
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	snprintf(str_code,1024,"add $sp 4\n");
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+
+	free(str_code);
+}
+
+void gen_depile(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
+	char* str_code = calloc(1024,sizeof(char));
+	if(str_code == NULL)
+		exit(1);
+
+	snprintf(str_code,1024,"sub $sp 4\n");
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	// On sauvgarde la valeur dans le registre t0
+	snprintf(str_code,1024,"lw $t0 ($sp)\n");
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	snprintf(str_code,1024,"sw $t0 %s\n",code->res->name);
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+
+
+	free(str_code);
+}
+
 //Genere le code assembleur en fonction des quads et Table des Symbole dans un fichier .s
 void genAssembleur(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
   if(code == NULL)
@@ -433,6 +466,12 @@ void genAssembleur(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 			break;
 		case q_goto:
 			gen_goto(code,sym_table,file);
+			break;
+		case q_empile:
+			gen_empile(code,sym_table,file);
+			break;
+		case q_depile:
+			gen_depile(code,sym_table,file);
 			break;
 
   }
