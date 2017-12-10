@@ -122,7 +122,7 @@ Define : DEFINE ID NOMBRE Define {$$=concat_define(new_define($2,$3),$4);}
 ListeFonction: fonction MAIN'('')''{'ListeInstr'}' fonction {$$=concat(concat($1,ast_new_main($6)),$8);}
 	;
 
-fonction: INT ID'('ListeArgs')''{'ListeInstr'}' fonction {$$=concat(new_ast_fonction(strcat($2,"FCT"),$4,$7),$9);}
+fonction: INT ID'('ListeArgs')''{'ListeInstr'}' fonction {$$=concat(ast_new_declaration(new_ast_fonction(strcat($2,"FCT"),$4,$7)),$9);}
 	| {$$=NULL;}
 	;
 
