@@ -9,6 +9,11 @@ typedef struct std_dim{
 	struct std_dim* next;
 }std_dim,*Dim;
 
+typedef struct std_arg{
+	char* name;
+	struct std_arg* next;
+}std_arg,*Arg;
+
 // Enumeration des types de symboles
 typedef enum sym_type{
   sym_var, // symbole
@@ -18,6 +23,7 @@ typedef enum sym_type{
   sym_tab,
 	sym_tabRes,
 	sym_stencil,
+	sym_fonction,
 } sym_type;
 
 // Structure des symboles
@@ -33,6 +39,7 @@ typedef struct std_symbole{
 			int dim;
 			int size;
 		} stencil;
+		Arg arg_list;
   } val;
   sym_type type; // type du symbole
   struct std_symbole* next;

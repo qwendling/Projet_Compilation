@@ -873,6 +873,18 @@ void print_tab(Symbole s){
   printf("\n");
 }
 
+Arg create_argList(Arbre a){
+  if(a==NULL)
+    return NULL;
+  if(a->type == ast_declaration){
+    Arg new_arg =calloc(1,sizeof(std_arg));
+    new_arg->name =strdup(a->fils->val.str);
+    new_arg->next =create_argList(a->freres);
+    return new_arg;
+  }
+  return NULL;
+}
+
 // Repère si il y'a une erreur de sArbre verifStencil(Arbre list, Arbre dim)émantique dans le programme
 int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
 	if(a == NULL){
@@ -926,6 +938,12 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
 				s->val.stencil.voisin = a->fils->val.stencil.member;
 				s->val.stencil.dim = a->fils->val.stencil.profondeurs;
 				break;
+        case ast_fonction:
+          //ICI le check semantique des fonctions
+
+          s->type = sym_fonction;
+          s->val.arg_list = create_argList(a->fils->fils);
+        break;
 			}
 			break;
 		case ast_var:
