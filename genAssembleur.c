@@ -422,11 +422,7 @@ void gen_returnFct(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 	if(str_code == NULL)
 		exit(1);
 
-	snprintf(str_code,1024,"lw $t0 %s\n",code->arg1->name);
-	fwrite(str_code,sizeof(char),strlen(str_code),file);
-	// On sauvgarde la valeur dans le registre t0
-	snprintf(str_code,1024,"sw $t0 $v0\n");
-	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	load_var("$v0",code->arg1,file);
 	snprintf(str_code,1024,"b %s\n",code->res->name);
 	fwrite(str_code,sizeof(char),strlen(str_code),file);
 
