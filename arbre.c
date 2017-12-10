@@ -625,7 +625,7 @@ Arbre ast_new_applyStencilG(Arbre tableau,Arbre stencil){
 
 //------- Sprint 7 -------
 
-Arbre new_ast_fonction(char* id, Arbre args, Arbre instruction){
+Arbre ast_new_fonction(char* id, Arbre args, Arbre instruction){
   printf("%s\n", id);
   Arbre new = calloc(1,sizeof(std_arbre));
   new->type = ast_fonction;
@@ -635,7 +635,7 @@ Arbre new_ast_fonction(char* id, Arbre args, Arbre instruction){
   return new;
 }
 
-Arbre new_ast_appelFonction(char* id, Arbre args){
+Arbre ast_new_appelFonction(char* id, Arbre args){
   Arbre new = calloc(1,sizeof(std_arbre));
   new->type = ast_fonction;
   new->val.str = id;
@@ -673,8 +673,10 @@ int repaceIdInAST(Arbre ast){
   Arbre astRacine = ast;
 
   while(ast != NULL){
-    if(ast->type == ast_fonction){
-      replaceIdVarFct(ast->val.str,ast->fils);
+    if(ast->type == ast_declaration){
+      if(ast->fils->type == ast_fonction){
+        replaceIdVarFct(ast->fils->val.str,ast->fils->fils);
+      }
     }
     if(ast->type == ast_main){
       replaceIdMain(ast->fils);

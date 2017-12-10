@@ -28,3 +28,9 @@ int main() {
 
 	return 0;
 }
+
+int fctTest2(){
+  printf("fcttest reconnu");
+  int ok2 = 12;
+  return 0;
+}

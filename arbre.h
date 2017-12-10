@@ -219,8 +219,8 @@ int verifStencil(Arbre astStencil, int member, int dim);
 
 //------- SPRINT 7 -------
 
-Arbre new_ast_appelFonction(char* id, Arbre arg);
-Arbre new_ast_fonction(char* id, Arbre args, Arbre fct);
+Arbre ast_new_appelFonction(char* id, Arbre arg);
+Arbre ast_new_fonction(char* id, Arbre args, Arbre fct);
 int replaceIdMain(Arbre ast);
 
 int replaceIdVarFct(char *id, Arbre ast);

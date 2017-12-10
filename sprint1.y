@@ -122,7 +122,7 @@ Define : DEFINE ID NOMBRE Define {$$=concat_define(new_define($2,$3),$4);}
 ListeFonction: fonction MAIN'('')''{'ListeInstr'}' fonction {$$=concat(concat($1,ast_new_main($6)),$8);}
 	;
 
-fonction: INT ID'('ListeArgs')''{'ListeInstr'}' fonction {$$=concat(ast_new_declaration(new_ast_fonction(strcat($2,"FCT"),$4,$7)),$9);}
+fonction: INT ID'('ListeArgs')''{'ListeInstr'}' fonction {$$=concat(ast_new_declaration(ast_new_fonction(strcat($2,"FCT"),$4,$7)),$9);}
 	| {$$=NULL;}
 	;
 
@@ -253,7 +253,7 @@ B: NOMBRE {$$=new_const($1);}
 	| ID { $$ = new_var($1);}
 	| AutoIncremente {$$ = $1;}
 	| ID ListeDimAffect {$$ = new_tableau($1,$2);}
-	| ID'('ListeExpression')' {$$ = new_ast_appelFonction($1,$3);}
+	| ID'('ListeExpression')' {$$ = ast_new_appelFonction($1,$3);}
 	;
 
 ListeExpression: Expression','ListeExpression {$$=concat($1,$3);}
