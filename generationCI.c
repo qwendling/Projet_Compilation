@@ -113,6 +113,12 @@ void print_quad(quad q){
     case q_depile:
       printf("depile NULL NULL %s\n",q->res->name);
       break;
+    case q_fctRes:
+      printf("fctRes NULL NULL %s\n",q->res->name);
+      break;
+    case q_returnFct:
+      printf("returnFct %s NULL %s\n",q->arg1->name,q->res->name);
+      break;
 
   }
   print_quad(q->next);
@@ -124,6 +130,16 @@ void quad_complete(quad q,Symbole s){
     return;
   q->res = s;
   quad_complete(q->nextBool,s);
+}
+
+void quad_complete_returnFct(quad q,Symbole s){
+  if(q==NULL)
+    return;
+  if(q->op == q_returnFct){
+    q->res = s;
+  }
+
+  quad_complete_returnFct(q->next,s);
 }
 
 quad add_bool(quad q1,quad q2){
@@ -296,7 +312,6 @@ quad genForStencil(Arbre indexTab,Dim dimTab,Symbole sym_sten,int profondeur,Sym
 int isInQuad(Symbole s,quad q){
   if(q==NULL)
     return 0;
-  printf("compare quad : %s et %s\n",s->name,q->res->name);
   return !strcmp(s->name,q->res->name) || isInQuad(s,q->next);
 }
 
@@ -305,7 +320,6 @@ void genPile(quad code,quad* empile,quad* depile){
     return;
 
   if(code->res != NULL && code->res->type == sym_var && !isInQuad(code->res,*empile)){
-    printf("####### EMPILE %s\n",code->res->name);
     *empile =add_quad(*empile,quad_add(NULL,q_empile,NULL,NULL,code->res));
     *depile =add_quad(quad_add(NULL,q_depile,NULL,NULL,code->res),*depile);
   }
@@ -685,10 +699,17 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
         codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,sym_arg1));
         arg = genCode(ast->fils->fils->freres,sym_table);
         genPile(arg,&arg2,&arg3);
+        lbl = sym_new_lbl(sym_table);
+        quad_complete_returnFct(arg,lbl);
 
+        codegen = add_quad(codegen,quad_add(NULL,q_beginFct,NULL,NULL,NULL));
         codegen = add_quad(codegen,arg2);
+
         codegen = add_quad(codegen,arg);
+        codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,lbl));
+
         codegen = add_quad(codegen,arg3);
+        codegen = add_quad(codegen,quad_add(NULL,q_endFct,NULL,NULL,NULL));
 
         codegen = add_quad(codegen,genCode(ast->freres,sym_table));
       }
@@ -739,6 +760,36 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
       printf("\n\n");*/
 
       codegen = add_quad(codegen,quad_add(NULL,use_var,NULL,NULL,result));
+      break;
+    case ast_fonction:
+      sym_arg1 = sym_find(ast->val.str,sym_table);
+      Arg list_arg = sym_arg1->val.arg_list;
+      fils = ast->fils;
+      //affectation des arguments
+      while(list_arg != NULL){
+        sym_arg2 = sym_find(list_arg->name,sym_table);
+        arg = add_quad(arg,genCode(fils,sym_table));
+        arg = add_quad(arg,quad_add(NULL,affectation_var,quad_res(arg),NULL,sym_arg2));
+        arg2 = add_quad(arg2,quad_add(NULL,q_empile,NULL,NULL,sym_arg2));
+        arg3 = add_quad(quad_add(NULL,q_depile,NULL,NULL,sym_arg2),arg3);
+        list_arg = list_arg->next;
+        fils = fils->freres;
+      }
+      codegen = add_quad(codegen,arg2);
+      codegen = add_quad(codegen,arg);
+
+      //appel de la Fonction
+
+      codegen = add_quad(codegen,quad_add(NULL,q_goto,NULL,NULL,sym_arg1));
+      codegen = add_quad(codegen,arg3);
+
+      //recuperation du resultat
+      codegen = add_quad(codegen,quad_add(NULL,q_fctRes,NULL,NULL,sym_new_tmp(sym_table)));
+      break;
+    case ast_returnFct:
+      arg = genCode(ast->fils,sym_table);
+      codegen = add_quad(codegen,arg);
+      codegen = add_quad(codegen,quad_add(NULL,q_returnFct,quad_res(arg),NULL,NULL));
       break;
   }
   return codegen;

@@ -665,6 +665,9 @@ int replaceIdVarFct(char *id, Arbre ast){
   if(ast->type == ast_tableau){
     ast->val.str = strcat(ast->val.str,id);
   }
+  if(ast->type == ast_fonction){
+    ast->val.str = strcat(ast->val.str,"FCT");
+  }
 
   if(ast->fils != NULL){
       replaceIdVarFct(id,ast->fils);
@@ -710,6 +713,9 @@ int replaceIdMain(Arbre ast){
   }
   if(ast->type == ast_tableau){
     ast->val.str = strcat(ast->val.str,"MAINFCT");
+  }
+  if(ast->type == ast_fonction){
+    ast->val.str = strcat(ast->val.str,"FCT");
   }
 
   if(ast->fils != NULL){
@@ -956,7 +962,7 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
           //ICI le check semantique des fonctions
 
           s->type = sym_fonction;
-          s->val.arg_list = create_argList(a->fils->fils);
+          s->val.arg_list = create_argList(a->fils->fils->fils);
         break;
 			}
 			break;

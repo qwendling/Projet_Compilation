@@ -404,6 +404,66 @@ void gen_depile(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 	free(str_code);
 }
 
+void gen_fctRes(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
+	char* str_code = calloc(1024,sizeof(char));
+	if(str_code == NULL)
+		exit(1);
+
+
+	snprintf(str_code,1024,"sw $v0 %s\n",code->res->name);
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+
+
+	free(str_code);
+}
+
+void gen_returnFct(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
+	char* str_code = calloc(1024,sizeof(char));
+	if(str_code == NULL)
+		exit(1);
+
+	snprintf(str_code,1024,"lw $t0 %s\n",code->arg1->name);
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	// On sauvgarde la valeur dans le registre t0
+	snprintf(str_code,1024,"sw $t0 $v0\n");
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	snprintf(str_code,1024,"b %s\n",code->res->name);
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+
+
+	free(str_code);
+}
+void gen_endFct(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
+	char* str_code = calloc(1024,sizeof(char));
+	if(str_code == NULL)
+		exit(1);
+
+		snprintf(str_code,1024,"sub $sp 4\n");
+		fwrite(str_code,sizeof(char),strlen(str_code),file);
+		// On sauvgarde la valeur dans le registre t0
+		snprintf(str_code,1024,"lw $ra ($sp)\n");
+		fwrite(str_code,sizeof(char),strlen(str_code),file);
+		snprintf(str_code,1024,"j $ra\n");
+		fwrite(str_code,sizeof(char),strlen(str_code),file);
+
+
+	free(str_code);
+}
+
+void gen_beginFct(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
+	char* str_code = calloc(1024,sizeof(char));
+	if(str_code == NULL)
+		exit(1);
+
+	// On sauvgarde la valeur dans le registre t0
+	snprintf(str_code,1024,"sw $ra ($sp)\n");
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+	snprintf(str_code,1024,"add $sp 4\n");
+	fwrite(str_code,sizeof(char),strlen(str_code),file);
+
+	free(str_code);
+}
+
 //Genere le code assembleur en fonction des quads et Table des Symbole dans un fichier .s
 void genAssembleur(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
   if(code == NULL)
@@ -472,6 +532,18 @@ void genAssembleur(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 			break;
 		case q_depile:
 			gen_depile(code,sym_table,file);
+			break;
+		case q_fctRes:
+			gen_fctRes(code,sym_table,file);
+			break;
+		case q_returnFct:
+			gen_returnFct(code,sym_table,file);
+			break;
+		case q_beginFct:
+			gen_beginFct(code,sym_table,file);
+			break;
+		case q_endFct:
+			gen_endFct(code,sym_table,file);
 			break;
 
   }

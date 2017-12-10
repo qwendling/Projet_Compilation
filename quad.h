@@ -37,6 +37,10 @@ typedef enum quad_op{
   //Sprint7
   q_empile,
   q_depile,
+  q_fctRes,
+  q_returnFct,
+  q_endFct,
+  q_beginFct,
 } quad_op;
 
 // structure des quads
