@@ -18,21 +18,13 @@ git config --global user.email "email@mail.com"
 ```
 
 ## Keywords et operateur
-+
--
-*
-/
-$
-++
---
-fct
-if
-else
-while
-for
-int
-printf
-printi
+- Expression Arithmétique:  - * / ++ -- moins unaire
+- Operateur stencil: $
+- Structure de controle: && || >= > < <= !  if else
+- Boucle:  for while 
+- Type: stencil, int , int[dim][dim2]...
+- Affichage: printf printi
+- return
 
 
 ## Versioning
