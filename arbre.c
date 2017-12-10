@@ -958,7 +958,18 @@ int verifAppelFonction(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
     return 1;
 }
 
+int verifReturn(Arbre ast){
+  Arbre tmp = ast;
 
+  while(tmp!=NULL){
+    if(tmp->type == ast_return || tmp->type == ast_returnFct){
+      return 0;
+    }
+    tmp = tmp->freres;
+  }
+
+  return 1;
+}
 
 // Repère si il y'a une erreur de sArbre verifStencil(Arbre list, Arbre dim)émantique dans le programme
 int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
@@ -1014,6 +1025,10 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
 				s->val.stencil.dim = a->fils->val.stencil.profondeurs;
 				break;
         case ast_fonction:
+          if(verifReturn(a->fils->fils->freres->fils)){
+            printf("Aucun return dans la fonction %s ! \n", a->fils->val.str);
+  					return 7;
+          }
           s->type = sym_fonction;
           s->val.arg_list = create_argList(a->fils->fils->fils);
         break;
@@ -1053,7 +1068,13 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
   				return 7;
         }
       }
-    break;
+      break;
+    case ast_main:
+      if(verifReturn(a->fils)){
+        printf("Aucun return dans la fonction Main ! \n");
+        return 7;
+      }
+      break;
 
   }
   int tmp = ast_semantique(a->fils,sym_table);
