@@ -903,6 +903,37 @@ Arg create_argList(Arbre a){
   return NULL;
 }
 
+void printArg(Arg args){
+  if(args==NULL){
+    return ;
+  }
+  printf("%s\n", args->name);
+  printArg(args->next);
+}
+
+int verifAppelFonction(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
+  if(!sym_existe_table(sym_table,ast->val.str)){
+    return 1;
+  }
+
+  Symbole s = sym_find(ast->val.str,sym_table);
+  if(s->type != sym_fonction){
+    return 1;
+  }
+  Arbre tmp = ast->fils;
+  Arg list = s->val.arg_list;
+  while(tmp != NULL && list != NULL){
+    list = list->next;
+    tmp = tmp->freres;
+  }
+
+  if(list == NULL && tmp == NULL){
+    return 0;
+  }
+  else
+    return 1;
+}
+
 
 
 // Repère si il y'a une erreur de sArbre verifStencil(Arbre list, Arbre dim)émantique dans le programme
@@ -959,8 +990,6 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
 				s->val.stencil.dim = a->fils->val.stencil.profondeurs;
 				break;
         case ast_fonction:
-          //ICI le check semantique des fonctions
-
           s->type = sym_fonction;
           s->val.arg_list = create_argList(a->fils->fils->fils);
         break;
@@ -993,7 +1022,16 @@ int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){
 				return 1;
 			}
 			break;
-	}
+    case ast_fonction:
+      if(a->fils->type != ast_bloc){
+        if(verifAppelFonction(a,sym_table)){
+          printf("Mauvaise appelle de %s\n", a->val.str);
+  				return 7;
+        }
+      }
+    break;
+
+  }
   int tmp = ast_semantique(a->fils,sym_table);
   int tmp2 = ast_semantique(a->freres,sym_table);
 	return !(!tmp && !tmp2);
