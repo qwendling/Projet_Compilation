@@ -642,6 +642,14 @@ Arbre ast_new_appelFonction(char* id, Arbre args){
   new->fils = args;
 }
 
+void ast_changeReturnFct(Arbre a){
+  if(a==NULL)
+    return;
+  if(a->type == ast_return)
+    a->type = ast_returnFct;
+  ast_changeReturnFct(a->fils);
+  ast_changeReturnFct(a->freres);
+}
 
 int replaceIdVarFct(char *id, Arbre ast){
   if (ast == NULL){
@@ -676,6 +684,7 @@ int repaceIdInAST(Arbre ast){
     if(ast->type == ast_declaration){
       if(ast->fils->type == ast_fonction){
         replaceIdVarFct(ast->fils->val.str,ast->fils->fils);
+        ast_changeReturnFct(ast->fils);
       }
     }
     if(ast->type == ast_main){
@@ -836,6 +845,9 @@ void ast_print_aux(Arbre a,int profondeur){
   case ast_instruction:
   printf("ast_instruction \n");
   break;
+  case ast_returnFct:
+  printf("ast_returnFct\n");
+  break;
   }
 
   //Affiche de manière recursive et ajoute une profondeur si possède des fils
@@ -884,6 +896,8 @@ Arg create_argList(Arbre a){
   }
   return NULL;
 }
+
+
 
 // Repère si il y'a une erreur de sArbre verifStencil(Arbre list, Arbre dim)émantique dans le programme
 int ast_semantique(Arbre a,Symbole sym_table[TAILLE_TABLE]){

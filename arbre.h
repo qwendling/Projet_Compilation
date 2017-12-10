@@ -52,7 +52,8 @@ typedef enum arbre_type{
 
   ast_fonction,
   ast_args,
-  ast_instruction
+  ast_instruction,
+  ast_returnFct,
 
 }arbre_type;
 

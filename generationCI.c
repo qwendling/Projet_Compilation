@@ -655,6 +655,11 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
         sym_arg1 = sym_find(ast->fils->val.str,sym_table);
         codegen = declare_stencil(ast->fils->freres->fils,sym_table,&sym_arg1);
       }
+      if(ast->fils->type == ast_fonction){
+
+        
+        codegen = add_quad(codegen,genCode(ast->freres,sym_table));
+      }
       break;
     case ast_applyStencil:
       printf("CI apply stencil\n");
