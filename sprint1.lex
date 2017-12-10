@@ -151,9 +151,17 @@ void lex_free() {
 
 int main(int argc, char **argv )
 {
+  if(argc != 2){
+    printf("utilisation : %s file",argv[0]);
+    return 1;
+  }
 	name_id = malloc(1024);
 	// Ouverture du fichier
 	yyin = fopen(argv[1],"r");
+  if(yyin == NULL){
+    printf("Erreur ouverture du fichier %s\n",argv[1]);
+    return 1;
+  }
 	yyparse();
 	fclose(yyin);
 	free(name_id);
@@ -164,6 +172,7 @@ int main(int argc, char **argv )
 	printf("\n########## DEFINE ##########\n\n");
   print_define(listedef);
   replaceDefineInAST(ast,listedef);
+  free_define(listedef);
 
 
 	printf("\n########## AST ##########\n\n");

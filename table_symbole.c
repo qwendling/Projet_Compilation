@@ -72,6 +72,23 @@ Symbole sym_find(char* name,Symbole sym_Table[TAILLE_TABLE]){
   return e;
 }
 
+void free_Dim(Dim d){
+  if(d== NULL){
+    return;
+  }
+  free_Dim(d->next);
+  free(d);
+}
+
+void free_Arg(Arg a){
+  if(a== NULL){
+    return;
+  }
+  free_Arg(a->next);
+  free(a->name);
+  free(a);
+}
+
 // Free un symbole
 void sym_delete(Symbole s){
   if(s==NULL){
@@ -79,6 +96,12 @@ void sym_delete(Symbole s){
   }
   if(s->type == sym_string){
 	  free(s->val.str);
+  }
+  if(s->type == sym_tab){
+    free_Dim(s->val.dimension);
+  }
+  if(s->type == sym_fonction){
+    free_Arg(s->val.arg_list);
   }
   Symbole tmp = s->next;
   free(s->name);

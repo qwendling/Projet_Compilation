@@ -24,7 +24,7 @@ Arbre new_const(int val){
 Arbre new_string(char* val){
   Arbre new = calloc(1,sizeof(std_arbre));
   new->type = ast_str;
-  new->val.str = val;
+  new->val.str = strdup(val);
   // On return une feuille de type ast_str
   return new;
 }
@@ -170,10 +170,14 @@ void ast_free(Arbre a){
 		return;
 	ast_free(a->freres);
 	ast_free(a->fils);
-	if(a->type == ast_str || a->type == ast_var){
+	if(a->type == ast_str || a->type == ast_var || a->type == ast_tableau || a->type == ast_fonction){
 		if(a->val.str != NULL)
 			free(a->val.str);
 	}
+  if(a->type == ast_stencil){
+    if(a->val.stencil.name != NULL)
+      free(a->val.stencil.name);
+  }
 
 	free(a);
 }
@@ -420,6 +424,14 @@ int verifTableau(Arbre Dim, Arbre Bloctableau){
 
 // ------ DEFINE -----
 
+void free_define(ListeDefine l){
+  if(l==NULL)
+    return;
+  free_define(l->next);
+  free(l->id);
+  free(l);
+}
+
 ListeDefine newListeDefine(){
 	return NULL;
 }
@@ -458,6 +470,7 @@ void replaceDefineInAST(Arbre a,ListeDefine d){
 	if(a->type == ast_var){
 		ListeDefine define = findInDefine(d,a->val.str);
 		if(define != NULL){
+      free(a->val.str);
 			int cst = define->cst;
 		  a->type = ast_constant;
 		  a->val.constante = cst;
@@ -629,7 +642,7 @@ Arbre ast_new_fonction(char* id, Arbre args, Arbre instruction){
   printf("%s\n", id);
   Arbre new = calloc(1,sizeof(std_arbre));
   new->type = ast_fonction;
-  new->val.str = id;
+  new->val.str = strdup(id);
   new->fils = ast_new_bloc(args);
   new->fils->freres = ast_new_bloc(instruction);
   return new;
@@ -638,7 +651,7 @@ Arbre ast_new_fonction(char* id, Arbre args, Arbre instruction){
 Arbre ast_new_appelFonction(char* id, Arbre args){
   Arbre new = calloc(1,sizeof(std_arbre));
   new->type = ast_fonction;
-  new->val.str = id;
+  new->val.str = strdup(id);
   new->fils = args;
 }
 
@@ -656,18 +669,23 @@ int replaceIdVarFct(char *id, Arbre ast){
     return 0;
   }
 
-  if(ast->type == ast_var){
-    ast->val.str = strcat(ast->val.str,id);
+  char* str_tmp = calloc(1024,sizeof(char));
+  if(ast->type == ast_var || ast->type == ast_tableau){
+    snprintf(str_tmp,1024,"%s%s",ast->val.str,id);
+    free(ast->val.str);
+    ast->val.str = strdup(str_tmp);
   }
   if(ast->type == ast_stencil){
-    ast->val.stencil.name = strcat(ast->val.stencil.name,id);
-  }
-  if(ast->type == ast_tableau){
-    ast->val.str = strcat(ast->val.str,id);
+    snprintf(str_tmp,1024,"%s%s",ast->val.stencil.name,id);
+    free(ast->val.stencil.name);
+    ast->val.stencil.name = strdup(str_tmp);
   }
   if(ast->type == ast_fonction){
-    ast->val.str = strcat(ast->val.str,"FCT");
+    snprintf(str_tmp,1024,"%sFCT",ast->val.str);
+    free(ast->val.str);
+    ast->val.str = strdup(str_tmp);
   }
+  free(str_tmp);
 
   if(ast->fils != NULL){
       replaceIdVarFct(id,ast->fils);
@@ -705,18 +723,24 @@ int replaceIdMain(Arbre ast){
     return 0;
   }
 
-  if(ast->type == ast_var){
-    ast->val.str = strcat(ast->val.str,"MAINFCT");
+
+  char* str_tmp = calloc(1024,sizeof(char));
+  if(ast->type == ast_var || ast->type == ast_tableau){
+    snprintf(str_tmp,1024,"%sMAINFCT",ast->val.str);
+    free(ast->val.str);
+    ast->val.str = strdup(str_tmp);
   }
   if(ast->type == ast_stencil){
-    ast->val.stencil.name = strcat(ast->val.stencil.name,"MAINFCT");
-  }
-  if(ast->type == ast_tableau){
-    ast->val.str = strcat(ast->val.str,"MAINFCT");
+    snprintf(str_tmp,1024,"%sMAINFCT",ast->val.stencil.name);
+    free(ast->val.stencil.name);
+    ast->val.stencil.name = strdup(str_tmp);
   }
   if(ast->type == ast_fonction){
-    ast->val.str = strcat(ast->val.str,"FCT");
+    snprintf(str_tmp,1024,"%sFCT",ast->val.str);
+    free(ast->val.str);
+    ast->val.str = strdup(str_tmp);
   }
+  free(str_tmp);
 
   if(ast->fils != NULL){
       replaceIdMain(ast->fils);

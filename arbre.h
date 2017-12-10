@@ -242,6 +242,8 @@ int ast_semantique(Arbre a ,Symbole sym_table[TAILLE_TABLE]);
 
 ListeDefine newListeDefine();
 
+void free_define(ListeDefine l);
+
 ListeDefine new_define(char* id, int constante);
 
 ListeDefine concat_define(ListeDefine d,ListeDefine r);

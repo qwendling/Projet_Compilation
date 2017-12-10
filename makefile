@@ -27,7 +27,7 @@ ARBRE_H = arbre.h
 SYMBOLE_C = table_symbole.c
 SYMBOLE_H = table_symbole.h
 GENERATIONCI_C = generationCI.c
-FILE_C = arbre.c table_symbole.c generationCI.c genAssembleur.c 
+FILE_C = arbre.c table_symbole.c generationCI.c genAssembleur.c
 
 ############################
 # 		Makefile Action			#
@@ -45,7 +45,7 @@ all: ${LEX} ${YACC} ${FILE_C}
 	@printf "${CYAN}\t\t LEX Compiled ${END} \n"
 	@#######
 	@printf "${YELLOW}Project Compiling... ${END} \n"
-	@gcc -o ${EXEC} lex.yy.c ${EXEC}.tab.c ${FILE_C} -ly -lm
+	@gcc -o ${EXEC} lex.yy.c ${EXEC}.tab.c ${FILE_C} -ly -lm -g
 	@printf "\n${CYAN}\t\t Project Compiled ${END} \n\n"
 	@#######
 

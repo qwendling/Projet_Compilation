@@ -4,6 +4,7 @@
 	//###################################
 
 	#include <stdio.h>
+	#include <stdlib.h>
 	#include<string.h>
 	#include "arbre.h"
 	extern Arbre ast;
@@ -114,7 +115,7 @@
 // Le program est une fonction qu'on considère comme un arbre ast
 program: Define ListeFonction {listedef= $1 ; ast=$2;};
 
-Define : DEFINE ID NOMBRE Define {$$=concat_define(new_define($2,$3),$4);}
+Define : DEFINE ID NOMBRE Define {$$=concat_define(new_define($2,$3),$4);free($2);}
 	|  {$$=NULL;}
 	;
 
@@ -122,7 +123,11 @@ Define : DEFINE ID NOMBRE Define {$$=concat_define(new_define($2,$3),$4);}
 ListeFonction: fonction MAIN'('')''{'ListeInstr'}' fonction {$$=concat(concat($1,ast_new_main($6)),$8);}
 	;
 
-fonction: INT ID'('ListeArgs')''{'ListeInstr'}' fonction {$$=concat(ast_new_declaration(ast_new_fonction(strcat($2,"FCT"),$4,$7)),$9);}
+fonction: INT ID'('ListeArgs')''{'ListeInstr'}' fonction {char* str_tmp = calloc(1024,sizeof(char));
+																													snprintf(str_tmp,1024,"%sFCT",$2);
+																													$$=concat(ast_new_declaration(ast_new_fonction(str_tmp,$4,$7)),$9);
+																													free($2);
+																													free(str_tmp);}
 	| {$$=NULL;}
 	;
 
@@ -143,7 +148,7 @@ ListeInstr: Instruction';'ListeInstr { $$=concat($1,$3);}
 
 // Les différentes instructions possible
 Instruction: RETURN Expression { $$=ast_new_return($2);}
-	|PRINTF'('STRING')' { $$=ast_new_print(ast_printf,new_string($3));}
+	|PRINTF'('STRING')' { $$=ast_new_print(ast_printf,new_string($3));free($3);}
 	|PRINTI'('Expression')' { $$=ast_new_print(ast_printi,$3); }
 	|Declaration { $$=$1;}
 	|Affectation { $$=$1;}
@@ -154,9 +159,9 @@ Instruction: RETURN Expression { $$=ast_new_return($2);}
 //---------- DECLARATION VARIABLE -------------//
 // Declaration de variable soit par une affectation de valeur soit vide
 Declaration: INT Affectation{$$=ast_new_declaration(new_var($2->fils->val.str)); $$->freres = $2;}
-	| INT ID {$$=ast_new_declaration(new_var($2));}
+	| INT ID {$$=ast_new_declaration(new_var($2));free($2);}
 	| Tableau {printf("declaration de tab\n");$$=$1;}
-	| STENCIL ID'{'NOMBRE','NOMBRE'}''=''{' ListeBlockStencil '}' {$$=ast_new_stencilDeclare($2,$10,$4,$6);}
+	| STENCIL ID'{'NOMBRE','NOMBRE'}''=''{' ListeBlockStencil '}' {$$=ast_new_stencilDeclare($2,$10,$4,$6);free($2);}
 	;
 
 
@@ -175,8 +180,8 @@ ListeStencilMember: Expression','ListeStencilMember {$$=concat($1,$3);}
 
 
 //--------- Declaration Tableau ----------//
-Tableau:INT ID ListeDim {$$=ast_new_tableauDeclare($2,$3,NULL);}
-	| INT ID ListeDim '=''{' ListeBlocTableau  '}' {$$=ast_new_tableauDeclare($2,$3,$6);}
+Tableau:INT ID ListeDim {$$=ast_new_tableauDeclare($2,$3,NULL);free($2);}
+	| INT ID ListeDim '=''{' ListeBlocTableau  '}' {$$=ast_new_tableauDeclare($2,$3,$6);free($2);}
 	;
 
 ListeDim: '['NOMBRE']' ListeDim {$$=concat(new_const($2),$4);}
@@ -201,12 +206,12 @@ ListeTableauBlocMember: '{'ListeBlocTableau'}'','ListeTableauBlocMember {$$=conc
 
 //---------- AFFECTATION VARIABLE -------------//
 // Une affectation correspond a un ID prenant comme valeur une expression
-Affectation: ID '=' Expression {$$=ast_new_affectation(new_var($1),$3);}
+Affectation: ID '=' Expression {$$=ast_new_affectation(new_var($1),$3);free($1);}
 	;
 
 
 //--------- Affectation Tableau --------------//
-AffectationTableau: ID ListeDimAffect '=' Expression {$$=ast_new_tableauAffec($1,$2,$4);};
+AffectationTableau: ID ListeDimAffect '=' Expression {$$=ast_new_tableauAffec($1,$2,$4);free($1);};
 
 
 ListeDimAffect: '['Expression']' ListeDimAffect {$$=concat($2,$4);}
@@ -235,25 +240,25 @@ Facteur: '('Expression')' {$$ = $2;}
 	| '-'B {$$ = ast_new_fois(new_const(-1),$2);} %prec UMOINS
 	;
 
-ApplyStencil: ID'$'ID ListeDimAffect {$$=ast_new_applyStencilD(new_stencil($1),new_tableau($3,$4)) ;}
-	| ID ListeDimAffect'$'ID {$$= ast_new_applyStencilG(new_tableau($1,$2),new_stencil($4));}
+ApplyStencil: ID'$'ID ListeDimAffect {$$=ast_new_applyStencilD(new_stencil($1),new_tableau($3,$4)) ;free($1);free($3);}
+	| ID ListeDimAffect'$'ID {$$= ast_new_applyStencilG(new_tableau($1,$2),new_stencil($4));free($1);free($4);}
 
 
 //---------- AUTO INCREMENTATION -------------//
 // Gestion de l'AutoIncrementation avant (BEFORE) et aprés (AFTER) la variable a incrémenter
-AutoIncremente:	INCREMENTPLUSAFTER {$$=ast_new_autoIncrement_plus(new_var($1));} %prec AUTOINCR
-	| INCREMENTMOINSAFTER {$$=ast_new_autoIncrement_moins(new_var($1));;} %prec AUTOINCR
-	| INCREMENTMOINSBEFORE {$$=ast_new_affectation(new_var($1),ast_new_moins(new_var($1),new_const(1)));} %prec AUTOINCR
-	| INCREMENTPLUSBEFORE {$$=ast_new_affectation(new_var($1),ast_new_plus(new_var($1),new_const(1)));} %prec AUTOINCR
+AutoIncremente:	INCREMENTPLUSAFTER {$$=ast_new_autoIncrement_plus(new_var($1));free($1);} %prec AUTOINCR
+	| INCREMENTMOINSAFTER {$$=ast_new_autoIncrement_moins(new_var($1));free($1);} %prec AUTOINCR
+	| INCREMENTMOINSBEFORE {$$=ast_new_affectation(new_var($1),ast_new_moins(new_var($1),new_const(1)));free($1);} %prec AUTOINCR
+	| INCREMENTPLUSBEFORE {$$=ast_new_affectation(new_var($1),ast_new_plus(new_var($1),new_const(1)));free($1);} %prec AUTOINCR
 	;
 
 //---------- ETAT TERMINAL -------------//
 // Etat terminal qui peut etre soit un nombre, un variable ou une incrementation de variable
 B: NOMBRE {$$=new_const($1);}
-	| ID { $$ = new_var($1);}
+	| ID { $$ = new_var($1);free($1);}
 	| AutoIncremente {$$ = $1;}
-	| ID ListeDimAffect {$$ = new_tableau($1,$2);}
-	| ID'('ListeExpression')' {$$ = ast_new_appelFonction($1,$3);}
+	| ID ListeDimAffect {$$ = new_tableau($1,$2);free($1);}
+	| ID'('ListeExpression')' {$$ = ast_new_appelFonction($1,$3);free($1);}
 	;
 
 ListeExpression: Expression','ListeExpression {$$=concat($1,$3);}
