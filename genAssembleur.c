@@ -365,7 +365,7 @@ void gen_goto(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 		exit(1);
 
 	// On sauvgarde la valeur dans le registre t0
-	snprintf(str_code,1024,"b %s\n",code->res->name);
+	snprintf(str_code,1024,"jal %s\n",code->res->name);
 	fwrite(str_code,sizeof(char),strlen(str_code),file);
 
 	free(str_code);
@@ -439,7 +439,7 @@ void gen_endFct(quad code,Symbole sym_table[TAILLE_TABLE],FILE* file){
 		// On sauvgarde la valeur dans le registre t0
 		snprintf(str_code,1024,"lw $ra ($sp)\n");
 		fwrite(str_code,sizeof(char),strlen(str_code),file);
-		snprintf(str_code,1024,"j $ra\n");
+		snprintf(str_code,1024,"jr $ra\n");
 		fwrite(str_code,sizeof(char),strlen(str_code),file);
 
 

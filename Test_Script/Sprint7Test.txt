@@ -5,8 +5,15 @@ int fctTest(int id1, int id2){
   return 0;
 }
 
+int fact(int n){
+  if(n<=0)
+    return 1;
+  return n*fact(n-1);
+}
+
 
 int main() {
+  printf("Debut main \n");
 
   int intVa = fctTest (4+45/12, 4);
 
@@ -25,6 +32,9 @@ int main() {
 	printf("printf reconnu");
 	printi(42);
 	printi(52+9);
+  printf("\n");
+  printi(fact(3));
+  printf("\n");
 	/* Fin du test */
 
 	return 0;
