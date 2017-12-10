@@ -59,7 +59,6 @@ test: all
 			|| printf "%s""$$i ${REDBOX} FAILED ${END} \n" ; \
 	done
 	@printf "\n${GREEN}Great success can commit now ! ${END}\n\n"
-	@gnome-terminal --maximize -e ./borat.sh
 
 
 # Clean repository
