@@ -1,6 +1,7 @@
 int fctTest(int id1, int id2){
   printf("fcttest reconnu");
   int ok = 12;
+  int ok2 = 15;
   return 0;
 }
 
@@ -31,6 +32,6 @@ int main() {
 
 int fctTest2(){
   printf("fcttest reconnu");
-  int ok2 = 12;
+  int ok = 12;
   return 0;
 }

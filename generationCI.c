@@ -62,51 +62,57 @@ void print_quad(quad q){
       printf("return %s NULL NULL\n",q->arg1->name);
       break;
     case affectation_var:
-		printf("WTFFF %s %p\n",q->arg1->name,q->res);
-		printf("affectation %s NULL %s\n",q->arg1->name,q->res->name);
-		break;
+  		printf("WTFFF %s %p\n",q->arg1->name,q->res);
+  		printf("affectation %s NULL %s\n",q->arg1->name,q->res->name);
+  		break;
     case affectation_tab:
       printf("affectation_tab %s NULL %s\n",q->arg1->name,q->res->name);
       break;
     case q_add:
-		printf("add %s %s %s\n",q->arg1->name,q->arg2->name,q->res->name);
-		break;
+  		printf("add %s %s %s\n",q->arg1->name,q->arg2->name,q->res->name);
+  		break;
     case q_mul:
-		printf("mul %s %s %s\n",q->arg1->name,q->arg2->name,q->res->name);
-		break;
+  		printf("mul %s %s %s\n",q->arg1->name,q->arg2->name,q->res->name);
+  		break;
     case q_div:
-		printf("div %s %s %s\n",q->arg1->name,q->arg2->name,q->res->name);
-		break;
+  		printf("div %s %s %s\n",q->arg1->name,q->arg2->name,q->res->name);
+  		break;
     case q_sub:
-		printf("sub %s %s %s\n",q->arg1->name,q->arg2->name,q->res->name);
-		break;
-	case use_var:
-		printf("use NULL NULL %s\n",q->res->name);
-		break;
+  		printf("sub %s %s %s\n",q->arg1->name,q->arg2->name,q->res->name);
+  		break;
+  	case use_var:
+  		printf("use NULL NULL %s\n",q->res->name);
+  		break;
     case q_equal:
       printf("equal %s %s %s\n",q->arg1->name,q->arg2->name,q->res->name);
       break;
     case q_nequal:
-    printf("nequal %s %s %s\n",q->arg1->name,q->arg2->name,q->res->name);
-    break;
+      printf("nequal %s %s %s\n",q->arg1->name,q->arg2->name,q->res->name);
+      break;
     case q_greater:
-    printf("gt %s %s %s\n",q->arg1->name,q->arg2->name,q->res->name);
-    break;
+      printf("gt %s %s %s\n",q->arg1->name,q->arg2->name,q->res->name);
+      break;
     case q_greaterOrEqual:
-    printf("gte %s %s %s\n",q->arg1->name,q->arg2->name,q->res->name);
-    break;
+      printf("gte %s %s %s\n",q->arg1->name,q->arg2->name,q->res->name);
+      break;
     case q_less:
-    printf("lt %s %s %s\n",q->arg1->name,q->arg2->name,q->res->name);
-    break;
+      printf("lt %s %s %s\n",q->arg1->name,q->arg2->name,q->res->name);
+      break;
     case q_lessOrEqual:
-    printf("lte %s %s %s\n",q->arg1->name,q->arg2->name,q->res->name);
-    break;
+      printf("lte %s %s %s\n",q->arg1->name,q->arg2->name,q->res->name);
+      break;
     case q_create_label:
-    printf("label NULL NULL %s\n",q->res->name);
-    break;
+      printf("label NULL NULL %s\n",q->res->name);
+      break;
     case q_goto:
-    printf("goto NULL NULL %s\n",q->res->name);
-    break;
+      printf("goto NULL NULL %s\n",q->res->name);
+      break;
+    case q_empile:
+      printf("empile NULL NULL %s\n",q->res->name);
+      break;
+    case q_depile:
+      printf("depile NULL NULL %s\n",q->res->name);
+      break;
 
   }
   print_quad(q->next);
@@ -287,6 +293,24 @@ quad genForStencil(Arbre indexTab,Dim dimTab,Symbole sym_sten,int profondeur,Sym
 	return codegen;
 }
 
+int isInQuad(Symbole s,quad q){
+  if(q==NULL)
+    return 0;
+  printf("compare quad : %s et %s\n",s->name,q->res->name);
+  return !strcmp(s->name,q->res->name) || isInQuad(s,q->next);
+}
+
+void genPile(quad code,quad* empile,quad* depile){
+  if(code == NULL)
+    return;
+
+  if(code->res != NULL && code->res->type == sym_var && !isInQuad(code->res,*empile)){
+    printf("####### EMPILE %s\n",code->res->name);
+    *empile =add_quad(*empile,quad_add(NULL,q_empile,NULL,NULL,code->res));
+    *depile =add_quad(quad_add(NULL,q_depile,NULL,NULL,code->res),*depile);
+  }
+  genPile(code->next,empile,depile);
+}
 
 // genere les quads depuis l'AST en stockant dans la table des symboles
 quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
@@ -345,6 +369,7 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
           codegen = add_quad(codegen,genCode(fils,sym_table));
           fils = fils->freres;
         }
+        codegen = add_quad(codegen,genCode(ast->freres,sym_table));
         break;
     case ast_var:
   		printf("CI Var %s\n",ast->val.str);
@@ -656,8 +681,15 @@ quad genCode(Arbre ast,Symbole sym_table[TAILLE_TABLE]){
         codegen = declare_stencil(ast->fils->freres->fils,sym_table,&sym_arg1);
       }
       if(ast->fils->type == ast_fonction){
+        sym_arg1 = sym_find(ast->fils->val.str,sym_table);
+        codegen = add_quad(codegen,quad_add(NULL,q_create_label,NULL,NULL,sym_arg1));
+        arg = genCode(ast->fils->fils->freres,sym_table);
+        genPile(arg,&arg2,&arg3);
 
-        
+        codegen = add_quad(codegen,arg2);
+        codegen = add_quad(codegen,arg);
+        codegen = add_quad(codegen,arg3);
+
         codegen = add_quad(codegen,genCode(ast->freres,sym_table));
       }
       break;
