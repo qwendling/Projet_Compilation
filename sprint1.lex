@@ -40,7 +40,7 @@ int return_value = 0;
 
 MAIN "int main"
 NOMBRE [0-9]*
-COMMENT ([^\\]\/\/.*[\n])|\/\*([^\*]|\n|\*[^\/])*\*\/
+COMMENT (\/\/.*[\n])|\/\*([^\*]|\n|\*[^\/])*\*\/
 STRING   \"([^\"\\]|\\.)*\"
 RETURN return
 
