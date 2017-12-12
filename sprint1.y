@@ -308,8 +308,8 @@ InitMember: Affectation {$$=$1;}
 	;
 
 // Liste des Incrementations dans la boucle for
-ListeIncrement: AutoIncremente',' ListeIncrement {$$=concat($1,$3);}
-	| AutoIncremente {$$=$1;}
+ListeIncrement: Instruction',' Instruction {$$=concat($1,$3);}
+	| Instruction {$$=$1;}
 	;
 
 
